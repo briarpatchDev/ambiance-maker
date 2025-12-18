@@ -2,16 +2,28 @@
   "name": "ambiance-maker",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && npm run postbuild",
+    "prebuild": "node scripts/prebuild.js",
+    "postbuild": "node scripts/postbuild.js",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.954.0",
+    "bcryptjs": "^3.0.3",
+    "classnames": "^2.5.1",
+    "focus-trap-react": "^11.0.4",
+    "lodash": "^4.17.21",
     "next": "16.0.10",
+    "node-cron": "^4.2.1",
+    "normalize.css": "^8.0.1",
     "react": "19.2.1",
-    "react-dom": "19.2.1"
+    "react-dom": "19.2.1",
+    "react-toastify": "^11.0.5",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@types/node": "^20",

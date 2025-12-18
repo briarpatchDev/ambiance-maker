@@ -11,7 +11,9 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <div className={styles.page}>
-      <div className={styles.wrapper}>{`This homepage is empty`}</div>
+      <div className={styles.wrapper}>
+        
+      </div>
     </div>
   );
 }
