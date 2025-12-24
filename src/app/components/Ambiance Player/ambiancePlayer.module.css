@@ -1,7 +1,32 @@
+.player {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1.2rem;
+}
 
+.controls {
+  display: flex;
+  justify-content: center;
+  column-gap: 0.8rem;
+  width: 100%;
+  max-width: 80rem;
+}
 
+.videos {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  row-gap: 0.8rem;
+  column-gap: 0.4rem;
+  width: 100%;
+  max-width: 140rem;
+}
 
-
+.videos iframe {
+  border-radius: 1.2rem;
+  width: 400px !important;
+  height: 300px !important;
+}
 
 /* Desktop Styles */
 @media screen and (min-width: 651px) and (max-width: 1023px) {

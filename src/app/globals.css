@@ -88,6 +88,7 @@ a {
 
 /* Fonts */
 /* Poppins */
+/**
 @font-face {
   font-family: "Poppins";
   src: url("/fonts/Poppins/Poppins-ExtraLightItalic.ttf") format("truetype");
@@ -256,7 +257,6 @@ a {
   font-display: swap;
 }
 
-/* Roboto */
 @font-face {
   font-family: "Roboto";
   src: url("/fonts/Roboto/Roboto-Italic.ttf") format("truetype");
@@ -329,7 +329,6 @@ a {
   font-display: swap;
 }
 
-/* Urbanist */
 @font-face {
   font-family: "Urbanist";
   src: url("/fonts/Urbanist/Urbanist-Italic-VariableFont_wght.ttf")
@@ -347,26 +346,24 @@ a {
   font-display: swap;
 }
 
-/* Manrope */
 @font-face {
   font-family: "Manrope-ExtraLight";
   src: url("/fonts/Manrope-VariableFont_wght.ttf") format("truetype");
   font-display: swap;
 }
 
-/* Gabarito */
 @font-face {
   font-family: "Gabarito";
   src: url("/fonts/Gabarito-VariableFont_wght.ttf") format("truetype");
   font-display: swap;
 }
 
-/* Inter */
 @font-face {
   font-family: "Inter";
   src: url("/fonts/Inter-VariableFont_wght.ttf") format("truetype");
   font-display: swap;
 }
+  */
 
 /* Toastify Styles    */
 .Toastify__toast-container {
