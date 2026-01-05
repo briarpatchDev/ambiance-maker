@@ -17,6 +17,13 @@ export default function Page() {
           <Link href="/test_pages/player">{`Player`}</Link>
         </div>
         <div>
+          <h1>{`Inputs`}</h1>
+          <Link href="/test_pages/inputs/speed_slider">{`Speed Slider`}</Link>
+          <Link href="/test_pages/inputs/volume_slider">{`Volume Slider`}</Link>
+          <Link href="/test_pages/inputs/video_slider">{`Video Slider`}</Link>
+          <Link href="/test_pages/inputs/ambiance_input">{`Ambiance Input`}</Link>
+        </div>
+        <div>
           <h1>{`Navbar`}</h1>
           <Link href="/test_pages/navbar">{`Navbar`}</Link>
         </div>

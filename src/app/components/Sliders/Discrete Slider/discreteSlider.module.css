@@ -1,0 +1,49 @@
+.track {
+  display: flex;
+  position: relative;
+  height: 1.2rem;
+  width: 100%;
+  background-color: grey;
+  cursor: pointer;
+  border-radius: 2rem;
+}
+
+.fill,
+.thumb,
+.thumb_label {
+  position: absolute;
+  transition: all 0.2s;
+}
+
+.fill {
+  background-color: var(--grey-text);
+  border-bottom-left-radius: 2rem;
+  border-top-left-radius: 2rem;
+  height: 100%;
+}
+
+.thumb {
+  height: 2.4rem;
+  width: 1.2rem;
+  border-radius: 2.4rem;
+  transform: translateY(-0.6rem) translateX(-0.6rem);
+  background-color: white;
+  border: 0.1rem solid black;
+  outline: 0.2rem solid transparent;
+}
+
+.thumb:focus {
+  outline: 0.2rem solid rgba(0, 34, 255, 0.7);
+  outline-offset: 0rem;
+}
+
+.thumb_label {
+  transform: translateX(-50%) translateY(-160%);
+  color: var(--grey-text);
+  font-size: 1.6rem;
+}
+
+.text_wrapper {
+  user-select: none;
+  cursor: pointer;
+}
