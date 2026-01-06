@@ -62,11 +62,11 @@ export default function DiscreteSlider({
     };
   }, [isDragging]);
 
-  // Start dragging when mouse down on thumb
+  // Start dragging when user mouses down on thumb
   function handleMouseDown(e: React.MouseEvent) {
     e.preventDefault();
-    setIsDragging(true);
     thumbRef.current?.focus();
+    setIsDragging(true);
   }
 
   // Moves the thumb when user presses on arrow keys
@@ -97,7 +97,7 @@ export default function DiscreteSlider({
     );
     let newIndex = Math.round(percentage * (values.length - 1));
     // We are assuming at least 30 values, otherwise this would need to be removed
-    // This makes it so it locks to the edge of the slider
+    // This makes it so clicks lock to the edge of the slider when intended
     if (newIndex < values.length / 10 && index.current > values.length / 5) {
       newIndex = 0;
     } else if (
@@ -127,9 +127,12 @@ export default function DiscreteSlider({
       onClick={handleClick}
       ref={trackRef}
     >
-      <div className={styles.fill} style={{ width: `${fill}%` }}></div>
       <div
-        className={styles.thumb}
+        className={classNames(styles.fill, { [styles.dragging]: isDragging })}
+        style={{ width: `${fill}%` }}
+      ></div>
+      <div
+        className={classNames(styles.thumb, { [styles.dragging]: isDragging })}
         style={{ left: `${fill}%` }}
         role="slider"
         tabIndex={0}
@@ -141,10 +144,11 @@ export default function DiscreteSlider({
         onKeyDown={handleKeydown}
         onMouseDown={handleMouseDown}
         ref={thumbRef}
-      ></div>
-      <label className={styles.thumb_label} style={{ left: `${fill}%` }}>
-        <div className={styles.text_wrapper}>{value}</div>
-      </label>
+      >
+        <label className={styles.thumb_label}>
+          <div className={styles.text_wrapper}>{value}</div>
+        </label>
+      </div>
     </div>
   );
 }

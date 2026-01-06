@@ -20,7 +20,7 @@
 }
 
 .fill {
-  background-color: var(--grey-text);
+  background-color: rgb(160, 0, 0);
   border-bottom-left-radius: 2rem;
   border-top-left-radius: 2rem;
   height: 100%;
@@ -46,6 +46,10 @@
   transform: translateX(-50%) translateY(-160%);
   color: var(--grey-text);
   font-size: 1.6rem;
+}
+
+.end .thumb_label {
+  transform: translateX(-50%) translateY(160%);
 }
 
 .text_wrapper {
