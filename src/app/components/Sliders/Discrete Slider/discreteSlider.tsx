@@ -25,8 +25,10 @@ export default function DiscreteSlider({
   const index = useRef(values.findIndex((value) => value === defaultValue));
   const [fill, setFill] = useState((100 * index.current) / (values.length - 1));
   const [isDragging, setIsDragging] = useState(false);
+  const [showTransition, setShowTransition] = useState(true);
   const thumbRef = useRef<null | HTMLDivElement>(null);
   const trackRef = useRef<null | HTMLDivElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout>(undefined);
 
   // Calls a parent function when the value changes
   useEffect(() => {
@@ -48,26 +50,48 @@ export default function DiscreteSlider({
       setValue(values[newIndex]);
     };
 
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDragging || !trackRef.current) return;
+      e.preventDefault(); // Prevent scrolling
+      const rect = trackRef.current.getBoundingClientRect();
+      const percentage = Math.max(
+        0,
+        Math.min(1, (e.touches[0].clientX - rect.left) / rect.width)
+      );
+      const newIndex = Math.round(percentage * (values.length - 1));
+      index.current = newIndex;
+      setFill((100 * newIndex) / (values.length - 1));
+      setValue(values[newIndex]);
+    };
+
     const handleMouseUp = () => {
       setIsDragging(false);
+      setShowTransition(true);
+    };
+
+    const handleTouchEnd = () => {
+      setIsDragging(false);
+      setShowTransition(true);
     };
 
     if (isDragging) {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => {
+        setShowTransition(false);
+      }, 200);
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("touchmove", handleTouchMove, { passive: false });
+      window.addEventListener("touchend", handleTouchEnd);
     }
     return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
     };
   }, [isDragging]);
-
-  // Start dragging when user mouses down on thumb
-  function handleMouseDown(e: React.MouseEvent) {
-    e.preventDefault();
-    thumbRef.current?.focus();
-    setIsDragging(true);
-  }
 
   // Moves the thumb when user presses on arrow keys
   function handleKeydown(e: React.KeyboardEvent) {
@@ -86,14 +110,14 @@ export default function DiscreteSlider({
     }
   }
 
-  // Moves the thumb when user clicks on the track
-  function handleClick(e: React.MouseEvent) {
+  // Shared logic for handling start of dragging (mouse or touch)
+  function handleDragStart(clientX: number, track: HTMLElement) {
     if (isDragging) return;
-    thumbRef.current?.focus();
-    const rect = e.currentTarget.getBoundingClientRect();
+    setIsDragging(true);
+    const rect = track.getBoundingClientRect();
     const percentage = Math.max(
       0,
-      Math.min(1, (e.clientX - rect.left) / rect.width)
+      Math.min(1, (clientX - rect.left) / rect.width)
     );
     let newIndex = Math.round(percentage * (values.length - 1));
     // We are assuming at least 30 values, otherwise this would need to be removed
@@ -106,33 +130,42 @@ export default function DiscreteSlider({
     ) {
       newIndex = values.length - 1;
     }
-    // Always moves the index if user click in a different place
-    if (newIndex === index.current) {
-      const unroundedIndex = percentage * (values.length - 1);
-      if (unroundedIndex < newIndex && newIndex > 0) {
-        newIndex--;
-      } else if (unroundedIndex > newIndex && newIndex < values.length - 1) {
-        newIndex++;
-      }
-    }
     index.current = newIndex;
     setFill((100 * newIndex) / (values.length - 1));
     setValue(values[newIndex]);
+    setTimeout(() => {
+      thumbRef.current?.focus();
+    }, 0);
   }
 
+  // Moves the thumb when user presses down on the track
+  function handleMouseDown(e: React.MouseEvent) {
+    handleDragStart(e.clientX, e.currentTarget as HTMLElement);
+  }
+
+  // Moves the thumb when user touches the track
+  function handleTouchStart(e: React.TouchEvent) {
+    e.preventDefault();
+    handleDragStart(e.touches[0].clientX, e.currentTarget as HTMLElement);
+  }
   return (
     <div
       style={{ ...style }}
       className={styles.track}
-      onClick={handleClick}
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
       ref={trackRef}
     >
       <div
-        className={classNames(styles.fill, { [styles.dragging]: isDragging })}
+        className={classNames(styles.fill, {
+          [styles.transition]: showTransition,
+        })}
         style={{ width: `${fill}%` }}
       ></div>
       <div
-        className={classNames(styles.thumb, { [styles.dragging]: isDragging })}
+        className={classNames(styles.thumb, {
+          [styles.transition]: showTransition,
+        })}
         style={{ left: `${fill}%` }}
         role="slider"
         tabIndex={0}
@@ -142,7 +175,6 @@ export default function DiscreteSlider({
         aria-valuetext={value}
         aria-label={ariaLabel}
         onKeyDown={handleKeydown}
-        onMouseDown={handleMouseDown}
         ref={thumbRef}
       >
         <label className={styles.thumb_label}>

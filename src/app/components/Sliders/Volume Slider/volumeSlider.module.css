@@ -1,8 +1,13 @@
+.volume_slider {
+  display: flex;
+  align-items: center;
+  column-gap: 1.2rem;
+  width: 100%;
+}
 
-
-
-
-
-/* Desktop Styles */
-@media screen and (min-width: 651px) and (max-width: 1023px) {
+.volume_slider svg {
+  min-width: 3.6rem;
+  width: 4.8rem;
+  height: auto;
+  fill: var(--grey-text);
 }

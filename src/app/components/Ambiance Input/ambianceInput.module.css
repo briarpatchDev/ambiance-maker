@@ -1,8 +1,61 @@
+.ambiance_input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(180deg, rgb(50, 50, 50) 0%, rgb(57, 50, 57) 100%);
+  padding: 0.6rem 0.68em;
+  color: var(--grey-text);
+  width: min(54rem, 96vw);
+  border-radius: 0.4rem;
+  border: 0.05rem solid rgb(30, 0, 30);
+  row-gap: 0.4rem;
+}
 
+.ambiance_input h1 {
+  all: unset;
+  align-self: flex-start;
+  font-size: 2.4rem;
+  padding: 0.4rem 0;
+  overflow-x: scroll;
+  color: var(--grey-text);
+}
 
+.link_input_wrapper {
+  display: flex;
+  width: 98%;
+  flex-direction: column;
+  row-gap: 0.8rem;
+}
 
+.link_input {
+  all: unset;
+  background-color: rgb(200, 200, 200);
+  color: rgb(20, 20, 20);
+  padding-left: 0.88rem;
+  border-radius: 0.4rem;
+  height: 3.2rem;
+  font-size: 1.6rem;
+}
 
+.link_error {
+  display: flex;
+  align-items: center;
+  column-gap: 0.4rem;
+  color: rgb(255, 96, 96);
+  font-size: 1.5rem;
+  padding-left: 0.4rem;
+}
 
-/* Desktop Styles */
-@media screen and (min-width: 651px) and (max-width: 1023px) {
+.video_controls_wrapper {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.8rem;
+  width: 85%;
+}
+
+.video_controls {
+  display: flex;
+  column-gap: 2.4rem;
+  width: 100%;
+  padding-top: 4.2rem;
 }

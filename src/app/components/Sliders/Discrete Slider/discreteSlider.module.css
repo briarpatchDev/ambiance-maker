@@ -5,18 +5,18 @@
   width: 100%;
   background-color: grey;
   cursor: pointer;
-  border-radius: 2rem;
+  border-radius: 0.4rem;
 }
 
 .fill,
 .thumb,
 .thumb_label {
   position: absolute;
-  transition: all 0.2s;
+  transition: none;
 }
 
-.dragging {
-  transition: none;
+.transition {
+  transition: all 0.2s;
 }
 
 .fill {

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import styles from "./videoRangeSlider.module.css";
 import classNames from "classnames";
+import { tr } from "zod/locales";
 
 // Creates a range slider for a video
 interface VideoRangeSliderProps {
@@ -26,10 +27,11 @@ export default function VideoRangeSlider({
 
   const startThumbRef = useRef<null | HTMLDivElement>(null);
   const endThumbRef = useRef<null | HTMLDivElement>(null);
-  const [isDraggingStart, setIsDraggingStart] = useState(false);
-  const [isDraggingEnd, setIsDraggingEnd] = useState(false);
-  const isDragging = useRef(false);
+  const activeThumb = useRef<"start" | "end" | null>(null);
   const trackRef = useRef<null | HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [showTransition, setShowTransition] = useState(true);
+  const timeoutRef = useRef<NodeJS.Timeout>(undefined);
 
   // When the timeframe changes, changes the fill and calls a parent function
   useEffect(() => {
@@ -41,83 +43,81 @@ export default function VideoRangeSlider({
   // Handles dragging the start thumb
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (!isDraggingStart || !trackRef.current) return;
+      if (!isDragging || !trackRef.current) return;
       const rect = trackRef.current.getBoundingClientRect();
       const newPoint = Math.round(
         videoDuration *
           Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
       );
-
-      if (newPoint < end) {
-        setStart(newPoint);
+      if (activeThumb.current === "start") {
+        if (newPoint < end) {
+          setStart(newPoint);
+        } else {
+          setStart(end - 1);
+        }
       } else {
-        setStart(end - 1);
+        if (newPoint > start) {
+          setEnd(newPoint);
+        } else {
+          setEnd(start + 1);
+        }
       }
     };
-    const handleMouseUp = () => {
-      setIsDraggingStart(false);
-      // Done to stop click event
-      setTimeout(() => {
-        isDragging.current = false;
-      }, 10);
-    };
-    if (isDraggingStart) {
-      isDragging.current = true;
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
-    }
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [isDraggingStart]);
 
-  // Handles dragging the end thumb
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isDraggingEnd || !trackRef.current) return;
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDragging || !trackRef.current) return;
+      e.preventDefault();
       const rect = trackRef.current.getBoundingClientRect();
       const newPoint = Math.round(
         videoDuration *
-          Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+          Math.max(
+            0,
+            Math.min(1, (e.touches[0].clientX - rect.left) / rect.width)
+          )
       );
-      if (newPoint > start) {
-        setEnd(newPoint);
+      if (activeThumb.current === "start") {
+        if (newPoint < end) {
+          setStart(newPoint);
+        } else {
+          setStart(end - 1);
+        }
       } else {
-        setEnd(start + 1);
+        if (newPoint > start) {
+          setEnd(newPoint);
+        } else {
+          setEnd(start + 1);
+        }
       }
     };
+
     const handleMouseUp = () => {
-      setIsDraggingEnd(false);
-      // Done to stop click event
-      setTimeout(() => {
-        isDragging.current = false;
-      }, 10);
+      setShowTransition(true);
+      setIsDragging(false);
     };
-    if (isDraggingEnd) {
-      isDragging.current = true;
+
+    const handleTouchEnd = () => {
+      setShowTransition(true);
+      setIsDragging(false);
+    };
+
+    if (isDragging) {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => {
+        setShowTransition(false);
+      }, 200);
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("touchmove", handleTouchMove, { passive: false });
+      window.addEventListener("touchend", handleTouchEnd);
     }
     return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [isDraggingEnd]);
-
-  // Start dragging when user mouses down on the start thumb
-  function handleMouseDownStart(e: React.MouseEvent) {
-    e.preventDefault();
-    startThumbRef.current?.focus();
-    setIsDraggingStart(true);
-  }
-
-  // Start dragging when user mouses down on the end thumb
-  function handleMouseDownEnd(e: React.MouseEvent) {
-    e.preventDefault();
-    endThumbRef.current?.focus();
-    setIsDraggingEnd(true);
-  }
+  }, [isDragging]);
 
   // Moves the start thumb when user presses on arrow keys
   function handleKeydownStart(e: React.KeyboardEvent) {
@@ -145,13 +145,13 @@ export default function VideoRangeSlider({
     }
   }
 
-  // Moves the closest thumb when user clicks on the track
-  function handleClick(e: React.MouseEvent) {
-    if (isDragging.current) return;
-    const rect = e.currentTarget.getBoundingClientRect();
+  // Moves the closest thumb when user clicks or touches on the track
+  function handleDragStart(clientX: number, track: HTMLElement) {
+    if (isDragging) return;
+    const rect = track.getBoundingClientRect();
     const newPoint = Math.round(
       videoDuration *
-        Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+        Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
     );
     let thumb: "start" | "end" = "start";
     if (newPoint < start) {
@@ -161,13 +161,19 @@ export default function VideoRangeSlider({
       thumb =
         Math.abs(start - newPoint) > Math.abs(end - newPoint) ? "end" : "start";
     }
+    activeThumb.current = thumb;
     if (thumb === "start") {
       setStart(newPoint);
-      startThumbRef.current?.focus();
+      setTimeout(() => {
+        startThumbRef.current?.focus();
+      }, 0);
     } else {
       setEnd(newPoint);
-      endThumbRef.current?.focus();
+      setTimeout(() => {
+        endThumbRef.current?.focus();
+      }, 0);
     }
+    setIsDragging(true);
   }
 
   // Converts videoDuration to a timecode in HH:MM:SS
@@ -188,29 +194,40 @@ export default function VideoRangeSlider({
     return timecode;
   }
 
+  // Moves the closet thumb when user presses down on the track
+  function handleMouseDown(e: React.MouseEvent) {
+    handleDragStart(e.clientX, e.currentTarget as HTMLElement);
+  }
+
+  // Moves the closest thumb when user touches the track
+  function handleTouchStart(e: React.TouchEvent) {
+    e.preventDefault();
+    handleDragStart(e.touches[0].clientX, e.currentTarget as HTMLElement);
+  }
+
   return (
     <div
       style={{ ...style }}
       className={styles.track}
-      onClick={handleClick}
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
       ref={trackRef}
     >
       <div
         className={classNames(styles.fill, {
-          [styles.dragging]: isDraggingStart || isDraggingEnd,
+          [styles.transition]: showTransition,
         })}
         style={{ width: `${fillWidth}%`, left: `${fillStart}%` }}
       ></div>
       <div
         className={classNames(styles.thumb, styles.start, {
-          [styles.dragging]: isDraggingStart,
+          [styles.transition]: showTransition,
         })}
         style={{ left: `${fillStart}%` }}
         role="slider"
         tabIndex={0}
         aria-label={ariaLabel}
         onKeyDown={handleKeydownStart}
-        onMouseDown={handleMouseDownStart}
         aria-valuemin={0}
         aria-valuemax={end - 1}
         aria-valuenow={start}
@@ -223,7 +240,7 @@ export default function VideoRangeSlider({
       </div>
       <div
         className={classNames(styles.thumb, styles.end, {
-          [styles.dragging]: isDraggingEnd,
+          [styles.transition]: showTransition,
         })}
         style={{ left: `${fillStart + fillWidth}%` }}
         role="slider"
@@ -234,7 +251,6 @@ export default function VideoRangeSlider({
         aria-valuetext={end.toString()}
         aria-label={ariaLabel}
         onKeyDown={handleKeydownEnd}
-        onMouseDown={handleMouseDownEnd}
         ref={endThumbRef}
       >
         <label className={styles.thumb_label}>

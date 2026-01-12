@@ -1,4 +1,11 @@
 .speed_slider {
   display: flex;
+  align-items: center;
+  column-gap: 1.2rem;
   width: 100%;
+}
+
+.speed_slider svg {
+  height: 5.2rem;
+  fill: var(--grey-text);
 }

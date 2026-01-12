@@ -21,9 +21,9 @@ export default function SpeedSlider({
   onValueChange,
   style,
 }: SpeedSliderProps) {
-  <SpeedIcon />;
   return (
     <div style={{ ...style }} className={styles.speed_slider}>
+      <SpeedIcon />
       <DiscreteSlider
         values={values}
         defaultValue="1.00x"

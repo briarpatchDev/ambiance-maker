@@ -26,6 +26,7 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.23",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
