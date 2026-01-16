@@ -9,8 +9,9 @@ import { tr } from "zod/locales";
 // Creates a range slider for a video
 interface VideoRangeSliderProps {
   videoDuration: number;
-  onTimeframeChange: (start: number, end: number) => void;
+  onTimeframeChange: (start: number, end: number, videoIndex?: number) => void;
   ariaLabel: string;
+  videoIndex?: number;
   style?: React.CSSProperties;
 }
 
@@ -18,6 +19,7 @@ export default function VideoRangeSlider({
   videoDuration,
   onTimeframeChange,
   ariaLabel,
+  videoIndex,
   style,
 }: VideoRangeSliderProps) {
   const [start, setStart] = useState(0);
@@ -37,7 +39,7 @@ export default function VideoRangeSlider({
   useEffect(() => {
     setFillStart((100 * start) / videoDuration);
     setFillWidth((100 * (end - start)) / videoDuration);
-    onTimeframeChange(start, end);
+    onTimeframeChange(start, end, videoIndex);
   }, [start, end]);
 
   // Handles dragging the start thumb

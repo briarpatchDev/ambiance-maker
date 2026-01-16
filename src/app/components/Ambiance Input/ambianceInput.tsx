@@ -10,9 +10,14 @@ import SpeedSlider from "@/app/components/Sliders/Speed Slider/speedSlider";
 import { debounce } from "lodash";
 
 interface AmbianceInputProps {
-  videoTitle: string;
-  videoDuration?: number;
-  linkError?: string;
+  videoTitle: string | undefined;
+  videoDuration: number | undefined;
+  linkError: string | undefined;
+  onLinkChange: (link: string, index?: number) => void;
+  onVolumeChange: (volume: string, index?: number) => void;
+  onSpeedChange: (speed: string, index?: number) => void;
+  onTimeframeChange: (start: number, end: number, index?: number) => void;
+  videoIndex?: number;
   style?: React.CSSProperties;
 }
 
@@ -20,16 +25,17 @@ export default function AmbianceInput({
   videoTitle,
   videoDuration,
   linkError,
+  onLinkChange,
+  onVolumeChange,
+  onSpeedChange,
+  onTimeframeChange,
+  videoIndex,
   style,
 }: AmbianceInputProps) {
   const linkInputRef = useRef<HTMLInputElement | null>(null);
   const [inputData, setInputData] = useState({
     link: "",
   });
-  const initialErrors = {
-    link: "",
-  };
-  const [inputErrors, setInputErrors] = useState(initialErrors);
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) {
@@ -40,28 +46,24 @@ export default function AmbianceInput({
     }));
   }
 
-  // Displays the video once user stops typing
+  // Updates the link input field
   const handleLinkChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     handleChange(e);
-    validateLink(e);
   };
 
-  // Checks if the link is to a valid video
+  // Uses onLinkChange to show a video once user stops typing
   const validateLink = useCallback(
-    debounce((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      setInputErrors((prev) => ({
-        ...prev,
-        [`link`]: `Error found`,
-      }));
+    debounce((link: string) => {
+      onLinkChange(link, videoIndex);
     }, 400),
     []
   );
 
   useEffect(() => {
-    return () => {};
-  }, []);
+    validateLink(inputData.link);
+  }, [inputData.link]);
 
   return (
     <div style={{ ...style }} className={styles.ambiance_input}>
@@ -90,14 +92,21 @@ export default function AmbianceInput({
         <div className={styles.video_controls_wrapper}>
           <div className={styles.video_controls}>
             <VideoSlider
-              onTimeframeChange={(value) => {}}
+              onTimeframeChange={onTimeframeChange}
               ariaLabel="Video timeframe slider"
               videoDuration={videoDuration}
+              videoIndex={videoIndex}
             />
           </div>
           <div className={styles.video_controls}>
-            <VolumeSlider onValueChange={(value) => {}} />
-            <SpeedSlider onValueChange={(value) => {}} />
+            <VolumeSlider
+              onValueChange={onVolumeChange}
+              videoIndex={videoIndex}
+            />
+            <SpeedSlider
+              onValueChange={onSpeedChange}
+              videoIndex={videoIndex}
+            />
           </div>
         </div>
       )}

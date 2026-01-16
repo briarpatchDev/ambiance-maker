@@ -45,7 +45,7 @@ export default function Page() {
   return (
     <div className={styles.page}>
       <div className={styles.wrapper}>
-        <AmbiancePlayer videos={videos} />
+        <AmbiancePlayer videoData={videos} />
       </div>
     </div>
   );

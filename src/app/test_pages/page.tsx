@@ -13,6 +13,10 @@ export default function Page() {
     <div className={styles.page}>
       <div className={styles.wrapper}>
         <div>
+          <h1>{`Main`}</h1>
+          <Link href="/test_pages/ambiance_maker">{`Ambiance Maker`}</Link>
+        </div>
+        <div>
           <h1>{`Ambiance Player`}</h1>
           <Link href="/test_pages/player">{`Player`}</Link>
         </div>

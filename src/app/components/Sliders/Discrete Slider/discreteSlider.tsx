@@ -9,8 +9,9 @@ import classNames from "classnames";
 interface DiscreteSliderProps {
   values: string[];
   defaultValue: string;
-  onValueChange: (value: string) => void;
+  onValueChange: (value: string, videoIndex?: number) => void;
   ariaLabel: string;
+  videoIndex?: number;
   style?: React.CSSProperties;
 }
 
@@ -19,6 +20,7 @@ export default function DiscreteSlider({
   defaultValue,
   onValueChange,
   ariaLabel,
+  videoIndex,
   style,
 }: DiscreteSliderProps) {
   const [value, setValue] = useState(defaultValue);
@@ -32,7 +34,7 @@ export default function DiscreteSlider({
 
   // Calls a parent function when the value changes
   useEffect(() => {
-    onValueChange(value);
+    onValueChange(value, videoIndex);
   }, [value]);
 
   // Handles dragging the thumb

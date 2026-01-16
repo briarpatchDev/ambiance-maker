@@ -8,7 +8,8 @@ import DiscreteSlider from "../Discrete Slider/discreteSlider";
 import SpeedIcon from "@/app/components/Icons/speed";
 
 interface SpeedSliderProps {
-  onValueChange: (value: string) => void;
+  onValueChange: (value: string, videoIndex?: number) => void;
+  videoIndex?: number;
   style?: React.CSSProperties;
 }
 
@@ -19,6 +20,7 @@ for (let i = 25; i <= 200; i += 5) {
 
 export default function SpeedSlider({
   onValueChange,
+  videoIndex,
   style,
 }: SpeedSliderProps) {
   return (
@@ -29,6 +31,7 @@ export default function SpeedSlider({
         defaultValue="1.00x"
         onValueChange={onValueChange}
         ariaLabel={"Video speed slider"}
+        videoIndex={videoIndex}
       />
     </div>
   );
