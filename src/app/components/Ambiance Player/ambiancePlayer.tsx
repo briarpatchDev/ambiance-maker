@@ -170,15 +170,17 @@ export default function AmbiancePlayer({
           }
           //playerRefs.current[index] && playerRefs.current[index].destroy();
 
-          try {
-            playerRefs.current[index].stopVideo();
-            playerRefs.current[index].cueVideoById({
-              videoId,
-            });
-            return;
-          } catch (e) {
-            playerRefs.current[index] = null;
-            console.log(`Error reloading player ${index}:`, e);
+          if (playerRefs.current[index]) {
+            try {
+              playerRefs.current[index].stopVideo();
+              playerRefs.current[index].cueVideoById({
+                videoId,
+              });
+              //return;
+            } catch (e) {
+              playerRefs.current[index] = null;
+              console.log(`Error reloading player ${index}:`, e);
+            }
           }
 
           //playerRefs.current[index] = null;
@@ -258,7 +260,7 @@ export default function AmbiancePlayer({
                       volume: video.volume ?? 100,
                       playbackSpeed: video.playbackSpeed || 1.0,
                       linkError: undefined,
-                      ready: true,
+                    
                     });
                     */
 
@@ -271,7 +273,7 @@ export default function AmbiancePlayer({
                       volume: 100,
                       playbackSpeed: 1.0,
                       linkError: undefined,
-                      ready: true,
+    
                     });
                   // Starts playing the video if other videos are playing already
                   const isOtherVideoPlaying = playerRefs.current.some(
@@ -361,7 +363,7 @@ export default function AmbiancePlayer({
                             volume: 100,
                             playbackSpeed: 1.0,
                             linkError: undefined,
-                            ready: true,
+         
                           });
                         // Starts playing the video if other videos are playing already
                         const isOtherVideoPlaying = playerRefs.current.some(
@@ -411,20 +413,13 @@ export default function AmbiancePlayer({
                 onError: (e: any) => {
                   console.log(`🚨 Player ${index} error:`, e.data);
                   console.log("Error code:", e.data);
-                  // This should happen when video owner has disabled embedding
-                  if (e.data === 150 || e.data === 101 || e.data === 100) {
-                    /*
-                    const playerElement = document.getElementById(playerId);
-                    playerElement?.remove();
-                    playerRefs.current[index] = null;
-                    */
-                    // We might want to do something here to handle broken ambiances
+                  if (e.data === 100 || e.data === 150 || e.data === 101) {
                     setVideoData &&
                       updateObjectArr(setVideoData, index, {
                         title: undefined,
                         duration: undefined,
-                        linkError: `This video cannot be embedded`,
-                        ready: true,
+                        linkError: `Video is unavailable`,
+              
                       });
                   }
                 },
@@ -446,8 +441,8 @@ export default function AmbiancePlayer({
               updateObjectArr(setVideoData, index, {
                 title: undefined,
                 duration: undefined,
-                linkError: `Video not found`,
-                ready: false,
+                linkError: `Video is unavailable`,
+     
               });
             // We might want to do something here to handle broken ambiances
           }

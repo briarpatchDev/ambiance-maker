@@ -21,7 +21,6 @@ export interface VideoData {
   endTime?: number;
   volume?: number;
   playbackSpeed?: number;
-  ready?: boolean;
 }
 
 const maxVideos = 6;
@@ -34,7 +33,6 @@ const createVideoEntry = (): VideoData => ({
   endTime: undefined,
   volume: undefined,
   playbackSpeed: undefined,
-  ready: false,
 });
 
 export default function AmbianceMaker({ style }: AmbianceMakerProps) {
