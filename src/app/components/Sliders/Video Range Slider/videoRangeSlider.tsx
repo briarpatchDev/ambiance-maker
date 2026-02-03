@@ -4,13 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import styles from "./videoRangeSlider.module.css";
 import classNames from "classnames";
-import { tr } from "zod/locales";
 
 // Creates a range slider for a video
 interface VideoRangeSliderProps {
   videoDuration: number;
   onTimeframeChange: (start: number, end: number, videoIndex?: number) => void;
   ariaLabel: string;
+  startTime?: number;
+  endTime?: number;
   videoIndex?: number;
   style?: React.CSSProperties;
 }
@@ -19,6 +20,8 @@ export default function VideoRangeSlider({
   videoDuration,
   onTimeframeChange,
   ariaLabel,
+  startTime,
+  endTime,
   videoIndex,
   style,
 }: VideoRangeSliderProps) {
@@ -39,8 +42,13 @@ export default function VideoRangeSlider({
   useEffect(() => {
     setFillStart((100 * start) / videoDuration);
     setFillWidth((100 * (end - start)) / videoDuration);
-    onTimeframeChange(start, end, videoIndex);
   }, [start, end]);
+
+  // When the prop timeframe changes, sets the new start / end times
+  useEffect(() => {
+    setStart(startTime ?? 0);
+    setEnd(endTime ?? videoDuration);
+  }, [startTime, endTime, videoDuration]);
 
   // Handles dragging the start thumb
   useEffect(() => {
@@ -49,20 +57,16 @@ export default function VideoRangeSlider({
       const rect = trackRef.current.getBoundingClientRect();
       const newPoint = Math.round(
         videoDuration *
-          Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+          Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)),
       );
       if (activeThumb.current === "start") {
-        if (newPoint < end) {
-          setStart(newPoint);
-        } else {
-          setStart(end - 1);
-        }
+        const newStart = newPoint < end ? newPoint : end - 1;
+        setStart(newStart);
+        onTimeframeChange(newStart, end, videoIndex);
       } else {
-        if (newPoint > start) {
-          setEnd(newPoint);
-        } else {
-          setEnd(start + 1);
-        }
+        const newEnd = newPoint > start ? newPoint : start + 1;
+        setEnd(newEnd);
+        onTimeframeChange(start, newEnd, videoIndex);
       }
     };
 
@@ -74,21 +78,17 @@ export default function VideoRangeSlider({
         videoDuration *
           Math.max(
             0,
-            Math.min(1, (e.touches[0].clientX - rect.left) / rect.width)
-          )
+            Math.min(1, (e.touches[0].clientX - rect.left) / rect.width),
+          ),
       );
       if (activeThumb.current === "start") {
-        if (newPoint < end) {
-          setStart(newPoint);
-        } else {
-          setStart(end - 1);
-        }
+        const newStart = newPoint < end ? newPoint : end - 1;
+        setStart(newStart);
+        onTimeframeChange(newStart, end, videoIndex);
       } else {
-        if (newPoint > start) {
-          setEnd(newPoint);
-        } else {
-          setEnd(start + 1);
-        }
+        const newEnd = newPoint > start ? newPoint : start + 1;
+        setEnd(newEnd);
+        onTimeframeChange(start, newEnd, videoIndex);
       }
     };
 
@@ -126,10 +126,12 @@ export default function VideoRangeSlider({
     if (e.key === "ArrowRight") {
       if (start + 1 < end) {
         setStart(start + 1);
+        onTimeframeChange(start + 1, end, videoIndex);
       }
     } else if (e.key === "ArrowLeft") {
       if (start - 1 >= 0) {
         setStart(start - 1);
+        onTimeframeChange(start - 1, end, videoIndex);
       }
     }
   }
@@ -139,10 +141,12 @@ export default function VideoRangeSlider({
     if (e.key === "ArrowRight") {
       if (end + 1 <= videoDuration) {
         setEnd(end + 1);
+        onTimeframeChange(start, end + 1, videoIndex);
       }
     } else if (e.key === "ArrowLeft") {
       if (end - 1 > start) {
         setEnd(end - 1);
+        onTimeframeChange(start, end - 1, videoIndex);
       }
     }
   }
@@ -153,7 +157,7 @@ export default function VideoRangeSlider({
     const rect = track.getBoundingClientRect();
     const newPoint = Math.round(
       videoDuration *
-        Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+        Math.max(0, Math.min(1, (clientX - rect.left) / rect.width)),
     );
     let thumb: "start" | "end" = "start";
     if (newPoint < start) {
@@ -166,11 +170,13 @@ export default function VideoRangeSlider({
     activeThumb.current = thumb;
     if (thumb === "start") {
       setStart(newPoint);
+      onTimeframeChange(newPoint, end, videoIndex);
       setTimeout(() => {
         startThumbRef.current?.focus();
       }, 0);
     } else {
       setEnd(newPoint);
+      onTimeframeChange(start, newPoint, videoIndex);
       setTimeout(() => {
         endThumbRef.current?.focus();
       }, 0);

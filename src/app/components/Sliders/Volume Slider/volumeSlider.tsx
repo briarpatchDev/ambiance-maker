@@ -16,6 +16,7 @@ import VolumeHigh from "@/app/components/Icons/volume_high";
 
 interface VolumeSliderProps {
   onValueChange: (value: string, videoIndex?: number) => void;
+  currentVolume?: number;
   videoIndex?: number;
   style?: React.CSSProperties;
 }
@@ -27,13 +28,14 @@ for (let i = 0; i <= 100; i += 1) {
 
 export default function VolumeSlider({
   onValueChange,
+  currentVolume,
   videoIndex,
   style,
 }: VolumeSliderProps) {
   const [volume, setVolume] = useState(100);
 
   function onVolumeChange(value: string) {
-    onValueChange(value);
+    onValueChange(value, videoIndex);
     setVolume(parseInt(value));
   }
 
@@ -46,6 +48,7 @@ export default function VolumeSlider({
       <DiscreteSlider
         values={values}
         defaultValue="100%"
+        currentValue={`${currentVolume}%`}
         onValueChange={onVolumeChange}
         ariaLabel={"Volume slider"}
         videoIndex={videoIndex}

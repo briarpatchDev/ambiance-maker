@@ -10,10 +10,12 @@
     linear-gradient(180deg, rgb(50, 50, 50) 0%, rgb(57, 50, 57) 100%);
   padding: 0.6rem 0.68em;
   color: var(--grey-text);
-  width: min(54rem, 96vw);
+  flex: 1;
+  min-width: max(30rem, 30%);
   border-radius: 0.4rem;
   border: 0.05rem solid rgb(30, 0, 30);
   row-gap: 0.4rem;
+  max-height: max-content;
 }
 
 .ambiance_input h1 {

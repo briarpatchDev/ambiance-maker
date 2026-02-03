@@ -9,6 +9,7 @@ import SpeedIcon from "@/app/components/Icons/speed";
 
 interface SpeedSliderProps {
   onValueChange: (value: string, videoIndex?: number) => void;
+  playbackSpeed?: number;
   videoIndex?: number;
   style?: React.CSSProperties;
 }
@@ -20,6 +21,7 @@ for (let i = 25; i <= 200; i += 5) {
 
 export default function SpeedSlider({
   onValueChange,
+  playbackSpeed,
   videoIndex,
   style,
 }: SpeedSliderProps) {
@@ -29,6 +31,9 @@ export default function SpeedSlider({
       <DiscreteSlider
         values={values}
         defaultValue="1.00x"
+        currentValue={
+          playbackSpeed ? `${playbackSpeed?.toFixed(2)}x` : undefined
+        }
         onValueChange={onValueChange}
         ariaLabel={"Video speed slider"}
         videoIndex={videoIndex}

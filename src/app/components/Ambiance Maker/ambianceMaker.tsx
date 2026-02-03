@@ -21,9 +21,10 @@ export interface VideoData {
   endTime?: number;
   volume?: number;
   playbackSpeed?: number;
+  ready?: boolean;
 }
 
-const maxVideos = 1;
+const maxVideos = 6;
 const createVideoEntry = (): VideoData => ({
   src: undefined,
   linkError: undefined,
@@ -33,11 +34,12 @@ const createVideoEntry = (): VideoData => ({
   endTime: undefined,
   volume: undefined,
   playbackSpeed: undefined,
+  ready: false,
 });
 
 export default function AmbianceMaker({ style }: AmbianceMakerProps) {
   function onLinkChange(link: string, index = 0) {
-    updateObjectArr(setVideoData, index, { [`src`]: link });
+    updateObjectArr(setVideoData, index, { [`src`]: link});
   }
 
   function onTimeframeChange(start: number, end: number, index = 0) {
@@ -58,7 +60,7 @@ export default function AmbianceMaker({ style }: AmbianceMakerProps) {
   }
 
   const [videoData, setVideoData] = useState<VideoData[]>(
-    Array.from({ length: maxVideos }, createVideoEntry)
+    Array.from({ length: maxVideos }, createVideoEntry),
   );
 
   return (
@@ -72,6 +74,10 @@ export default function AmbianceMaker({ style }: AmbianceMakerProps) {
             <AmbianceInput
               videoTitle={video.title}
               videoDuration={video.duration}
+              startTime={video.startTime}
+              endTime={video.endTime}
+              volume={video.volume}
+              playbackSpeed={video.playbackSpeed}
               linkError={video.linkError}
               onLinkChange={onLinkChange}
               onTimeframeChange={onTimeframeChange}

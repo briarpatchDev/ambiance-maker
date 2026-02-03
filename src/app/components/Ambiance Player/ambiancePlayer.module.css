@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   row-gap: 1.2rem;
+  padding: 0 0.8rem
 }
 
 .controls {
@@ -16,10 +17,28 @@
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  row-gap: 0.8rem;
-  column-gap: 0.4rem;
+  row-gap: 1.2rem;
+  column-gap: 1.2rem;
   width: 100%;
   max-width: 140rem;
+  min-height: 33.6rem;
+  background-color: rgba(35, 35, 35);
+  border-radius: 1.2rem;
+  padding: 1.8rem;
+}
+
+.video_wrapper {
+  display: none;
+  min-height: 20rem;
+  min-width: 20rem;
+}
+
+.video_wrapper.visible {
+  display: flex;
+}
+
+.video_wrapper > * {
+  border-radius: 0.8rem;
 }
 
 .videos iframe {

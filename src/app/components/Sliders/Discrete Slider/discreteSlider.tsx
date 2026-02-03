@@ -9,6 +9,7 @@ import classNames from "classnames";
 interface DiscreteSliderProps {
   values: string[];
   defaultValue: string;
+  currentValue?: string;
   onValueChange: (value: string, videoIndex?: number) => void;
   ariaLabel: string;
   videoIndex?: number;
@@ -18,6 +19,7 @@ interface DiscreteSliderProps {
 export default function DiscreteSlider({
   values,
   defaultValue,
+  currentValue,
   onValueChange,
   ariaLabel,
   videoIndex,
@@ -32,10 +34,19 @@ export default function DiscreteSlider({
   const trackRef = useRef<null | HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout>(undefined);
 
-  // Calls a parent function when the value changes
+  // Uses the currentValue prop to sync the slider
   useEffect(() => {
-    onValueChange(value, videoIndex);
-  }, [value]);
+    if (!currentValue || currentValue === value) return;
+    let currentIndex = values.findIndex((value) => value === currentValue);
+    let newValue = currentValue;
+    if (currentIndex < 0) {
+      currentIndex = values.findIndex((value) => value === defaultValue);
+      newValue = defaultValue;
+    }
+    index.current = currentIndex;
+    setFill((100 * currentIndex) / (values.length - 1));
+    setValue(newValue);
+  }, [currentValue]);
 
   // Handles dragging the thumb
   useEffect(() => {
@@ -44,12 +55,13 @@ export default function DiscreteSlider({
       const rect = trackRef.current.getBoundingClientRect();
       const percentage = Math.max(
         0,
-        Math.min(1, (e.clientX - rect.left) / rect.width)
+        Math.min(1, (e.clientX - rect.left) / rect.width),
       );
       const newIndex = Math.round(percentage * (values.length - 1));
       index.current = newIndex;
       setFill((100 * newIndex) / (values.length - 1));
       setValue(values[newIndex]);
+      onValueChange(values[newIndex], videoIndex);
     };
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -58,12 +70,13 @@ export default function DiscreteSlider({
       const rect = trackRef.current.getBoundingClientRect();
       const percentage = Math.max(
         0,
-        Math.min(1, (e.touches[0].clientX - rect.left) / rect.width)
+        Math.min(1, (e.touches[0].clientX - rect.left) / rect.width),
       );
       const newIndex = Math.round(percentage * (values.length - 1));
       index.current = newIndex;
       setFill((100 * newIndex) / (values.length - 1));
       setValue(values[newIndex]);
+      onValueChange(values[newIndex], videoIndex);
     };
 
     const handleMouseUp = () => {
@@ -102,12 +115,14 @@ export default function DiscreteSlider({
         index.current++;
         setFill((100 * index.current) / (values.length - 1));
         setValue(values[index.current]);
+        onValueChange(values[index.current], videoIndex);
       }
     } else if (e.key === "ArrowLeft") {
       if (index.current > 0) {
         index.current--;
         setFill((100 * index.current) / (values.length - 1));
         setValue(values[index.current]);
+        onValueChange(values[index.current], videoIndex);
       }
     }
   }
@@ -119,7 +134,7 @@ export default function DiscreteSlider({
     const rect = track.getBoundingClientRect();
     const percentage = Math.max(
       0,
-      Math.min(1, (clientX - rect.left) / rect.width)
+      Math.min(1, (clientX - rect.left) / rect.width),
     );
     let newIndex = Math.round(percentage * (values.length - 1));
     // We are assuming at least 30 values, otherwise this would need to be removed
@@ -135,6 +150,7 @@ export default function DiscreteSlider({
     index.current = newIndex;
     setFill((100 * newIndex) / (values.length - 1));
     setValue(values[newIndex]);
+    onValueChange(values[newIndex], videoIndex);
     setTimeout(() => {
       thumbRef.current?.focus();
     }, 0);

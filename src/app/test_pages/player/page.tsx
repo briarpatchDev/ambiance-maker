@@ -1,15 +1,14 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./page.module.css";
 import type { Metadata } from "next";
+import { useEffect, useState } from "react";
 import Player from "@/app/components/Ambiance Player/ambiancePlayer";
 import AmbiancePlayer from "@/app/components/Ambiance Player/ambiancePlayer";
 import { VideoData } from "@/app/components/Ambiance Player/ambiancePlayer";
-
-export const metadata: Metadata = {
-  title: "Ambiance",
-  description: `Test page for playing ambiances`,
-};
+import { updateObjectsArr } from "@/app/lib/setStateFunctions";
+import { update } from "lodash";
 
 const videos: VideoData[] = [
   {
@@ -40,12 +39,36 @@ const videos: VideoData[] = [
     src: `https://www.youtube.com/watch?v=invalidVid`, // a 404
   },
 ];
+const maxVideos = 6;
+const createVideoEntry = (): VideoData => ({
+  src: undefined,
+  linkError: undefined,
+  title: undefined,
+  duration: undefined,
+  startTime: undefined,
+  endTime: undefined,
+  volume: undefined,
+  playbackSpeed: undefined,
+  ready: false,
+});
 
 export default function Page() {
+  const [videoData, setVideoData] = useState<VideoData[]>(
+    Array.from({ length: maxVideos }, createVideoEntry),
+  );
+  useEffect(() => {
+    updateObjectsArr(
+      setVideoData,
+      videos.map((video, i) => {
+        return { index: i, updates: video };
+      }),
+    );
+  }, []);
+
   return (
     <div className={styles.page}>
       <div className={styles.wrapper}>
-        <AmbiancePlayer videoData={videos} />
+        <AmbiancePlayer videoData={videoData} setVideoData={setVideoData} />
       </div>
     </div>
   );

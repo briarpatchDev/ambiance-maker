@@ -12,6 +12,10 @@ import { debounce } from "lodash";
 interface AmbianceInputProps {
   videoTitle: string | undefined;
   videoDuration: number | undefined;
+  startTime?: number;
+  endTime?: number;
+  volume?: number;
+  playbackSpeed?: number;
   linkError: string | undefined;
   onLinkChange: (link: string, index?: number) => void;
   onVolumeChange: (volume: string, index?: number) => void;
@@ -24,6 +28,10 @@ interface AmbianceInputProps {
 export default function AmbianceInput({
   videoTitle,
   videoDuration,
+  startTime,
+  endTime,
+  volume,
+  playbackSpeed,
   linkError,
   onLinkChange,
   onVolumeChange,
@@ -57,7 +65,7 @@ export default function AmbianceInput({
   const validateLink = useCallback(
     debounce((link: string) => {
       onLinkChange(link, videoIndex);
-    }, 400),
+    }, 300),
     []
   );
 
@@ -67,7 +75,7 @@ export default function AmbianceInput({
 
   return (
     <div style={{ ...style }} className={styles.ambiance_input}>
-      {videoTitle && <h1>{videoTitle}</h1>}
+      {!!videoTitle && <h1>{videoTitle}</h1>}
       <div className={styles.link_input_wrapper}>
         <input
           id={"link"}
@@ -81,17 +89,19 @@ export default function AmbianceInput({
           placeholder="Enter a Youtube link..."
           className={styles.link_input}
         />
-        {linkError && (
+        {!!linkError && (
           <div className={styles.link_error} id="link_error" aria-live="polite">
             <div>{`❌`}</div>
             <div>{linkError}</div>
           </div>
         )}
       </div>
-      {videoDuration && (
+      {!!videoDuration && (
         <div className={styles.video_controls_wrapper}>
           <div className={styles.video_controls}>
             <VideoSlider
+              startTime={startTime}
+              endTime={endTime}
               onTimeframeChange={onTimeframeChange}
               ariaLabel="Video timeframe slider"
               videoDuration={videoDuration}
@@ -100,10 +110,12 @@ export default function AmbianceInput({
           </div>
           <div className={styles.video_controls}>
             <VolumeSlider
+              currentVolume={volume}
               onValueChange={onVolumeChange}
               videoIndex={videoIndex}
             />
             <SpeedSlider
+              playbackSpeed={playbackSpeed}
               onValueChange={onSpeedChange}
               videoIndex={videoIndex}
             />
