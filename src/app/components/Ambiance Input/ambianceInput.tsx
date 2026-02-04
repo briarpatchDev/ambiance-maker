@@ -22,6 +22,7 @@ interface AmbianceInputProps {
   onSpeedChange: (speed: string, index?: number) => void;
   onTimeframeChange: (start: number, end: number, index?: number) => void;
   videoIndex?: number;
+  initialLink?: string;
   style?: React.CSSProperties;
 }
 
@@ -38,14 +39,15 @@ export default function AmbianceInput({
   onSpeedChange,
   onTimeframeChange,
   videoIndex,
+  initialLink,
   style,
 }: AmbianceInputProps) {
   const linkInputRef = useRef<HTMLInputElement | null>(null);
   const [inputData, setInputData] = useState({
-    link: "",
+    link: initialLink ? initialLink : "",
   });
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) {
     const { name, value } = e.target;
     setInputData((prevData) => ({
@@ -56,7 +58,7 @@ export default function AmbianceInput({
 
   // Updates the link input field
   const handleLinkChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     handleChange(e);
   };
@@ -66,7 +68,7 @@ export default function AmbianceInput({
     debounce((link: string) => {
       onLinkChange(link, videoIndex);
     }, 300),
-    []
+    [],
   );
 
   useEffect(() => {

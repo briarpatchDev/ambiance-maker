@@ -24,6 +24,7 @@ declare global {
 interface AmbiancePlayerProps {
   videoData: VideoData[];
   setVideoData?: React.Dispatch<React.SetStateAction<VideoData[]>>;
+  initialVideoData?: VideoData[];
   style?: React.CSSProperties;
 }
 
@@ -62,6 +63,7 @@ function createUrl({ src, startTime, endTime }: VideoData): string | false {
 
 export default function AmbiancePlayer({
   videoData,
+  initialVideoData,
   setVideoData,
   style,
 }: AmbiancePlayerProps) {
@@ -83,6 +85,8 @@ export default function AmbiancePlayer({
   // Keeps volume and speed inputs the same
   const volumeTimeoutRefs = useRef<(NodeJS.Timeout | null)[]>([]);
   const speedTimeoutRefs = useRef<(NodeJS.Timeout | null)[]>([]);
+  // Tracks which players are currently being initialized
+  const initializingRef = useRef<boolean[]>([]);
 
   // Calls updateVideos when the videoData changes
   useEffect(() => {
@@ -115,339 +119,282 @@ export default function AmbiancePlayer({
         return;
       }
 
+      // First pass: update all existing players synchronously
       videoData.forEach((video, index) => {
-        const playerId = `player-${index}`;
-        const playerElement = document.getElementById(playerId);
         const embedUrl = createUrl(video);
         const videoId =
           embedUrl && typeof embedUrl === "string"
             ? embedUrl.match(/embed\/([^?]+)/)?.[1]
             : undefined;
 
-        /*
-        // If src changed and a player already exists, reuse it instead of destroy
-        if (video.src !== prevLinksRef.current[index] && playerRefs.current[index] && videoId) {
-          if (timeoutRefs.current[index]) {
-            clearTimeout(timeoutRefs.current[index]!);
-            timeoutRefs.current[index] = null;
-          }
-          if (volumeTimeoutRefs.current[index]) {
-            clearInterval(volumeTimeoutRefs.current[index]!);
-            volumeTimeoutRefs.current[index] = null;
-          }
-          if (speedTimeoutRefs.current[index]) {
-            clearInterval(speedTimeoutRefs.current[index]!);
-            speedTimeoutRefs.current[index] = null;
-          }
-          try {
-            playerRefs.current[index].stopVideo();
-            playerRefs.current[index].loadVideoById({ videoId, startSeconds: video.startTime || 0 });
-            playerRefs.current[index].setVolume(video.volume ?? 100);
-            playerRefs.current[index].setPlaybackRate(video.playbackSpeed || 1.0);
-          } catch (e) {
-            console.log(`Error reloading player ${index}:`, e);
-          }
-          prevLinksRef.current[index] = video.src;
-          prevStartTimesRef.current[index] = video.startTime;
-          return;
-        }
-          */
-
-        // Check if link is same from before and resets the video if its different
-        if (video.src !== prevLinksRef.current[index]) {
-          prevLinksRef.current[index] = video.src;
-          if (timeoutRefs.current[index]) {
-            clearTimeout(timeoutRefs.current[index]!);
-            timeoutRefs.current[index] = null;
-          }
-          if (volumeTimeoutRefs.current[index]) {
-            clearInterval(volumeTimeoutRefs.current[index]!);
-            volumeTimeoutRefs.current[index] = null;
-          }
-          if (speedTimeoutRefs.current[index]) {
-            clearInterval(speedTimeoutRefs.current[index]!);
-            speedTimeoutRefs.current[index] = null;
-          }
-          //playerRefs.current[index] && playerRefs.current[index].destroy();
-
-          if (playerRefs.current[index]) {
-            try {
-              playerRefs.current[index].stopVideo();
-              playerRefs.current[index].cueVideoById({
-                videoId,
-              });
-              //return;
-            } catch (e) {
-              playerRefs.current[index] = null;
-              console.log(`Error reloading player ${index}:`, e);
-            }
-          }
-
-          //playerRefs.current[index] = null;
-
-          /*
-          setVideoData &&
-            updateObjectArr(setVideoData, index, {
-              title: undefined,
-              duration: undefined,
-              linkError: undefined,
-            });
-
-          return;
-          */
-        }
-        // Checking if the url is valid
-        if (!embedUrl) {
-          // This resets the ambiance input
-          if (video.linkError || video.duration) {
-            setVideoData &&
-              updateObjectArr(setVideoData, index, {
-                title: undefined,
-                duration: undefined,
-                linkError: undefined,
-              });
-          }
-          return;
-        }
-        // Extracts video ID from embed URL (already computed)
-        if (!videoId) return;
-
-        // This lets us change the videos with new props from the ambiance inputs
-        if (playerRefs.current[index]) {
+        // Update existing player props immediately
+        if (playerRefs.current[index] && embedUrl && videoId) {
           const player = playerRefs.current[index];
           player.setVolume(video.volume ?? 100);
           player.setPlaybackRate(video.playbackSpeed || 1.0);
           const currentTime = player.getCurrentTime();
           const prevStartTime = prevStartTimesRef.current[index];
-          if (video.startTime && video.endTime) {
-            if (
-              currentTime < video.startTime ||
-              currentTime > video.endTime ||
-              video.startTime != prevStartTime
-            ) {
-              player.seekTo(video.startTime);
-            } else {
+          const playerState = player.getPlayerState();
+          if (video.startTime !== undefined && video.endTime !== undefined) {
+            if (playerState === 1) {
+              if (
+                currentTime < video.startTime ||
+                currentTime > video.endTime ||
+                video.startTime != prevStartTime
+              ) {
+                player.seekTo(video.startTime);
+              }
               scheduleLoop(player, index);
             }
           }
           prevStartTimesRef.current[index] = video.startTime;
-          return;
-        }
-        if (playerElement) {
-          try {
-            const player = new window.YT.Player(playerId, {
-              height: "200px",
-              width: "200px",
-              videoId: videoId,
-              playerVars: {
-                //autoplay: 1,
-                //start: video.startTime,
-              },
-              events: {
-                onReady: (e: any) => {
-                  playerRefs.current[index] = e.target;
-                  // We set the video's settings here
-                  //e.target.setVolume(video.volume ?? 100);
-                  //e.target.setPlaybackRate(video.playbackSpeed || 1);
-                  console.log(`${playerId} is ready now`);
-                  /*
-                  setVideoData &&
-                    updateObjectArr(setVideoData, index, {
-                      title: player.getVideoData().title,
-                      duration: player.getDuration(),
-                      startTime: video.startTime || 0,
-                      endTime: video.endTime || player.getDuration(),
-                      volume: video.volume ?? 100,
-                      playbackSpeed: video.playbackSpeed || 1.0,
-                      linkError: undefined,
-                    
-                    });
-                    */
-
-                  setVideoData &&
-                    updateObjectArr(setVideoData, index, {
-                      title: player.getVideoData().title,
-                      duration: player.getDuration(),
-                      startTime: 0,
-                      endTime: player.getDuration(),
-                      volume: 100,
-                      playbackSpeed: 1.0,
-                      linkError: undefined,
-    
-                    });
-                  // Starts playing the video if other videos are playing already
-                  const isOtherVideoPlaying = playerRefs.current.some(
-                    (p, i) => p && i !== index && p.getPlayerState() === 1,
-                  );
-                  if (isOtherVideoPlaying) {
-                    e.target.playVideo();
-                  }
-                  // This changes the volume on the ambiance input when user changes volume on the video
-                  volumeTimeoutRefs.current[index] = setInterval(() => {
-                    if (
-                      e.target.getVolume() !==
-                      videoDataRef.current[index].volume
-                    ) {
-                      setVideoData &&
-                        updateObjectArr(setVideoData, index, {
-                          volume: e.target.getVolume(),
-                        });
-                    }
-                  }, 600);
-                  // This changes the speed on the ambiance input when user changes speed on the video
-                  speedTimeoutRefs.current[index] = setInterval(() => {
-                    if (
-                      e.target.getPlaybackRate() !==
-                      videoDataRef.current[index].playbackSpeed
-                    ) {
-                      setVideoData &&
-                        updateObjectArr(setVideoData, index, {
-                          playbackSpeed: e.target.getPlaybackRate(),
-                        });
-                    }
-                  }, 600);
-                },
-                onPlaybackRateChange: (e: any) => {
-                  // Reschedules the loop if video is currently playing
-
-                  if (e.target.getPlayerState() === 1) {
-                    //scheduleLoop(e.target, video, index);
-                    scheduleLoop(e.target, index);
-                  }
-                  /*
-
-                  setVideoData &&
-                    updateObjectArr(setVideoData, index, {
-                      playbackSpeed: player.getPlaybackRate() || 1,
-                    });
-                    */
-                },
-                onStateChange: (e: any) => {
-                  switch (e.data) {
-                    // Video started playing after being seeking/buffering/being unpaused
-                    case 1: {
-                      const currentTime = player.getCurrentTime();
-                      const startTime =
-                        videoDataRef.current[index].startTime || 0;
-                      const endTime =
-                        videoDataRef.current[index].endTime ||
-                        e.target.getDuration();
-                      if (currentTime < startTime || currentTime > endTime) {
-                        player.seekTo(startTime);
-                      } else {
-                        scheduleLoop(e.target, index);
-                      }
-                      break;
-                    }
-                    // Video paused or buffering, stops the loop timer
-                    case 2:
-                    case 3: {
-                      //scheduleLoop(e.target, video, index, true);
-                      scheduleLoop(e.target, index, true);
-                      break;
-                    }
-                    // Video cued - should happen when user replaces src link with another
-                    case 5: {
-                      const currentTitle = player.getVideoData().title;
-                      if (
-                        currentTitle &&
-                        currentTitle !== videoDataRef.current[index].title
-                      ) {
-                        // We need to set up all the data / timers again here
-                        setVideoData &&
-                          updateObjectArr(setVideoData, index, {
-                            title: currentTitle,
-                            duration: player.getDuration(),
-                            startTime: 0,
-                            endTime: player.getDuration(),
-                            volume: 100,
-                            playbackSpeed: 1.0,
-                            linkError: undefined,
-         
-                          });
-                        // Starts playing the video if other videos are playing already
-                        const isOtherVideoPlaying = playerRefs.current.some(
-                          (p, i) =>
-                            p && i !== index && p.getPlayerState() === 1,
-                        );
-                        if (isOtherVideoPlaying) {
-                          e.target.playVideo();
-                        }
-                        // This changes the volume on the ambiance input when user changes volume on the video
-                        volumeTimeoutRefs.current[index] = setInterval(() => {
-                          if (
-                            e.target.getVolume() !==
-                            videoDataRef.current[index].volume
-                          ) {
-                            setVideoData &&
-                              updateObjectArr(setVideoData, index, {
-                                volume: e.target.getVolume(),
-                              });
-                          }
-                        }, 600);
-                        // This changes the speed on the ambiance input when user changes speed on the video
-                        speedTimeoutRefs.current[index] = setInterval(() => {
-                          if (
-                            e.target.getPlaybackRate() !==
-                            videoDataRef.current[index].playbackSpeed
-                          ) {
-                            setVideoData &&
-                              updateObjectArr(setVideoData, index, {
-                                playbackSpeed: e.target.getPlaybackRate(),
-                              });
-                          }
-                        }, 600);
-                      }
-                      break;
-                    }
-                    // Video ended, needed for custom endTimes
-                    case 0: {
-                      player.seekTo(videoDataRef.current[index].startTime || 0);
-                      //e.target.playVideo();
-                      //scheduleLoop(e.target, video, index);
-                      //scheduleLoop(e.target, index);
-                      break;
-                    }
-                  }
-                },
-                onError: (e: any) => {
-                  console.log(`🚨 Player ${index} error:`, e.data);
-                  console.log("Error code:", e.data);
-                  if (e.data === 100 || e.data === 150 || e.data === 101) {
-                    setVideoData &&
-                      updateObjectArr(setVideoData, index, {
-                        title: undefined,
-                        duration: undefined,
-                        linkError: `Video is unavailable`,
-              
-                      });
-                  }
-                },
-              },
-            });
-          } catch {
-            console.log("video id prob doesn't exist");
-            // This will happen if the videoId doesn't exist. Possibly on a deleted video
-            /*
-            const playerElement = document.getElementById(playerId);
-            playerElement?.remove();
-            */
-            /*
-            setTimeout(() => {
-              resetPlayer(index);
-            }, 100);
-            */
-            setVideoData &&
-              updateObjectArr(setVideoData, index, {
-                title: undefined,
-                duration: undefined,
-                linkError: `Video is unavailable`,
-     
-              });
-            // We might want to do something here to handle broken ambiances
-          }
         }
       });
+
+      // Second pass: create new players sequentially
+      const createNewPlayers = async () => {
+        for (let index = 0; index < videoData.length; index++) {
+          const video = videoData[index];
+          const playerId = `player-${index}`;
+          const playerElement = document.getElementById(playerId);
+          const embedUrl = createUrl(video);
+          const videoId =
+            embedUrl && typeof embedUrl === "string"
+              ? embedUrl.match(/embed\/([^?]+)/)?.[1]
+              : undefined;
+
+          // Check if link is same from before and resets the video if its different
+          if (video.src !== prevLinksRef.current[index]) {
+            prevLinksRef.current[index] = video.src;
+            if (timeoutRefs.current[index]) {
+              clearTimeout(timeoutRefs.current[index]!);
+              timeoutRefs.current[index] = null;
+            }
+            if (volumeTimeoutRefs.current[index]) {
+              clearInterval(volumeTimeoutRefs.current[index]!);
+              volumeTimeoutRefs.current[index] = null;
+            }
+            if (speedTimeoutRefs.current[index]) {
+              clearInterval(speedTimeoutRefs.current[index]!);
+              speedTimeoutRefs.current[index] = null;
+            }
+            if (playerRefs.current[index]) {
+              try {
+                playerRefs.current[index].stopVideo();
+                playerRefs.current[index].cueVideoById({
+                  videoId,
+                });
+                //return;
+              } catch (e) {
+                playerRefs.current[index] = null;
+                console.log(`Error reloading player ${index}:`, e);
+              }
+            }
+          }
+          // Checking if the url is valid
+          if (!embedUrl) {
+            // This resets the ambiance input
+            if (video.linkError || video.duration) {
+              setVideoData &&
+                updateObjectArr(setVideoData, index, {
+                  title: undefined,
+                  duration: undefined,
+                  linkError: undefined,
+                });
+            }
+            return;
+          }
+          if (!videoId) continue;
+          // Skip if player already exists
+          if (playerRefs.current[index]) continue;
+
+          if (playerElement) {
+            // Skip if already initializing
+            if (initializingRef.current[index]) continue;
+            // Mark as initializing
+            initializingRef.current[index] = true;
+            // Add delay between player creations to prevent race conditions
+            if (index > 0)
+              await new Promise((resolve) => setTimeout(resolve, 200));
+            try {
+              const player = new window.YT.Player(playerId, {
+                height: "200px",
+                width: "200px",
+                videoId: videoId,
+                playerVars: {
+                  //autoplay: 1,
+                  //start: video.startTime,
+                },
+                events: {
+                  onReady: (e: any) => {
+                    playerRefs.current[index] = e.target;
+                    initializingRef.current[index] = false;
+                    console.log(`${playerId} is ready now`);
+                    setVideoData &&
+                      updateObjectArr(setVideoData, index, {
+                        title: player.getVideoData().title,
+                        duration: player.getDuration(),
+                        startTime: initialVideoData?.[index]?.startTime || 0,
+                        endTime:
+                          initialVideoData?.[index]?.endTime ||
+                          player.getDuration(),
+                        volume: initialVideoData?.[index]?.volume || 100,
+                        playbackSpeed:
+                          initialVideoData?.[index]?.playbackSpeed || 1.0,
+                        linkError: undefined,
+                      });
+                    // Starts playing the video if other videos are playing already
+                    const isOtherVideoPlaying = playerRefs.current.some(
+                      (p, i) => p && i !== index && p.getPlayerState() === 1,
+                    );
+                    if (isOtherVideoPlaying) {
+                      e.target.playVideo();
+                    }
+                    // This changes the volume on the ambiance input when user changes volume on the video
+                    volumeTimeoutRefs.current[index] = setInterval(() => {
+                      if (
+                        e.target.getVolume() !==
+                        videoDataRef.current[index].volume
+                      ) {
+                        setVideoData &&
+                          updateObjectArr(setVideoData, index, {
+                            volume: e.target.getVolume(),
+                          });
+                      }
+                    }, 600);
+                    // This changes the speed on the ambiance input when user changes speed on the video
+                    speedTimeoutRefs.current[index] = setInterval(() => {
+                      if (
+                        e.target.getPlaybackRate() !==
+                        videoDataRef.current[index].playbackSpeed
+                      ) {
+                        setVideoData &&
+                          updateObjectArr(setVideoData, index, {
+                            playbackSpeed: e.target.getPlaybackRate(),
+                          });
+                      }
+                    }, 600);
+                  },
+                  onPlaybackRateChange: (e: any) => {
+                    // Reschedules the loop if video is currently playing
+                    if (e.target.getPlayerState() === 1) {
+                      scheduleLoop(e.target, index);
+                    }
+                  },
+                  onStateChange: (e: any) => {
+                    switch (e.data) {
+                      // Video started playing after being seeking/buffering/being unpaused
+                      case 1: {
+                        const currentTime = player.getCurrentTime();
+                        const startTime =
+                          videoDataRef.current[index].startTime || 0;
+                        const endTime =
+                          videoDataRef.current[index].endTime ||
+                          e.target.getDuration();
+                        if (currentTime < startTime || currentTime > endTime) {
+                          player.seekTo(startTime);
+                        } else {
+                          scheduleLoop(e.target, index);
+                        }
+                        break;
+                      }
+                      // Video paused or buffering, stops the loop timer
+                      case 2:
+                      case 3: {
+                        //scheduleLoop(e.target, video, index, true);
+                        scheduleLoop(e.target, index, true);
+                        break;
+                      }
+                      // Video cued - should happen when user replaces src link with another
+                      case 5: {
+                        const currentTitle = player.getVideoData().title;
+                        if (
+                          currentTitle &&
+                          currentTitle !== videoDataRef.current[index].title
+                        ) {
+                          // We need to set up all the data / timers again here
+                          setVideoData &&
+                            updateObjectArr(setVideoData, index, {
+                              title: currentTitle,
+                              duration: player.getDuration(),
+                              startTime: 0,
+                              endTime: player.getDuration(),
+                              volume: 100,
+                              playbackSpeed: 1.0,
+                              linkError: undefined,
+                            });
+                          // Starts playing the video if other videos are playing already
+                          const isOtherVideoPlaying = playerRefs.current.some(
+                            (p, i) =>
+                              p && i !== index && p.getPlayerState() === 1,
+                          );
+                          if (isOtherVideoPlaying) {
+                            e.target.playVideo();
+                          }
+                          // This changes the volume on the ambiance input when user changes volume on the video
+                          volumeTimeoutRefs.current[index] = setInterval(() => {
+                            if (
+                              e.target.getVolume() !==
+                              videoDataRef.current[index].volume
+                            ) {
+                              setVideoData &&
+                                updateObjectArr(setVideoData, index, {
+                                  volume: e.target.getVolume(),
+                                });
+                            }
+                          }, 600);
+                          // This changes the speed on the ambiance input when user changes speed on the video
+                          speedTimeoutRefs.current[index] = setInterval(() => {
+                            if (
+                              e.target.getPlaybackRate() !==
+                              videoDataRef.current[index].playbackSpeed
+                            ) {
+                              setVideoData &&
+                                updateObjectArr(setVideoData, index, {
+                                  playbackSpeed: e.target.getPlaybackRate(),
+                                });
+                            }
+                          }, 600);
+                        }
+                        break;
+                      }
+                      // Video ended, needed for custom endTimes
+                      case 0: {
+                        player.seekTo(
+                          videoDataRef.current[index].startTime || 0,
+                        );
+                        break;
+                      }
+                    }
+                  },
+                  onError: (e: any) => {
+                    console.log(`🚨 Player ${index} error:`, e.data);
+                    console.log("Error code:", e.data);
+                    if (e.data === 100 || e.data === 150 || e.data === 101) {
+                      setVideoData &&
+                        updateObjectArr(setVideoData, index, {
+                          title: undefined,
+                          duration: undefined,
+                          linkError: `Video is unavailable`,
+                        });
+                    }
+                  },
+                },
+              });
+            } catch {
+              console.log("video id prob doesn't exist");
+              setVideoData &&
+                updateObjectArr(setVideoData, index, {
+                  title: undefined,
+                  duration: undefined,
+                  linkError: `Video is unavailable`,
+                });
+            }
+          }
+        }
+      };
+
+      createNewPlayers();
     };
 
     // Set up API ready callback
@@ -483,18 +430,6 @@ export default function AmbiancePlayer({
     },
     [],
   );
-
-  // Resets the player at the given index with an empty div
-  const resetPlayer = useCallback((index: number) => {
-    const playerElement = document.getElementById(`player-${index}`);
-    const wrapperElement = document.getElementById(`video-wrapper-${index}`);
-    if (playerElement && wrapperElement) {
-      const newDiv = document.createElement("div");
-      newDiv.id = `player-${index}`;
-      wrapperElement.replaceChild(newDiv, playerElement);
-    }
-    playerRefs.current[index] = null;
-  }, []);
 
   const play = useCallback(() => {
     //if (!isPlayerReady.current) return;

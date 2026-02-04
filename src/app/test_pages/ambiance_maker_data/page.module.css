@@ -1,0 +1,44 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  min-height: max-content;
+  background: linear-gradient(
+      210deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0) 75%
+    ),
+    radial-gradient(
+      ellipse 150% 20vh at 50% 0%,
+      rgba(255, 255, 255, 0.04) 0%,
+      rgba(255, 255, 255, 0.06) 30%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0.03) 70%,
+      transparent 100%
+    ),
+    radial-gradient(
+      ellipse 150% 20vh at 50% 100%,
+      rgba(0, 0, 0, 0.02) 0%,
+      rgba(0, 0, 0, 0.035) 30%,
+      rgba(0, 0, 0, 0.025) 50%,
+      rgba(146, 113, 113, 0.015) 70%,
+      transparent 100%
+    ),
+    linear-gradient(
+      85deg,
+      rgba(116, 107, 121, 0.5) 0%,
+      rgba(73, 70, 83, 0.5) 100%
+    ),
+    linear-gradient(185deg, rgb(116, 107, 121) 0%, rgb(73, 70, 83) 100%);
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.2rem 0 4rem;
+  row-gap: 2.4rem;
+}

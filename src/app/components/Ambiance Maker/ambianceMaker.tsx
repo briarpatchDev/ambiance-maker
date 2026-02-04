@@ -9,6 +9,7 @@ import AmbiancePlayer from "@/app/components/Ambiance Player/ambiancePlayer";
 import { updateObjectArr } from "@/app/lib/setStateFunctions";
 
 interface AmbianceMakerProps {
+  initialVideoData?: VideoData[];
   style?: React.CSSProperties;
 }
 
@@ -35,9 +36,12 @@ const createVideoEntry = (): VideoData => ({
   playbackSpeed: undefined,
 });
 
-export default function AmbianceMaker({ style }: AmbianceMakerProps) {
+export default function AmbianceMaker({
+  initialVideoData,
+  style,
+}: AmbianceMakerProps) {
   function onLinkChange(link: string, index = 0) {
-    updateObjectArr(setVideoData, index, { [`src`]: link});
+    updateObjectArr(setVideoData, index, { [`src`]: link });
   }
 
   function onTimeframeChange(start: number, end: number, index = 0) {
@@ -64,7 +68,7 @@ export default function AmbianceMaker({ style }: AmbianceMakerProps) {
   return (
     <div style={{ ...style }} className={styles.ambiance_maker}>
       <div className={styles.player_wrapper}>
-        <AmbiancePlayer videoData={videoData} setVideoData={setVideoData} />
+        <AmbiancePlayer videoData={videoData} initialVideoData={initialVideoData} setVideoData={setVideoData} />
       </div>
       <div className={styles.inputs_wrapper}>
         {videoData.map((video, videoIndex) => {
@@ -82,6 +86,11 @@ export default function AmbianceMaker({ style }: AmbianceMakerProps) {
               onVolumeChange={onVolumeChange}
               onSpeedChange={onSpeedChange}
               videoIndex={videoIndex}
+              initialLink={
+                initialVideoData && initialVideoData[videoIndex]
+                  ? initialVideoData[videoIndex].src
+                  : undefined
+              }
               key={`input-${videoIndex}`}
             />
           );
