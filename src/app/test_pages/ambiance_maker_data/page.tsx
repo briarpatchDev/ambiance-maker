@@ -20,19 +20,19 @@ const videoData: VideoData[] = [
     volume: 25,
   },
   {
+    src: `https://www.youtube.com/shorts/lBq7IZ7tZR8`, // a short of a fireplace crackling
+  },
+  {
     src: `https://www.youtube.com/watch?v=KwGNDJfSmFk`,
     playbackSpeed: 2,
     startTime: 6,
     endTime: 18,
   }, // Echoing Clock Tick,
   {
-    src: `https://www.youtube.com/shorts/lBq7IZ7tZR8`, // a short of a fireplace crackling
+    src: `https://www.youtube.com/watch?v=aG7Ig-HbyVk`, // A video that cannot be imbedded
   },
   {
-   src: `https://www.youtube.com/watch?v=aG7Ig-HbyVk`, // A video that cannot be imbedded
-  },
-  {
-  src: `https://www.youtube.com/watch?v=invalidVid`, // a 404
+    src: `https://www.youtube.com/watch?v=invalidVid`, // a 404
   },
 ];
 

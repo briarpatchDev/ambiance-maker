@@ -6,7 +6,9 @@
 }
 
 .player_wrapper {
-  
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .inputs_wrapper {

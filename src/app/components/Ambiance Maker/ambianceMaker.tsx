@@ -68,7 +68,11 @@ export default function AmbianceMaker({
   return (
     <div style={{ ...style }} className={styles.ambiance_maker}>
       <div className={styles.player_wrapper}>
-        <AmbiancePlayer videoData={videoData} initialVideoData={initialVideoData} setVideoData={setVideoData} />
+        <AmbiancePlayer
+          videoData={videoData}
+          initialVideoData={initialVideoData}
+          setVideoData={setVideoData}
+        />
       </div>
       <div className={styles.inputs_wrapper}>
         {videoData.map((video, videoIndex) => {

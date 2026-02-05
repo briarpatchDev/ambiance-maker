@@ -10,6 +10,12 @@ import Image from "next/image";
 import Link from "next/link";
 import styles from "./ambiancePlayer.module.css";
 import Button from "@/app/components/Buttons/Button Set/button";
+import PlayIcon from "@/app/components/Icons/play";
+import PauseIcon from "@/app/components/Icons/pause";
+import VolumeHighIcon from "@/app/components/Icons/volume_high";
+import VolumeMutedIcon from "@/app/components/Icons/volume_muted";
+import Backwards from "@/app/components/Icons/backwards";
+import Rewind from "@/app/components/Icons/reset";
 import classNames from "classnames";
 import { updateObjectArr } from "@/app/lib/setStateFunctions";
 
@@ -145,8 +151,16 @@ export default function AmbiancePlayer({
                 player.seekTo(video.startTime);
               }
               scheduleLoop(player, index);
+            } else if (
+              prevStartTime !== undefined &&
+              video.startTime !== prevStartTime
+            ) {
+              // Plays video when user adjusts start thumb
+              player.seekTo(video.startTime);
+              player.playVideo();
             }
           }
+
           prevStartTimesRef.current[index] = video.startTime;
         }
       });
@@ -166,6 +180,7 @@ export default function AmbiancePlayer({
           // Check if link is same from before and resets the video if its different
           if (video.src !== prevLinksRef.current[index]) {
             prevLinksRef.current[index] = video.src;
+            prevStartTimesRef.current[index] = undefined;
             if (timeoutRefs.current[index]) {
               clearTimeout(timeoutRefs.current[index]!);
               timeoutRefs.current[index] = null;
@@ -202,7 +217,7 @@ export default function AmbiancePlayer({
                   linkError: undefined,
                 });
             }
-            return;
+            continue;
           }
           if (!videoId) continue;
           // Skip if player already exists
@@ -274,6 +289,7 @@ export default function AmbiancePlayer({
                           });
                       }
                     }, 600);
+                    muted && e.target.mute();
                   },
                   onPlaybackRateChange: (e: any) => {
                     // Reschedules the loop if video is currently playing
@@ -375,19 +391,31 @@ export default function AmbiancePlayer({
                         updateObjectArr(setVideoData, index, {
                           title: undefined,
                           duration: undefined,
-                          linkError: `Video is unavailable`,
+                          linkError: `Video unavailable`,
                         });
                     }
                   },
                 },
               });
             } catch {
+              // Resets the player <div> when user inputs a video id that doesn't exist
+              playerRefs.current[index] = null;
+              const wrapperElement = document.getElementById(
+                `video-wrapper-${index}`,
+              );
+              const playerElement = document.getElementById(`player-${index}`);
+              const newPlayerElement = document.createElement("div");
+              newPlayerElement.id = `player-${index}`;
+              if (!playerElement) return;
+              wrapperElement?.replaceChild(newPlayerElement, playerElement);
               console.log("video id prob doesn't exist");
+              initializingRef.current[index] = false;
+              if (videoDataRef.current[index].linkError) continue; // stops infinite render
               setVideoData &&
                 updateObjectArr(setVideoData, index, {
                   title: undefined,
                   duration: undefined,
-                  linkError: `Video is unavailable`,
+                  linkError: `Video unavailable`,
                 });
             }
           }
@@ -461,23 +489,48 @@ export default function AmbiancePlayer({
     setMuted(false);
   }, []);
 
+  const rewind = useCallback(() => {
+    playerRefs.current.forEach((player, index) => {
+      if (!player) return;
+      player.seekTo(videoDataRef.current[index].startTime);
+      player.playVideo();
+      player.unMute();
+    });
+    setMuted(false);
+  }, []);
+
+  const jumpBack = useCallback(() => {
+    playerRefs.current.forEach((player, index) => {
+      if (!player) return;
+      player.seekTo(player.getCurrentTime() - 10);
+      player.playVideo();
+      player.unMute();
+    });
+    setMuted(false);
+  }, []);
+
+  const jumpForward = useCallback(() => {
+    playerRefs.current.forEach((player, index) => {
+      if (!player) return;
+      let newTime = player.getCurrentTime() + 10;
+      if (
+        videoDataRef.current[index] &&
+        newTime > (videoDataRef.current[index].endTime || player.getDuration())
+      ) {
+        newTime =
+          (videoDataRef.current[index].startTime || 0) +
+          newTime -
+          (videoDataRef.current[index].endTime || player.getDuration());
+      }
+      player.seekTo(newTime);
+      player.playVideo();
+      player.unMute();
+    });
+    setMuted(false);
+  }, []);
+
   return (
     <div style={{ ...style }} className={styles.player}>
-      <div className={styles.controls}>
-        <Button
-          text={muted ? "Unmute" : "Mute"}
-          onClick={muted ? unmute : mute}
-          variant="tertiary"
-          width={"smallest"}
-        />
-        <Button
-          text="Pause"
-          variant="tertiary"
-          onClick={pause}
-          width="smallest"
-        />
-        <Button text="Play" variant="primary" onClick={play} width="default" />
-      </div>
       <div className={styles.videos} id={`videos`}>
         {videoData.map((video, i) => {
           return (
@@ -486,13 +539,56 @@ export default function AmbiancePlayer({
                 [styles.visible]: video.title,
               })}
               id={`video-wrapper-${i}`}
-              //key={`${i}${video.src ? `-${video.src}` : ``}`}
               key={`video-wrapper-${i}`}
             >
               <div id={`player-${i}`} />
             </div>
           );
         })}
+      </div>
+      <div className={styles.control_bar}>
+        <div className={styles.controls_wrapper}>
+          <button onClick={play} title="Play Videos" aria-label="Play Videos">
+            <PlayIcon />
+          </button>
+          <button
+            onClick={pause}
+            title="Pause Videos"
+            aria-label="Pause Videos"
+          >
+            <PauseIcon />
+          </button>
+          <button
+            onClick={muted ? unmute : mute}
+            title={muted ? "Unmute Videos" : "Mute Videos"}
+            aria-label={muted ? "Unmute Videos" : "Mute Videos"}
+            aria-pressed={muted}
+          >
+            {muted ? <VolumeMutedIcon /> : <VolumeHighIcon />}
+          </button>
+        </div>
+        <div className={styles.controls_wrapper}>
+          <button
+            onClick={rewind}
+            title="Rewind Videos"
+            aria-label="Rewind Videos"
+          >
+            <Rewind />
+          </button>
+          <button
+            onClick={jumpBack}
+            title="Rewind 10s"
+            aria-label="Rewind 10s"
+            style={{ paddingRight: "0.4rem" }}
+          >
+            <Backwards style={{ padding: "0.2rem 0" }} />
+          </button>
+          <button onClick={jumpForward} title="Jump 10s" aria-label="Jump 10s">
+            <Backwards
+              style={{ transform: "rotateZ(180deg)", padding: "0.2rem 0" }}
+            />
+          </button>
+        </div>
       </div>
     </div>
   );
