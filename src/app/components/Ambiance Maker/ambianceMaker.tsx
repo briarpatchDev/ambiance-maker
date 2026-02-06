@@ -20,6 +20,7 @@ export interface VideoData {
   duration?: number;
   startTime?: number;
   endTime?: number;
+  currentTime?: number;
   volume?: number;
   playbackSpeed?: number;
 }
@@ -39,6 +40,7 @@ const createVideoEntry = (): VideoData => ({
   duration: undefined,
   startTime: undefined,
   endTime: undefined,
+  currentTime: undefined,
   volume: undefined,
   playbackSpeed: undefined,
 });
@@ -102,6 +104,7 @@ export default function AmbianceMaker({
               videoDuration={video.duration}
               startTime={video.startTime}
               endTime={video.endTime}
+              currentTime={video.currentTime}
               volume={video.volume}
               playbackSpeed={video.playbackSpeed}
               linkError={video.linkError}

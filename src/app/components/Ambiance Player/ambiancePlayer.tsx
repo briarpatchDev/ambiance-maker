@@ -41,6 +41,7 @@ export interface VideoData {
   duration?: number;
   startTime?: number;
   endTime?: number;
+  currentTime?: number;
   volume?: number;
   playbackSpeed?: number;
   ready?: boolean;
@@ -88,9 +89,10 @@ export default function AmbiancePlayer({
 
   // Timeouts for controlling looping videos
   const timeoutRefs = useRef<(NodeJS.Timeout | null)[]>([]);
-  // Keeps volume and speed inputs the same
+  // Keeps volume and speed inputs the same, tracks current time
   const volumeTimeoutRefs = useRef<(NodeJS.Timeout | null)[]>([]);
   const speedTimeoutRefs = useRef<(NodeJS.Timeout | null)[]>([]);
+  const currentTimeRefs = useRef<(NodeJS.Timeout | null)[]>([]);
   // Tracks which players are currently being initialized
   const initializingRef = useRef<boolean[]>([]);
 
@@ -193,6 +195,10 @@ export default function AmbiancePlayer({
               clearInterval(speedTimeoutRefs.current[index]!);
               speedTimeoutRefs.current[index] = null;
             }
+            if (timeoutRefs.current[index]) {
+              clearInterval(currentTimeRefs.current[index]!);
+              currentTimeRefs.current[index] = null;
+            }
             if (playerRefs.current[index]) {
               try {
                 playerRefs.current[index].stopVideo();
@@ -289,6 +295,21 @@ export default function AmbiancePlayer({
                           });
                       }
                     }, 600);
+                    // Tracks the current time of the video, for indicator on the input
+                    currentTimeRefs.current[index] = setInterval(() => {
+                      if (
+                        e.target.getCurrentTime() !==
+                        videoDataRef.current[index].currentTime
+                      ) {
+                        setVideoData &&
+                          updateObjectArr(setVideoData, index, {
+                            currentTime:
+                              e.target.getCurrentTime() === 0
+                                ? videoDataRef.current[index].startTime
+                                : e.target.getCurrentTime(),
+                          });
+                      }
+                    }, 600);
                     muted && e.target.mute();
                   },
                   onPlaybackRateChange: (e: any) => {
@@ -371,6 +392,21 @@ export default function AmbiancePlayer({
                                 });
                             }
                           }, 600);
+                          // Tracks the current time of the video, for indicator on the input
+                          currentTimeRefs.current[index] = setInterval(() => {
+                            if (
+                              e.target.getCurrentTime() !==
+                              videoDataRef.current[index].currentTime
+                            ) {
+                              setVideoData &&
+                                updateObjectArr(setVideoData, index, {
+                                  currentTime:
+                                    e.target.getCurrentTime() === 0
+                                      ? videoDataRef.current[index].startTime
+                                      : e.target.getCurrentTime(),
+                                });
+                            }
+                          }, 600);
                         }
                         break;
                       }
@@ -445,7 +481,7 @@ export default function AmbiancePlayer({
       }
       if (stopping) return;
       const currentTime = player.getCurrentTime();
-      const endTime = videoData.endTime ?? player.getDuration() - 1;
+      const endTime = videoData.endTime ?? player.getDuration();
       const playbackSpeed = player.getPlaybackRate() || 1;
       const timeRemaining = (endTime - currentTime) / playbackSpeed;
       if (timeRemaining > 0) {
@@ -502,7 +538,14 @@ export default function AmbiancePlayer({
   const jumpBack = useCallback(() => {
     playerRefs.current.forEach((player, index) => {
       if (!player) return;
-      player.seekTo(player.getCurrentTime() - 10);
+      let newTime = player.getCurrentTime() - 10;
+      if (
+        videoDataRef.current[index].startTime &&
+        newTime < videoDataRef.current[index].startTime
+      ) {
+        newTime = videoDataRef.current[index].startTime;
+      }
+      player.seekTo(newTime);
       player.playVideo();
       player.unMute();
     });

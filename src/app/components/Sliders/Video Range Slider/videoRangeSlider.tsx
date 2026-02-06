@@ -12,6 +12,7 @@ interface VideoRangeSliderProps {
   ariaLabel: string;
   startTime?: number;
   endTime?: number;
+  currentTime?: number;
   videoIndex?: number;
   style?: React.CSSProperties;
 }
@@ -22,6 +23,7 @@ export default function VideoRangeSlider({
   ariaLabel,
   startTime,
   endTime,
+  currentTime,
   videoIndex,
   style,
 }: VideoRangeSliderProps) {
@@ -36,7 +38,10 @@ export default function VideoRangeSlider({
   const trackRef = useRef<null | HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [showTransition, setShowTransition] = useState(true);
+  const [showIndicator, setShowIndicator] = useState(true);
   const timeoutRef = useRef<NodeJS.Timeout>(undefined);
+  const prevCurrentTimeRef = useRef(0);
+  const indicatorTimeoutRef = useRef<NodeJS.Timeout>(undefined);
 
   // When the timeframe changes, changes the fill and calls a parent function
   useEffect(() => {
@@ -49,6 +54,25 @@ export default function VideoRangeSlider({
     setStart(startTime ?? 0);
     setEnd(endTime ?? videoDuration);
   }, [startTime, endTime, videoDuration]);
+
+  // When the currentTime prop changes, records it and adjusts the indicator's transition if needed
+  useEffect(() => {
+    if (typeof currentTime !== "number") return;
+    if (
+      currentTime < prevCurrentTimeRef.current ||
+      currentTime - prevCurrentTimeRef.current > 2
+    ) {
+      clearTimeout(indicatorTimeoutRef.current);
+      if (showIndicator) {
+        setShowIndicator(false);
+        indicatorTimeoutRef.current = setTimeout(() => {
+          setShowIndicator(true);
+          indicatorTimeoutRef.current = undefined;
+        }, 20);
+      }
+    }
+    prevCurrentTimeRef.current = currentTime;
+  }, [currentTime]);
 
   // Handles dragging the start thumb
   useEffect(() => {
@@ -265,6 +289,14 @@ export default function VideoRangeSlider({
           <div className={styles.text_wrapper}>{convertToTimecode(end)}</div>
         </label>
       </div>
+      {typeof currentTime === "number" && videoDuration && (
+        <div
+          className={classNames(styles.indicator, {
+            [styles.hidden]: !showIndicator,
+          })}
+          style={{ left: `${(100 * currentTime) / videoDuration}%` }}
+        ></div>
+      )}
     </div>
   );
 }

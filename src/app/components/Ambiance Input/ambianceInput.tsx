@@ -14,6 +14,7 @@ interface AmbianceInputProps {
   videoDuration: number | undefined;
   startTime?: number;
   endTime?: number;
+  currentTime?: number;
   volume?: number;
   playbackSpeed?: number;
   linkError: string | undefined;
@@ -31,6 +32,7 @@ export default function AmbianceInput({
   videoDuration,
   startTime,
   endTime,
+  currentTime,
   volume,
   playbackSpeed,
   linkError,
@@ -104,6 +106,7 @@ export default function AmbianceInput({
             <VideoSlider
               startTime={startTime}
               endTime={endTime}
+              currentTime={currentTime}
               onTimeframeChange={onTimeframeChange}
               ariaLabel="Video timeframe slider"
               videoDuration={videoDuration}

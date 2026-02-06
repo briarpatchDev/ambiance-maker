@@ -21,6 +21,7 @@ export default function Page() {
             setTimeframe({ start: start, end: end })
           }
           ariaLabel={"Video timeframe slider"}
+          currentTime={3400}
         />
       </div>
       <div style={{ display: "flex", flexDirection: "column" }}>
