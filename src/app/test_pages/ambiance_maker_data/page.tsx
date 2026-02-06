@@ -5,6 +5,7 @@ import styles from "./page.module.css";
 import { useState } from "react";
 import AmbianceMaker from "@/app/components/Ambiance Maker/ambianceMaker";
 import { VideoData } from "@/app/components/Ambiance Player/ambiancePlayer";
+import { AmbianceData } from "@/app/components/Ambiance Maker/ambianceMaker";
 
 const videoData: VideoData[] = [
   {
@@ -36,11 +37,19 @@ const videoData: VideoData[] = [
   },
 ];
 
+const ambianceData: AmbianceData = {
+  title: "Relaxing Sounds",
+  author: "robert73",
+  description:
+    "This is a really good description for an ambiance. There's a clock ticking, a fire spitting, rain on the windows, and the gentle hum of an old 'puter. There's a lot more you could say about this, there really is. This is a really good description for an ambiance. There's a clock ticking, a fire spitting, rain on the windows, and the gentle hum of an old 'puter.",
+  videoData: videoData,
+};
+
 export default function Page() {
   return (
     <div className={styles.page}>
       <div className={styles.wrapper}>
-        <AmbianceMaker initialVideoData={videoData} />
+        <AmbianceMaker ambianceData={ambianceData} />
       </div>
     </div>
   );

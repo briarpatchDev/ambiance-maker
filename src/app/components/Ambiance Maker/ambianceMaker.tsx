@@ -9,7 +9,7 @@ import AmbiancePlayer from "@/app/components/Ambiance Player/ambiancePlayer";
 import { updateObjectArr } from "@/app/lib/setStateFunctions";
 
 interface AmbianceMakerProps {
-  initialVideoData?: VideoData[];
+  ambianceData?: AmbianceData;
   style?: React.CSSProperties;
 }
 
@@ -22,6 +22,13 @@ export interface VideoData {
   endTime?: number;
   volume?: number;
   playbackSpeed?: number;
+}
+
+export interface AmbianceData {
+  title?: string;
+  author?: string;
+  description?: string;
+  videoData: VideoData[];
 }
 
 const maxVideos = 6;
@@ -37,7 +44,7 @@ const createVideoEntry = (): VideoData => ({
 });
 
 export default function AmbianceMaker({
-  initialVideoData,
+  ambianceData,
   style,
 }: AmbianceMakerProps) {
   function onLinkChange(link: string, index = 0) {
@@ -67,10 +74,23 @@ export default function AmbianceMaker({
 
   return (
     <div style={{ ...style }} className={styles.ambiance_maker}>
+      {ambianceData?.title && (
+        <div className={styles.header_wrapper}>
+          <div className={styles.header}>
+            <h1 className={styles.title}>{ambianceData.title}</h1>
+            {ambianceData.author && (
+              <div className={styles.author_wrapper}>
+                <div className={styles.by}>{`by`}</div>
+                <div className={styles.author}>{ambianceData.author}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <div className={styles.player_wrapper}>
         <AmbiancePlayer
           videoData={videoData}
-          initialVideoData={initialVideoData}
+          initialVideoData={ambianceData?.videoData}
           setVideoData={setVideoData}
         />
       </div>
@@ -91,8 +111,8 @@ export default function AmbianceMaker({
               onSpeedChange={onSpeedChange}
               videoIndex={videoIndex}
               initialLink={
-                initialVideoData && initialVideoData[videoIndex]
-                  ? initialVideoData[videoIndex].src
+                ambianceData && ambianceData.videoData[videoIndex]
+                  ? ambianceData.videoData[videoIndex].src
                   : undefined
               }
               key={`input-${videoIndex}`}
@@ -100,6 +120,11 @@ export default function AmbianceMaker({
           );
         })}
       </div>
+      {ambianceData?.description && (
+        <div className={styles.description_wrapper}>
+          <div className={styles.description}>{ambianceData.description}</div>
+        </div>
+      )}
     </div>
   );
 }
