@@ -32,8 +32,7 @@
       rgba(116, 107, 121, 0.5) 0%,
       rgba(73, 70, 83, 0.5) 100%
     ),
-    linear-gradient(185deg, rgb(116, 107, 121) 0%, rgb(38, 33, 51) 100%);
-
+    linear-gradient(185deg, rgb(116, 107, 121) 0%, rgb(73, 70, 83) 100%);
 }
 
 .wrapper {

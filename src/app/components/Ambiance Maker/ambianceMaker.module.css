@@ -11,12 +11,14 @@
   display: flex;
   justify-content: flex-start;
   width: 100%;
+  overflow-x: auto;
 }
 
 .header {
   display: flex;
   height: 4.2rem;
   padding-left: 1.8rem;
+  margin-bottom: 0.4rem;
   column-gap: 1.2rem;
 }
 
@@ -73,6 +75,14 @@
       rgba(57, 50, 57, 0.6) 100%
     ),
     linear-gradient(180deg, rgb(50, 50, 50) 0%, rgb(57, 50, 57) 100%);
+}
+
+.share {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2.4rem;
+  width: 100%;
 }
 
 .description {

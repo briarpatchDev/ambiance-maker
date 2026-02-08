@@ -6,10 +6,12 @@ import styles from "./ambianceMaker.module.css";
 import classNames from "classnames";
 import AmbianceInput from "@/app/components/Ambiance Input/ambianceInput";
 import AmbiancePlayer from "@/app/components/Ambiance Player/ambiancePlayer";
+import Button from "@/app/components/Buttons/Button Set/button";
 import { updateObjectArr } from "@/app/lib/setStateFunctions";
 
 interface AmbianceMakerProps {
   ambianceData?: AmbianceData;
+  user?: any;
   style?: React.CSSProperties;
 }
 
@@ -33,7 +35,7 @@ export interface AmbianceData {
 }
 
 const maxVideos = 6;
-const createVideoEntry = (): VideoData => ({
+export const createVideoEntry = (): VideoData => ({
   src: undefined,
   linkError: undefined,
   title: undefined,
@@ -47,6 +49,7 @@ const createVideoEntry = (): VideoData => ({
 
 export default function AmbianceMaker({
   ambianceData,
+  user,
   style,
 }: AmbianceMakerProps) {
   function onLinkChange(link: string, index = 0) {
@@ -73,6 +76,53 @@ export default function AmbianceMaker({
   const [videoData, setVideoData] = useState<VideoData[]>(
     Array.from({ length: maxVideos }, createVideoEntry),
   );
+
+  // Takes video data and creates a sharable link out of it
+  const shareTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [shareButtonText, setShareButtonText] = useState("Copy Ambiance Link");
+  async function shareLink() {
+    if (shareTimeoutRef.current) {
+      clearTimeout(shareTimeoutRef.current);
+    }
+    let text = `localhost:3000/test_pages/share?`;
+    let ampersand = false;
+    videoData.forEach((video, index) => {
+      const match =
+        video.src?.match(
+          /(?:https?:\/\/)?(?:[\w-]+\.)*youtube\.com\/watch\?v=([\w-]+)/i,
+        ) ||
+        video.src?.match(
+          /(?:https?:\/\/)?(?:[\w-]+\.)*youtube\.com\/shorts\/([\w-]+)/i,
+        ) ||
+        video.src?.match(
+          /(?:https?:\/\/)?(?:[\w-]+\.)*youtube\.com\/embed\/([\w-]+)/i,
+        ) ||
+        null;
+      if (!match) return;
+      const videoId = match[1];
+      text += `${ampersand ? `&` : ``}v${index + 1}=s${video.startTime}e${video.endTime}v${video.volume}r${Math.round(Number(video.playbackSpeed) * 100)}id${videoId}`;
+      ampersand = true;
+    });
+    async function writeClipboardItem(text: string) {
+      try {
+        const clipboardItem = new ClipboardItem({
+          "text/plain": new Blob([text], { type: "text/plain" }),
+        });
+        await navigator.clipboard.write([clipboardItem]);
+      } catch (err) {}
+    }
+    await writeClipboardItem(text);
+    setShareButtonText("Link copied!");
+    shareTimeoutRef.current = setTimeout(() => {
+      setShareButtonText("Copy Ambiance Link");
+    }, 1600);
+  }
+
+  // Saves an ambiance for a logged in user
+  function saveAmbiance() {}
+
+  // Saves the ambiance and submits it to the site for possible publication
+  function submitAmbiance() {}
 
   return (
     <div style={{ ...style }} className={styles.ambiance_maker}>
@@ -123,6 +173,32 @@ export default function AmbianceMaker({
           );
         })}
       </div>
+      {!ambianceData?.description &&
+        videoData.filter((video) => {
+          return video.title;
+        }).length > 1 && (
+          <div className={styles.share}>
+            <Button
+              variant="primary"
+              onClick={shareLink}
+              style={{ maxWidth: "40%", flex: "1" }}
+            >
+              {shareButtonText}
+            </Button>
+            {user && (
+              <Button
+                variant="primary"
+                onClick={saveAmbiance}
+              >{`Save Ambiance`}</Button>
+            )}
+            {user && (
+              <Button
+                variant="primary"
+                onClick={submitAmbiance}
+              >{`Submit Ambiance`}</Button>
+            )}
+          </div>
+        )}
       {ambianceData?.description && (
         <div className={styles.description_wrapper}>
           <div className={styles.description}>{ambianceData.description}</div>

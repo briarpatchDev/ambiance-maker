@@ -16,6 +16,7 @@ export default function Page() {
           <h1>{`Main`}</h1>
           <Link href="/test_pages/ambiance_maker">{`Ambiance Maker`}</Link>
           <Link href="/test_pages/ambiance_maker_data">{`Ambiance Maker Data`}</Link>
+          <Link href="/test_pages/share">{`Share`}</Link>
         </div>
         <div>
           <h1>{`Ambiance Player`}</h1>
