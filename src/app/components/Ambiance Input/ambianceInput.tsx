@@ -23,6 +23,7 @@ interface AmbianceInputProps {
   onSpeedChange: (speed: string, index?: number) => void;
   onTimeframeChange: (start: number, end: number, index?: number) => void;
   videoIndex?: number;
+  isIos?: boolean;
   initialLink?: string;
   style?: React.CSSProperties;
 }
@@ -41,6 +42,7 @@ export default function AmbianceInput({
   onSpeedChange,
   onTimeframeChange,
   videoIndex,
+  isIos,
   initialLink,
   style,
 }: AmbianceInputProps) {
@@ -114,11 +116,13 @@ export default function AmbianceInput({
             />
           </div>
           <div className={styles.video_controls}>
-            <VolumeSlider
-              currentVolume={volume}
-              onValueChange={onVolumeChange}
-              videoIndex={videoIndex}
-            />
+            {!isIos && (
+              <VolumeSlider
+                currentVolume={volume}
+                onValueChange={onVolumeChange}
+                videoIndex={videoIndex}
+              />
+            )}
             <SpeedSlider
               playbackSpeed={playbackSpeed}
               onValueChange={onSpeedChange}

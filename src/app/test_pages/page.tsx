@@ -13,8 +13,9 @@ export default function Page() {
     <div className={styles.page}>
       <div className={styles.wrapper}>
         <div>
-          <h1>{`Main`}</h1>
+          <h1>{`Ambiance Maker`}</h1>
           <Link href="/test_pages/ambiance_maker">{`Ambiance Maker`}</Link>
+          <Link href="/test_pages/ambiance_maker_user">{`Ambiance Maker User`}</Link>
           <Link href="/test_pages/ambiance_maker_data">{`Ambiance Maker Data`}</Link>
           <Link href="/test_pages/share">{`Share`}</Link>
         </div>

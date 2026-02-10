@@ -24,6 +24,7 @@
 
 .controls_wrapper button {
   all: unset;
+  box-sizing: border-box;
   height: 100%;
   padding: 0.2rem 1rem 0;
 }
@@ -34,9 +35,13 @@
 }
 
 .controls_wrapper button > svg {
-  height: 60%;
+  height: 2.88rem; /* 60% of control bar */
   width: auto;
   fill: var(--grey-text);
+}
+
+.rewind{
+  height: 2.6rem; /* 54% of control bar */
 }
 
 .videos {

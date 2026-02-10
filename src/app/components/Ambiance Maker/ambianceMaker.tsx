@@ -10,6 +10,7 @@ import Button from "@/app/components/Buttons/Button Set/button";
 import { updateObjectArr } from "@/app/lib/setStateFunctions";
 
 interface AmbianceMakerProps {
+  mode: "edit" | "draft" | "shared" | "published";
   ambianceData?: AmbianceData;
   user?: any;
   style?: React.CSSProperties;
@@ -48,6 +49,7 @@ export const createVideoEntry = (): VideoData => ({
 });
 
 export default function AmbianceMaker({
+  mode,
   ambianceData,
   user,
   style,
@@ -77,9 +79,23 @@ export default function AmbianceMaker({
     Array.from({ length: maxVideos }, createVideoEntry),
   );
 
+  // Checks if user is on iOs and displays a message that ambiance player is incompatible
+  const [isIOS, setIsIOS] = useState(false);
+  useEffect(() => {
+    const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+    const isIPhone = /iPhone/i.test(ua);
+    const isIPad = /iPad/i.test(ua);
+    const isIPod = /iPod/i.test(ua);
+    const isIPadOS =
+      /Macintosh/i.test(ua) && typeof navigator !== "undefined"
+        ? (navigator as any).maxTouchPoints > 1
+        : false;
+    setIsIOS(isIPhone || isIPad || isIPod || isIPadOS);
+  }, []);
+
   // Takes video data and creates a sharable link out of it
   const shareTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [shareButtonText, setShareButtonText] = useState("Copy Ambiance Link");
+  const [shareButtonText, setShareButtonText] = useState("Copy Link");
   async function shareLink() {
     if (shareTimeoutRef.current) {
       clearTimeout(shareTimeoutRef.current);
@@ -114,19 +130,76 @@ export default function AmbianceMaker({
     await writeClipboardItem(text);
     setShareButtonText("Link copied!");
     shareTimeoutRef.current = setTimeout(() => {
-      setShareButtonText("Copy Ambiance Link");
+      setShareButtonText("Copy Link");
     }, 1600);
   }
 
   // Saves an ambiance for a logged in user
-  function saveAmbiance() {}
+  async function saveAmbiance() {
+    try {
+      const options = {
+        method: "POST",
+        body: JSON.stringify({
+          title: inputData.title,
+          description: inputData.description,
+          ...videoData.reduce((acc, video, index) => {
+            return { ...acc, [`v${index + 1}`]: video };
+          }, {}),
+        }),
+        headers: { "Content-Type": "application/json" },
+      };
+      const res = await fetch("/ambiance/save", options);
+      const data = await res.json();
+    } catch {}
+  }
 
   // Saves the ambiance and submits it to the site for possible publication
-  function submitAmbiance() {}
+  async function submitAmbiance() {
+    try {
+      const options = {
+        method: "POST",
+        body: JSON.stringify({
+          title: inputData.title,
+          description: inputData.description,
+          ...videoData.reduce((acc, video, index) => {
+            return { ...acc, [`v${index + 1}`]: video };
+          }, {}),
+        }),
+        headers: { "Content-Type": "application/json" },
+      };
+      const res = await fetch("/ambiance/submit", options);
+      const data = await res.json();
+    } catch {}
+  }
+
+  // Handles the title and description inputs
+  const [inputData, setInputData] = useState({
+    title: mode === "draft" ? ambianceData?.title || "Untitled" : "Untitled",
+    description: "",
+  });
+  function handleInputChange(
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) {
+    const { name, value } = e.target;
+    setInputData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  }
+  function handleTitleBlur(e: React.FocusEvent<HTMLInputElement>) {
+    if (inputData.title.trim().length === 0) {
+      setInputData((prevData) => ({
+        ...prevData,
+        title: "Untitled",
+      }));
+    }
+  }
 
   return (
     <div style={{ ...style }} className={styles.ambiance_maker}>
-      {ambianceData?.title && (
+      {mode === "published" && ambianceData?.title ? (
         <div className={styles.header_wrapper}>
           <div className={styles.header}>
             <h1 className={styles.title}>{ambianceData.title}</h1>
@@ -138,6 +211,25 @@ export default function AmbianceMaker({
             )}
           </div>
         </div>
+      ) : (
+        user && (
+          <div className={styles.header_wrapper}>
+            <div className={styles.header}>
+              <input
+                id="title"
+                name="title"
+                type="text"
+                value={inputData.title}
+                onChange={handleInputChange}
+                className={styles.title}
+                maxLength={64}
+                onBlur={handleTitleBlur}
+                spellCheck={false}
+                aria-label="Edit title"
+              />
+            </div>
+          </div>
+        )
       )}
       <div className={styles.player_wrapper}>
         <AmbiancePlayer
@@ -146,6 +238,12 @@ export default function AmbianceMaker({
           setVideoData={setVideoData}
         />
       </div>
+      {isIOS && (
+        <div className={styles.ios_notice} role="status">
+          iOS can only play one audio track at a time. For multi-track
+          ambiances, use desktop.
+        </div>
+      )}
       <div className={styles.inputs_wrapper}>
         {videoData.map((video, videoIndex) => {
           return (
@@ -163,6 +261,7 @@ export default function AmbianceMaker({
               onVolumeChange={onVolumeChange}
               onSpeedChange={onSpeedChange}
               videoIndex={videoIndex}
+              isIos={isIOS}
               initialLink={
                 ambianceData && ambianceData.videoData[videoIndex]
                   ? ambianceData.videoData[videoIndex].src
@@ -173,6 +272,28 @@ export default function AmbianceMaker({
           );
         })}
       </div>
+      {mode === "published" && ambianceData?.description ? (
+        <div className={styles.description_wrapper}>
+          <div className={styles.description}>{ambianceData.description}</div>
+        </div>
+      ) : (
+        user && (
+          <div className={styles.description_wrapper}>
+            <textarea
+              id="description"
+              name="description"
+              value={inputData.description}
+              onChange={handleInputChange}
+              className={styles.description}
+              maxLength={500}
+              spellCheck={false}
+              placeholder="Describe your ambiance..."
+              aria-label="Edit description"
+              rows={4}
+            />
+          </div>
+        )
+      )}
       {!ambianceData?.description &&
         videoData.filter((video) => {
           return video.title;
@@ -181,7 +302,7 @@ export default function AmbianceMaker({
             <Button
               variant="primary"
               onClick={shareLink}
-              style={{ maxWidth: "40%", flex: "1" }}
+              style={{ maxWidth: "60%", flex: "1" }}
             >
               {shareButtonText}
             </Button>
@@ -189,21 +310,18 @@ export default function AmbianceMaker({
               <Button
                 variant="primary"
                 onClick={saveAmbiance}
+                style={{ maxWidth: "60%", flex: "1" }}
               >{`Save Ambiance`}</Button>
             )}
             {user && (
               <Button
                 variant="primary"
                 onClick={submitAmbiance}
+                style={{ maxWidth: "60%", flex: "1" }}
               >{`Submit Ambiance`}</Button>
             )}
           </div>
         )}
-      {ambianceData?.description && (
-        <div className={styles.description_wrapper}>
-          <div className={styles.description}>{ambianceData.description}</div>
-        </div>
-      )}
     </div>
   );
 }

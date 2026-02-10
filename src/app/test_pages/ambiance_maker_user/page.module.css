@@ -5,8 +5,7 @@
   width: 100vw;
   height: max-content;
   min-height: 100vh;
-  background:
-    linear-gradient(
+  background: linear-gradient(
       210deg,
       rgba(255, 255, 255, 0) 30%,
       rgba(255, 255, 255, 0.05) 50%,

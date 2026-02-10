@@ -616,7 +616,7 @@ export default function AmbiancePlayer({
             title="Rewind Videos"
             aria-label="Rewind Videos"
           >
-            <Rewind />
+            <Rewind className={styles.rewind} />
           </button>
           <button
             onClick={jumpBack}

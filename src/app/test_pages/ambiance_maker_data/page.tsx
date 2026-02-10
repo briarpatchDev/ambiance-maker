@@ -38,7 +38,7 @@ const videoData: VideoData[] = [
 ];
 
 const ambianceData: AmbianceData = {
-  title: "Relaxing Sounds",
+  title: "Relaxing Sounds - Part Twenty-Four",
   author: "robert73",
   description:
     "This is a really good description for an ambiance. There's a clock ticking, a fire spitting, rain on the windows, and the gentle hum of an old 'puter. There's a lot more you could say about this, there really is. This is a really good description for an ambiance. There's a clock ticking, a fire spitting, rain on the windows, and the gentle hum of an old 'puter.",
@@ -49,7 +49,7 @@ export default function Page() {
   return (
     <div className={styles.page}>
       <div className={styles.wrapper}>
-        <AmbianceMaker ambianceData={ambianceData} />
+        <AmbianceMaker mode="published" ambianceData={ambianceData} />
       </div>
     </div>
   );

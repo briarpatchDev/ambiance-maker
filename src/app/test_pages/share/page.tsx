@@ -37,7 +37,7 @@ export default function Page() {
   return (
     <div className={styles.page}>
       <div className={styles.wrapper}>
-        <AmbianceMaker ambianceData={{ videoData: decodeLink(searchParams) }} />
+        <AmbianceMaker mode="shared" ambianceData={{ videoData: decodeLink(searchParams) }} />
       </div>
     </div>
   );
