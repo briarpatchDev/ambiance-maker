@@ -1,15 +1,18 @@
-"use client";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./page.module.css";
-import { useState } from "react";
-import AmbianceMaker from "@/app/components/Ambiance Maker/ambianceMaker";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Homepage",
+  description: `This is a description about the page`,
+};
 
 export default function Page() {
   return (
     <div className={styles.page}>
       <div className={styles.wrapper}>
-        <AmbianceMaker user={true} mode="create" />
+        
       </div>
     </div>
   );

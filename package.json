@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.954.0",
+    "@supabase/ssr": "^0.8.0",
     "bcryptjs": "^3.0.3",
     "classnames": "^2.5.1",
     "focus-trap-react": "^11.0.4",

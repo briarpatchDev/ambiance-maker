@@ -8,9 +8,10 @@ import AmbianceInput from "@/app/components/Ambiance Input/ambianceInput";
 import AmbiancePlayer from "@/app/components/Ambiance Player/ambiancePlayer";
 import Button from "@/app/components/Buttons/Button Set/button";
 import { updateObjectArr } from "@/app/lib/setStateFunctions";
+import { useRouter } from "next/navigation";
 
 interface AmbianceMakerProps {
-  mode: "edit" | "draft" | "shared" | "published";
+  mode: "create" | "draft" | "shared" | "published";
   ambianceData?: AmbianceData;
   user?: any;
   style?: React.CSSProperties;
@@ -29,8 +30,12 @@ export interface VideoData {
 }
 
 export interface AmbianceData {
+  id?: string;
   title?: string;
   author?: string;
+  views?: number;
+  ratingTotal?: number;
+  ratingCount?: number;
   description?: string;
   videoData: VideoData[];
 }
@@ -54,10 +59,13 @@ export default function AmbianceMaker({
   user,
   style,
 }: AmbianceMakerProps) {
+  const router = useRouter();
+  // Handles when an inputs link / src changes
   function onLinkChange(link: string, index = 0) {
     updateObjectArr(setVideoData, index, { [`src`]: link });
   }
 
+  // Handles when an inputs timeframe changes
   function onTimeframeChange(start: number, end: number, index = 0) {
     updateObjectArr(setVideoData, index, {
       [`startTime`]: start,
@@ -65,19 +73,32 @@ export default function AmbianceMaker({
     });
   }
 
+  // Handles when an inputs volume changes
   function onVolumeChange(volume: string, index = 0) {
     updateObjectArr(setVideoData, index, { [`volume`]: parseInt(volume) });
   }
 
+  // Handles when an inputs playback rate changes
   function onSpeedChange(speed: string, index = 0) {
     updateObjectArr(setVideoData, index, {
       [`playbackSpeed`]: parseFloat(speed),
     });
   }
 
+  // Creates the video data
   const [videoData, setVideoData] = useState<VideoData[]>(
     Array.from({ length: maxVideos }, createVideoEntry),
   );
+
+  // Shows the buttons fully when there is at least 2 videos, makes them clickable
+  const [showButtons, setShowButtons] = useState(false);
+  useEffect(() => {
+    setShowButtons(
+      videoData.filter((video) => {
+        return video.title;
+      }).length > 1,
+    );
+  }, [videoData]);
 
   // Checks if user is on iOs and displays a message that ambiance player is incompatible
   const [isIOS, setIsIOS] = useState(false);
@@ -100,7 +121,7 @@ export default function AmbianceMaker({
     if (shareTimeoutRef.current) {
       clearTimeout(shareTimeoutRef.current);
     }
-    let text = `localhost:3000/test_pages/share?`;
+    let text = `${process.env.NEXT_PUBLIC_PROTOCOL}${process.env.NEXT_PUBLIC_DOMAIN}/test_pages/share?`;
     let ampersand = false;
     videoData.forEach((video, index) => {
       const match =
@@ -140,6 +161,7 @@ export default function AmbianceMaker({
       const options = {
         method: "POST",
         body: JSON.stringify({
+          id: ambianceData?.id,
           title: inputData.title,
           description: inputData.description,
           ...videoData.reduce((acc, video, index) => {
@@ -148,8 +170,12 @@ export default function AmbianceMaker({
         }),
         headers: { "Content-Type": "application/json" },
       };
-      const res = await fetch("/ambiance/save", options);
+      const res = await fetch("/api/ambiance/save", options);
       const data = await res.json();
+      if (data.ambiance?.id && !ambianceData?.id) {
+        router.replace(`/test_pages/drafts/${data.ambiance.id}`);
+      }
+      console.log(data);
     } catch {}
   }
 
@@ -159,6 +185,7 @@ export default function AmbianceMaker({
       const options = {
         method: "POST",
         body: JSON.stringify({
+          id: ambianceData?.id,
           title: inputData.title,
           description: inputData.description,
           ...videoData.reduce((acc, video, index) => {
@@ -167,14 +194,15 @@ export default function AmbianceMaker({
         }),
         headers: { "Content-Type": "application/json" },
       };
-      const res = await fetch("/ambiance/submit", options);
+      const res = await fetch("/api/ambiance/submit", options);
       const data = await res.json();
+      console.log(data);
     } catch {}
   }
 
   // Handles the title and description inputs
   const [inputData, setInputData] = useState({
-    title: mode === "draft" ? ambianceData?.title || "Untitled" : "Untitled",
+    title: mode === "create" ? ambianceData?.title || "Untitled" : "Untitled",
     description: "",
   });
   function handleInputChange(
@@ -294,34 +322,36 @@ export default function AmbianceMaker({
           </div>
         )
       )}
-      {!ambianceData?.description &&
-        videoData.filter((video) => {
-          return video.title;
-        }).length > 1 && (
-          <div className={styles.share}>
+      {mode !== "published" && (
+        <div className={styles.share}>
+          <Button
+            variant="primary"
+            onClick={shareLink}
+            disabled={!showButtons}
+            style={{ maxWidth: "60%", flex: "1" }}
+          >
+            {shareButtonText}
+          </Button>
+          {user && (
             <Button
               variant="primary"
-              onClick={shareLink}
+              onClick={saveAmbiance}
+              disabled={!showButtons}
               style={{ maxWidth: "60%", flex: "1" }}
             >
-              {shareButtonText}
+              {mode === "draft" ? `Save Draft` : `Save as Draft`}
             </Button>
-            {user && (
-              <Button
-                variant="primary"
-                onClick={saveAmbiance}
-                style={{ maxWidth: "60%", flex: "1" }}
-              >{`Save Ambiance`}</Button>
-            )}
-            {user && (
-              <Button
-                variant="primary"
-                onClick={submitAmbiance}
-                style={{ maxWidth: "60%", flex: "1" }}
-              >{`Submit Ambiance`}</Button>
-            )}
-          </div>
-        )}
+          )}
+          {user && (mode === "create" || mode === "draft") && (
+            <Button
+              variant="primary"
+              onClick={submitAmbiance}
+              disabled={!showButtons}
+              style={{ maxWidth: "60%", flex: "1" }}
+            >{`Submit Ambiance`}</Button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

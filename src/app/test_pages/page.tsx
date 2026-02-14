@@ -18,10 +18,13 @@ export default function Page() {
           <Link href="/test_pages/ambiance_maker_user">{`Ambiance Maker User`}</Link>
           <Link href="/test_pages/ambiance_maker_data">{`Ambiance Maker Data`}</Link>
           <Link href="/test_pages/share">{`Share`}</Link>
+          <Link href="/test_pages/drafts/">{`Drafts`}</Link>
+          <Link href="/test_pages/ambiance/">{`Ambiance`}</Link>
         </div>
         <div>
-          <h1>{`Ambiance Player`}</h1>
-          <Link href="/test_pages/player">{`Player`}</Link>
+          <h1>{`Ambiance Misc`}</h1>
+          <Link href="/test_pages/card">{`Ambiance Card`}</Link>
+          <Link href="/test_pages/manager">{`Ambiance Manager`}</Link>
         </div>
         <div>
           <h1>{`Inputs`}</h1>

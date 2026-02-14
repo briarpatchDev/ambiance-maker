@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <div className={styles.page}>
       <div className={styles.wrapper}>
-        <AmbianceMaker mode="edit" />
+        <AmbianceMaker mode="create" />
       </div>
     </div>
   );
