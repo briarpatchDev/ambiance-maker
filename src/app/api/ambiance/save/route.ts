@@ -7,6 +7,7 @@ import { cookies } from "next/headers";
 import {
   saveAmbianceSchema,
   transformVideoDataForStorage,
+  getVideoId,
   type VideoDataInput,
 } from "@/app/lib/schemas/ambiance";
 
@@ -84,6 +85,12 @@ export async function POST(req: NextRequest) {
     // Transform video data to extract just the video IDs for storage
     const videoDataForStorage = transformVideoDataForStorage(videoData);
 
+    // Generate thumbnail from first valid video
+    const firstVideo = videoData.find((v) => v.src && getVideoId(v.src));
+    const thumbnail = firstVideo
+      ? `https://img.youtube.com//vi/${getVideoId(firstVideo.src!)}/mqdefault.jpg`
+      : null;
+
     let ambiance;
     let error;
 
@@ -123,6 +130,7 @@ export async function POST(req: NextRequest) {
           title: title || "Untitled",
           description: description || "",
           video_data: videoDataForStorage,
+          thumbnail,
         })
         .eq("id", id)
         .select("id, title, status, created_at, updated_at")
@@ -160,6 +168,7 @@ export async function POST(req: NextRequest) {
             description: description || "",
             status: "draft",
             video_data: videoDataForStorage,
+            thumbnail,
           })
           .select("id, title, status, created_at")
           .single();

@@ -99,6 +99,12 @@ export async function POST(req: NextRequest) {
     // Transform video data to extract just the video IDs for storage
     const videoDataForStorage = transformVideoDataForStorage(videoData);
 
+    // Generate thumbnail from first valid video
+    const firstVideo = videoData.find((v) => v.src && getVideoId(v.src));
+    const thumbnail = firstVideo
+      ? `https://img.youtube.com/vi/${getVideoId(firstVideo.src!)}/mqdefault.jpg`
+      : null;
+
     let ambiance;
     let error;
 
@@ -139,6 +145,7 @@ export async function POST(req: NextRequest) {
           description,
           status: "submitted",
           video_data: videoDataForStorage,
+          thumbnail,
         })
         .eq("id", id)
         .select("id, title, status, created_at, updated_at")
@@ -176,6 +183,7 @@ export async function POST(req: NextRequest) {
             description,
             status: "submitted",
             video_data: videoDataForStorage,
+            thumbnail,
           })
           .select("id, title, status, created_at")
           .single();

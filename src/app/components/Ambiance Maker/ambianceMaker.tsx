@@ -33,10 +33,13 @@ export interface AmbianceData {
   id?: string;
   title?: string;
   author?: string;
+  dateUpdated?: Date;
+  datePublished?: Date;
   views?: number;
   ratingTotal?: number;
   ratingCount?: number;
   description?: string;
+  thumbnail?: string;
   videoData: VideoData[];
 }
 
@@ -156,7 +159,16 @@ export default function AmbianceMaker({
   }
 
   // Saves an ambiance for a logged in user
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [saveButtonText, setSaveButtonText] = useState(
+    mode === "draft" ? `Save Draft` : `Save as Draft`,
+  );
+  const saving = useRef(false);
+  // Save function
   async function saveAmbiance() {
+    if (saving.current) return;
+    setSaveButtonText("Saving...");
+    saving.current = true;
     try {
       const options = {
         method: "POST",
@@ -172,9 +184,19 @@ export default function AmbianceMaker({
       };
       const res = await fetch("/api/ambiance/save", options);
       const data = await res.json();
+      if (data.error) {
+        setSaveButtonText("Try Again");
+      } else {
+        setSaveButtonText("Saved!");
+      }
       if (data.ambiance?.id && !ambianceData?.id) {
         router.replace(`/test_pages/drafts/${data.ambiance.id}`);
       }
+      saveTimeoutRef.current && clearTimeout(saveTimeoutRef.current);
+      saveTimeoutRef.current = setTimeout(() => {
+        setSaveButtonText(mode === "draft" ? `Save Draft` : `Save as Draft`);
+        saving.current = false;
+      }, 1200);
       console.log(data);
     } catch {}
   }
@@ -202,8 +224,8 @@ export default function AmbianceMaker({
 
   // Handles the title and description inputs
   const [inputData, setInputData] = useState({
-    title: mode === "create" ? ambianceData?.title || "Untitled" : "Untitled",
-    description: "",
+    title: ambianceData?.title || "Untitled",
+    description: ambianceData?.description || "",
   });
   function handleInputChange(
     e: React.ChangeEvent<
@@ -339,7 +361,7 @@ export default function AmbianceMaker({
               disabled={!showButtons}
               style={{ maxWidth: "60%", flex: "1" }}
             >
-              {mode === "draft" ? `Save Draft` : `Save as Draft`}
+              {saveButtonText}
             </Button>
           )}
           {user && (mode === "create" || mode === "draft") && (

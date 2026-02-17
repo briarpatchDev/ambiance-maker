@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS ambiances (
   description TEXT NOT NULL DEFAULT '',
   status VARCHAR(20) NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'submitted', 'published')),
   video_data JSONB NOT NULL,
+  thumbnail VARCHAR(255),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   published_at TIMESTAMPTZ,

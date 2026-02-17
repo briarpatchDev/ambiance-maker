@@ -9,7 +9,7 @@
       rgba(57, 50, 57, 0.6) 100%
     ),
     linear-gradient(180deg, rgb(50, 50, 50) 0%, rgb(57, 50, 57) 100%);
-  padding: 0.6rem 0.68em;
+  padding: 0.6rem 0.6rem;
   color: var(--grey-text);
   flex: 1;
   min-width: max(30rem, 30%);
