@@ -1,15 +1,12 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./page.module.css";
 import type { Metadata } from "next";
+import { useRef } from "react";
 import { VideoData } from "@/app/components/Ambiance Player/ambiancePlayer";
 import { AmbianceData } from "@/app/components/Ambiance Maker/ambianceMaker";
 import AmbianceCard from "@/app/components/Ambiance Card/ambianceCard";
-
-export const metadata: Metadata = {
-  title: "Homepage",
-  description: `This is a description about the page`,
-};
 
 const videoData: VideoData[] = [
   {
@@ -175,8 +172,9 @@ const drafts = [
 ];
 
 export default function Page() {
+  const containerRef = useRef<HTMLDivElement>(null);
   return (
-    <div className={styles.page}>
+    <div className={styles.page} ref={containerRef}>
       <h2>{`Ambiances`}</h2>
       <div className={styles.container_wrapper}>
         <div className={styles.ambiances_container}>
@@ -187,12 +185,14 @@ export default function Page() {
                 title={ambiance.title || ``}
                 thumbnail={ambiance.thumbnail || ``}
                 linkTo={ambiance.datePublished ? "ambiance" : "draft"}
+                containerRef={containerRef}
                 views={ambiance.views}
                 author={ambiance.author}
                 ratingTotal={ambiance.ratingTotal}
                 ratingCount={ambiance.ratingCount}
                 datePublished={ambiance.datePublished}
                 dateUpdated={ambiance.dateUpdated}
+                description={ambiance.description}
                 key={index}
               />
             );
@@ -209,12 +209,14 @@ export default function Page() {
                 title={draft.title || ``}
                 thumbnail={draft.thumbnail || ``}
                 linkTo={draft.datePublished ? "ambiance" : "draft"}
+                containerRef={containerRef}
                 views={draft.views}
                 author={draft.author}
                 ratingTotal={draft.ratingTotal}
                 ratingCount={draft.ratingCount}
                 datePublished={draft.datePublished}
                 dateUpdated={draft.dateUpdated}
+                description={draft.description}
                 key={index}
               />
             );

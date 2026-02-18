@@ -3,15 +3,37 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./ambianceCard.module.css";
+import TooltipLink from "@/app/components/Tooltip Link/tooltipLink";
 import classNames from "classnames";
+
+// The description that appears as a tooltip
+export function Description({
+  description,
+}: {
+  description: string | undefined;
+}) {
+  return (
+    description && (
+      <div
+        id="description"
+        className={styles.description_wrapper}
+        role="tooltip"
+      >
+        <div className={styles.description}>{description}</div>
+      </div>
+    )
+  );
+}
 
 interface AmbianceCardProps {
   id: string;
   title: string;
   thumbnail: string;
   linkTo: "ambiance" | "draft";
-  views?: number;
+  containerRef: React.RefObject<HTMLElement | null>;
   author?: string;
+  description?: string;
+  views?: number;
   ratingTotal?: number;
   ratingCount?: number;
   datePublished?: Date;
@@ -25,8 +47,10 @@ export default function AmbianceCard({
   title,
   thumbnail,
   linkTo,
+  containerRef,
   views,
   author,
+  description,
   ratingTotal,
   ratingCount,
   datePublished,
@@ -34,10 +58,8 @@ export default function AmbianceCard({
   mode = "vertical",
   style,
 }: AmbianceCardProps) {
-  const [property, setProperty] = useState();
-
   // Takes the number of views and abbreviates it
-  function viewsMessage(views: number): string {
+  function formatViews(views: number): string {
     if (views < 2) {
       return `No views`;
     }
@@ -50,47 +72,56 @@ export default function AmbianceCard({
     if (views < 1000000) {
       return `${Math.floor(views / 1000)}k views`;
     }
-    return `${Math.floor(views / 1000000)}`;
+    return `${Math.floor(views / 100000) / 10}M views`;
   }
 
-  useEffect(() => {
-    return () => {};
-  }, []);
-
   return (
-    <Link
+    <TooltipLink
       href={`/${linkTo === "ambiance" ? `ambiance` : `drafts`}/${id}`}
-      style={{ ...style }}
-      className={styles.card}
-      aria-label={`Go to ambiance "$${title}"`}
+      direction="bottom"
+      tooltip={
+        description ? <Description description={description} /> : undefined
+      }
+      tooltipId={description ? "description" : ""}
+      aria-label={`Go to /${linkTo === "ambiance" ? `ambiance` : `draft`} "${title}"`}
+      offset={0.4}
+      containerRef={containerRef}
     >
-      <div className={styles.image_wrapper}>
-        <img
-          className={styles.thumbnail}
-          src={thumbnail}
-          alt="Ambiance Thumbnail"
-        />
-      </div>
-      <h1 className={styles.title}>{title}</h1>
-      {linkTo === "ambiance" ? (
-        <div className={styles.details_wrapper}>
-          <div className={styles.details_row}>
-            {views && <div className={styles.views}>{viewsMessage(views)}</div>}
-            {datePublished && <div>{datePublished.toLocaleDateString()}</div>}
-          </div>
-          {author && (
-            <div className={styles.author_row}>
-              <div className={styles.author}>{author}</div>
+      <div
+        style={{ ...style }}
+        className={styles.card}
+        aria-label={`Go to ${linkTo === "ambiance" ? `ambiance` : `draft`} "$${title}"`}
+      >
+        <div className={styles.image_wrapper}>
+          <img
+            className={styles.thumbnail}
+            src={thumbnail}
+            alt="Ambiance Thumbnail"
+          />
+        </div>
+        <h1 className={styles.title}>{title}</h1>
+        {linkTo === "ambiance" ? (
+          <div className={styles.details_wrapper}>
+            <div className={styles.details_row}>
+              {views && (
+                <div className={styles.views}>{formatViews(views)}</div>
+              )}
+              {datePublished && <div>{datePublished.toLocaleDateString()}</div>}
             </div>
-          )}
-        </div>
-      ) : (
-        <div className={styles.details_wrapper}>
-          <div className={styles.details_row}>
-            {dateUpdated && <div>{dateUpdated.toLocaleDateString()}</div>}
+            {author && (
+              <div className={styles.by_line}>
+                <div className={styles.author}>{author}</div>
+              </div>
+            )}
           </div>
-        </div>
-      )}
-    </Link>
+        ) : (
+          <div className={styles.details_wrapper}>
+            <div className={styles.details_row}>
+              {dateUpdated && <div>{dateUpdated.toLocaleDateString()}</div>}
+            </div>
+          </div>
+        )}
+      </div>
+    </TooltipLink>
   );
 }

@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100%;
+  max-height: 28rem;
   background:
     linear-gradient(
       270deg,
@@ -18,17 +20,17 @@
   user-select: none;
 }
 
-a.card {
+.card {
   color: var(--grey-text);
   transition: color 0.3s;
 }
 
-a.card:hover {
-  color: rgb(245, 245, 245);
-  transition: color 0.6s;
+.card:hover {
+  color: rgb(250, 250, 250);
+  transition: color 0.3s;
 }
 
-a.card img {
+.card img {
   filter: brightness(1);
   transform: scale(1);
   transition:
@@ -36,12 +38,12 @@ a.card img {
     transform 0.6s;
 }
 
-a.card:hover img {
+.card:hover img {
   filter: brightness(1.16);
   transform: scale(1.05);
   transition:
     filter 0.3s,
-    transform 4s;
+    transform 0.6s;
 }
 
 .card > * {
@@ -101,12 +103,42 @@ a.card:hover img {
   font-weight: 300;
 }
 
-.author_row {
+.by_line {
   display: flex;
   justify-content: flex-end;
   font-family: sans-serif;
   font-size: 1.6rem;
   font-weight: 300;
+}
+
+.description_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36rem;
+  border-radius: 1.2rem;
+  border: 0.1rem solid rgb(30, 0, 10);
+  background:
+    linear-gradient(
+      270deg,
+      rgba(121, 112, 125, 0.7) 0%,
+      rgba(120, 120, 120, 0.6) 100%
+    ),
+    linear-gradient(180deg, rgb(120, 120, 120) 0%, rgb(93, 81, 99) 100%);
+  box-shadow:
+    6px 3px 6px 0px rgba(0, 0, 0, 0.3),
+    -6px 3px 6px 0px rgba(0, 0, 0, 0.3),
+    0px 6px 6px 0px rgba(0, 0, 0, 0.3);
+}
+
+.description {
+  color: var(--grey-text);
+  min-height: 4.8rem;
+  padding: 1.2rem 1.8rem;
+  font-size: 1.6rem;
+  width: 100%;
+  max-width: 95%;
+  border-radius: 1.2rem;
 }
 
 /* Desktop Styles */
