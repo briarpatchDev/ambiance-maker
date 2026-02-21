@@ -30,7 +30,7 @@ export default function LoaderFullscreen({
         style={backdropStyle}
       >
         <div tabIndex={0} aria-live="polite" className={styles.offscreen} />
-        {children}
+        <div className={styles.loader_container}>{children}</div>
       </div>
     </FocusTrap>
   );

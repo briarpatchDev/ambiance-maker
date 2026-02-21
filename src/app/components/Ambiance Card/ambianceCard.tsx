@@ -25,11 +25,12 @@ export function Description({
   );
 }
 
-interface AmbianceCardProps {
+export interface AmbianceCardProps {
   id: string;
   title: string;
   thumbnail: string;
   linkTo: "ambiance" | "draft";
+  linkTarget?: React.HTMLAttributeAnchorTarget;
   containerRef: React.RefObject<HTMLElement | null>;
   author?: string;
   description?: string;
@@ -47,6 +48,7 @@ export default function AmbianceCard({
   title,
   thumbnail,
   linkTo,
+  linkTarget = "_self",
   containerRef,
   views,
   author,
@@ -76,52 +78,60 @@ export default function AmbianceCard({
   }
 
   return (
-    <TooltipLink
-      href={`/${linkTo === "ambiance" ? `ambiance` : `drafts`}/${id}`}
-      direction="bottom"
-      tooltip={
-        description ? <Description description={description} /> : undefined
-      }
-      tooltipId={description ? "description" : ""}
-      aria-label={`Go to /${linkTo === "ambiance" ? `ambiance` : `draft`} "${title}"`}
-      offset={0.4}
-      containerRef={containerRef}
+    <div
+      className={classNames(styles.card_wrapper, {
+        [styles.horizontal]: mode === "horizontal",
+      })}
     >
-      <div
-        style={{ ...style }}
-        className={styles.card}
-        aria-label={`Go to ${linkTo === "ambiance" ? `ambiance` : `draft`} "$${title}"`}
+      <TooltipLink
+        href={`/${linkTo === "ambiance" ? `ambiance` : `drafts`}/${id}`}
+        target={linkTarget}
+        direction="bottom"
+        tooltip={
+          description ? <Description description={description} /> : undefined
+        }
+        tooltipId={description ? "description" : ""}
+        aria-label={`Go to /${linkTo === "ambiance" ? `ambiance` : `draft`} "${title}"`}
+        offset={0.4}
+        containerRef={containerRef}
       >
-        <div className={styles.image_wrapper}>
-          <img
-            className={styles.thumbnail}
-            src={thumbnail}
-            alt="Ambiance Thumbnail"
-          />
-        </div>
-        <h1 className={styles.title}>{title}</h1>
-        {linkTo === "ambiance" ? (
-          <div className={styles.details_wrapper}>
-            <div className={styles.details_row}>
-              {views && (
-                <div className={styles.views}>{formatViews(views)}</div>
-              )}
-              {datePublished && <div>{datePublished.toLocaleDateString()}</div>}
-            </div>
-            {author && (
-              <div className={styles.by_line}>
-                <div className={styles.author}>{author}</div>
+        <div style={{ ...style }} className={styles.card}>
+          <div className={styles.image_wrapper}>
+            <img
+              className={styles.thumbnail}
+              src={thumbnail}
+              alt="Ambiance Thumbnail"
+            />
+          </div>
+
+          <div className={styles.meta_wrapper}>
+            <h1 className={styles.title}>{title}</h1>
+            {linkTo === "ambiance" ? (
+              <div className={styles.meta_section}>
+                <div className={styles.meta_row}>
+                  {views && (
+                    <div className={styles.views}>{formatViews(views)}</div>
+                  )}
+                  {datePublished && (
+                    <div>{datePublished.toLocaleDateString()}</div>
+                  )}
+                </div>
+                {author && (
+                  <div className={styles.byline}>
+                    <div className={styles.author}>{author}</div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className={styles.meta_wrapper}>
+                <div className={styles.meta_row}>
+                  {dateUpdated && <div>{dateUpdated.toLocaleDateString()}</div>}
+                </div>
               </div>
             )}
           </div>
-        ) : (
-          <div className={styles.details_wrapper}>
-            <div className={styles.details_row}>
-              {dateUpdated && <div>{dateUpdated.toLocaleDateString()}</div>}
-            </div>
-          </div>
-        )}
-      </div>
-    </TooltipLink>
+        </div>
+      </TooltipLink>
+    </div>
   );
 }

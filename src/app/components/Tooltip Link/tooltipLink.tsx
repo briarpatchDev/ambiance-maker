@@ -26,6 +26,7 @@ interface TooltipLinkProps {
   tooltipId: string;
   direction: Direction;
   href: string;
+  target?: React.HTMLAttributeAnchorTarget;
   offset?: number;
   shiftRem?: number;
   shiftChildPercent?: number;
@@ -75,6 +76,7 @@ export default function TooltipLink({
   tooltipId,
   direction,
   href,
+  target = "_self",
   offset = 0.0,
   shiftRem = 0.0,
   shiftChildPercent = 0,
@@ -318,6 +320,7 @@ export default function TooltipLink({
   return (
     <Link
       href={href}
+      target={target}
       ref={childrenRef}
       onFocus={focusable ? updateTooltipStatus : undefined}
       onBlur={focusable ? updateTooltipStatus : undefined}

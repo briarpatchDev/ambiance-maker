@@ -1,7 +1,257 @@
+.selection_manager {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  position: relative;
+  width: 100%;
+  max-width: 150rem;
+  color: var(--grey-text);
+}
 
+.content_wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  row-gap: 0.4rem;
+}
 
+.item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: var(--smallBorder);
+  height: 16rem;
+  width: 100%;
+}
 
+.content_wrapper > * {
+  display: flex;
+}
 
+.selection_manager_header {
+  display: flex;
+  justify-content: space-between;
+  height: 6rem;
+  width: 100%;
+  padding: 1.2rem;
+}
+
+.selection_manager_header > * {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.selection_manager_header h1 {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  column-gap: 2rem;
+  font-size: 3rem;
+  font-weight: 1000;
+  font-family: "Manrope", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+}
+
+.selection_manager_header h1 svg {
+  transform: translateY(0.4rem);
+  height: 3.6rem;
+  width: auto;
+  fill: var(--grey-text);
+}
+
+.trash_btn_wrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.trash_btn_wrapper button {
+  height: 80%;
+}
+
+.trash_btn_wrapper svg {
+  height: 80%;
+}
+
+.delete_menu {
+  display: flex;
+  justify-content: flex-end;
+  column-gap: 0.8rem;
+  margin-bottom: 0.8rem;
+  animation: selectAllWrapperAppear 0.2s;
+}
+
+.entries_and_select_all_wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 0.6rem;
+  width: 100%;
+}
+
+.entries_wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: start;
+}
+
+.entries_wrapper.mobile {
+  flex-direction: column;
+  flex-wrap: unset;
+  justify-content: unset;
+  align-items: center;
+}
+
+.mobile .entry_container {
+  width: 100%;
+  justify-content: center;
+}
+
+.entry_container {
+  display: flex;
+  position: relative;
+  padding: 0.4rem;
+}
+
+.select_all_wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: center;
+  column-gap: 0.4rem;
+  animation: selectAllWrapperAppear 0.2s;
+  height: 1.8rem;
+  font-size: 1.6rem;
+  margin-bottom: 1.2rem;
+}
+
+.select_all_wrapper input {
+  margin: 0 0.6rem;
+}
+
+@keyframes selectAllWrapperAppear {
+  0% {
+    height: 0;
+    margin-bottom: 0;
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.checkbox_wrapper {
+  position: absolute;
+  /*
+  width: 5.4rem;
+  min-width: 3rem;
+  opacity: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  */
+  top: 0.4rem;
+
+  left: 0.4rem;
+  z-index: 1;
+  animation: checkboxWrapperAppear 0.3s;
+}
+
+@keyframes checkboxWrapperAppear {
+  0% {
+    /*
+    width: 0;
+    opacity: 0;
+    min-width: 0;
+    */
+    opacity: 0;
+  }
+  40% {
+    /*
+    opacity: 0;
+    */
+  }
+  100% {
+    opacity: 1;
+    /*
+    min-width: 3rem;
+    */
+  }
+}
+
+.checkbox {
+  cursor: pointer;
+  height: 2.4rem;
+  width: 2.4rem;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0.15rem solid rgba(200, 200, 200, 0.6);
+  border-radius: 0.3rem;
+  background: rgba(0, 0, 0, 0.9);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.checkbox:hover {
+  border-color: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.checkbox:checked {
+  background: rgba(20, 0, 0, 0.9);
+  border-color: rgb(200, 50, 50);
+}
+
+.checkbox:checked::after {
+  content: "✕";
+  color: rgb(210, 40, 40);
+  font-size: 4.2rem;
+  font-weight: bold;
+  line-height: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateZ(-4deg);
+}
+
+.checkbox_wrapper .checkbox {
+  height: 12rem;
+  width: 12rem;
+}
+
+.checkbox_wrapper .checkbox::after {
+  transform: translate(-50%, -50%);
+  font-size: 12rem;
+}
+
+.buttons_wrapper {
+  display: flex;
+  justify-content: center;
+  column-gap: 1.2rem;
+}
+
+.hidden {
+  opacity: 0;
+}
+
+.message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.8rem;
+  width: 100%;
+  padding: 0.4rem;
+  height: 6rem;
+  text-align: center;
+}
+
+@media screen and (max-width: 480px) {
+}
 
 /* Desktop Styles */
 @media screen and (min-width: 651px) and (max-width: 1023px) {
