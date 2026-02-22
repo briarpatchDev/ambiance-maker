@@ -25,6 +25,7 @@ export default function Page() {
           <h1>{`Ambiance Misc`}</h1>
           <Link href="/test_pages/card">{`Ambiance Card`}</Link>
           <Link href="/test_pages/manager">{`Ambiance Manager`}</Link>
+          <Link href="/test_pages/pagination">{`Pagination`}</Link>
         </div>
         <div>
           <h1>{`Inputs`}</h1>
