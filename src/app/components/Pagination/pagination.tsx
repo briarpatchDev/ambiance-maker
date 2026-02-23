@@ -87,7 +87,7 @@ export default function Pagination({
     const sortLink = (text: string, sortOption: string, key: string) => {
       let params: string[] = [];
       if (pageSize !== DEFAULT_PAGE_SIZE) params.push(`page_size=${pageSize}`);
-      if (sortOption !== DEFAULT_SORT) params.push(`sort=${sortOption}`);
+      params.push(`sort=${sortOption}`);
       const queryString = params.toString() ? `?${params.join("&")}` : "";
       return (
         <Link
@@ -120,8 +120,9 @@ export default function Pagination({
     const pageSizeButton = (text: string, newPageSize: number) => {
       let params: string[] = [];
       if (page !== 1) params.push(`page=${page}`);
-      if (newPageSize !== DEFAULT_PAGE_SIZE)
+
         params.push(`page_size=${newPageSize}`);
+      
       if (sort !== DEFAULT_SORT) params.push(`sort=${sort}`);
       const queryString = params.toString() ? `?${params.join("&")}` : "";
       return (

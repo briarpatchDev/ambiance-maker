@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     let collection = searchParams.get("collection") || "default";
     let page = Number(searchParams.get("page")) || 1;
-    const sort = searchParams.get("sort") || DEFAULT_SORT;
+    let sort = searchParams.get("sort") || DEFAULT_SORT;
     //Page size and page size validation
     let pageSize = Number(searchParams.get("page_size")) || DEFAULT_PAGE_SIZE; //Items that will appear on each page
     if (pageSize < 12) {
@@ -65,6 +65,7 @@ export async function GET(req: NextRequest) {
           a: { datePublished: Date },
           b: { datePublished: Date },
         ) {
+          sort = "newest"; // Redefines to "newest" in case of bad param
           return (
             new Date(b.datePublished).getTime() -
             new Date(a.datePublished).getTime()

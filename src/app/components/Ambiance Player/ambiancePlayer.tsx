@@ -89,10 +89,9 @@ export default function AmbiancePlayer({
 
   // Timeouts for controlling looping videos
   const timeoutRefs = useRef<(NodeJS.Timeout | null)[]>([]);
-  // Keeps volume and speed inputs the same, tracks current time
-  const volumeTimeoutRefs = useRef<(NodeJS.Timeout | null)[]>([]);
-  const speedTimeoutRefs = useRef<(NodeJS.Timeout | null)[]>([]);
-  const currentTimeRefs = useRef<(NodeJS.Timeout | null)[]>([]);
+  // Single collection of intervals used to keep the iframe state in sync
+  const videoIntervalRefs = useRef<(NodeJS.Timeout | null)[]>([]);
+  const lastVolumeRef = useRef<(number | undefined)[]>([]);
   // Tracks which players are currently being initialized
   const initializingRef = useRef<boolean[]>([]);
 
@@ -138,7 +137,11 @@ export default function AmbiancePlayer({
         // Update existing player props immediately
         if (playerRefs.current[index] && embedUrl && videoId) {
           const player = playerRefs.current[index];
-          player.setVolume(video.volume ?? 100);
+          const desiredVol = video.volume ?? 100;
+          if (desiredVol !== lastVolumeRef.current[index]) {
+            player.setVolume(desiredVol);
+            lastVolumeRef.current[index] = desiredVol;
+          }
           player.setPlaybackRate(video.playbackSpeed || 1.0);
           const currentTime = player.getCurrentTime();
           const prevStartTime = prevStartTimesRef.current[index];
@@ -187,18 +190,13 @@ export default function AmbiancePlayer({
               clearTimeout(timeoutRefs.current[index]!);
               timeoutRefs.current[index] = null;
             }
-            if (volumeTimeoutRefs.current[index]) {
-              clearInterval(volumeTimeoutRefs.current[index]!);
-              volumeTimeoutRefs.current[index] = null;
+            lastVolumeRef.current[index] = undefined;
+
+            if (videoIntervalRefs.current[index]) {
+              clearInterval(videoIntervalRefs.current[index]!);
+              videoIntervalRefs.current[index] = null;
             }
-            if (speedTimeoutRefs.current[index]) {
-              clearInterval(speedTimeoutRefs.current[index]!);
-              speedTimeoutRefs.current[index] = null;
-            }
-            if (timeoutRefs.current[index]) {
-              clearInterval(currentTimeRefs.current[index]!);
-              currentTimeRefs.current[index] = null;
-            }
+
             if (playerRefs.current[index]) {
               try {
                 playerRefs.current[index].stopVideo();
@@ -271,42 +269,27 @@ export default function AmbiancePlayer({
                     if (isOtherVideoPlaying) {
                       e.target.playVideo();
                     }
-                    // This changes the volume on the ambiance input when user changes volume on the video
-                    volumeTimeoutRefs.current[index] = setInterval(() => {
+
+                    videoIntervalRefs.current[index] = setInterval(() => {
+                      const player = e.target;
+                      const vol = player.getVolume();
+                      const speed = player.getPlaybackRate();
+                      const rawTime = player.getCurrentTime();
+                      const time =
+                        rawTime === 0
+                          ? videoDataRef.current[index].startTime
+                          : rawTime;
+                      const vd = videoDataRef.current[index];
                       if (
-                        e.target.getVolume() !==
-                        videoDataRef.current[index].volume
+                        vol !== vd.volume ||
+                        speed !== vd.playbackSpeed ||
+                        time !== vd.currentTime
                       ) {
                         setVideoData &&
                           updateObjectArr(setVideoData, index, {
-                            volume: e.target.getVolume(),
-                          });
-                      }
-                    }, 600);
-                    // This changes the speed on the ambiance input when user changes speed on the video
-                    speedTimeoutRefs.current[index] = setInterval(() => {
-                      if (
-                        e.target.getPlaybackRate() !==
-                        videoDataRef.current[index].playbackSpeed
-                      ) {
-                        setVideoData &&
-                          updateObjectArr(setVideoData, index, {
-                            playbackSpeed: e.target.getPlaybackRate(),
-                          });
-                      }
-                    }, 600);
-                    // Tracks the current time of the video, for indicator on the input
-                    currentTimeRefs.current[index] = setInterval(() => {
-                      if (
-                        e.target.getCurrentTime() !==
-                        videoDataRef.current[index].currentTime
-                      ) {
-                        setVideoData &&
-                          updateObjectArr(setVideoData, index, {
-                            currentTime:
-                              e.target.getCurrentTime() === 0
-                                ? videoDataRef.current[index].startTime
-                                : e.target.getCurrentTime(),
+                            volume: vol,
+                            playbackSpeed: speed,
+                            currentTime: time,
                           });
                       }
                     }, 600);
@@ -368,42 +351,27 @@ export default function AmbiancePlayer({
                           if (isOtherVideoPlaying) {
                             e.target.playVideo();
                           }
-                          // This changes the volume on the ambiance input when user changes volume on the video
-                          volumeTimeoutRefs.current[index] = setInterval(() => {
+
+                          videoIntervalRefs.current[index] = setInterval(() => {
+                            const player = e.target;
+                            const vol = player.getVolume();
+                            const speed = player.getPlaybackRate();
+                            const rawTime = player.getCurrentTime();
+                            const time =
+                              rawTime === 0
+                                ? videoDataRef.current[index].startTime
+                                : rawTime;
+                            const vd = videoDataRef.current[index];
                             if (
-                              e.target.getVolume() !==
-                              videoDataRef.current[index].volume
+                              vol !== vd.volume ||
+                              speed !== vd.playbackSpeed ||
+                              time !== vd.currentTime
                             ) {
                               setVideoData &&
                                 updateObjectArr(setVideoData, index, {
-                                  volume: e.target.getVolume(),
-                                });
-                            }
-                          }, 600);
-                          // This changes the speed on the ambiance input when user changes speed on the video
-                          speedTimeoutRefs.current[index] = setInterval(() => {
-                            if (
-                              e.target.getPlaybackRate() !==
-                              videoDataRef.current[index].playbackSpeed
-                            ) {
-                              setVideoData &&
-                                updateObjectArr(setVideoData, index, {
-                                  playbackSpeed: e.target.getPlaybackRate(),
-                                });
-                            }
-                          }, 600);
-                          // Tracks the current time of the video, for indicator on the input
-                          currentTimeRefs.current[index] = setInterval(() => {
-                            if (
-                              e.target.getCurrentTime() !==
-                              videoDataRef.current[index].currentTime
-                            ) {
-                              setVideoData &&
-                                updateObjectArr(setVideoData, index, {
-                                  currentTime:
-                                    e.target.getCurrentTime() === 0
-                                      ? videoDataRef.current[index].startTime
-                                      : e.target.getCurrentTime(),
+                                  volume: vol,
+                                  playbackSpeed: speed,
+                                  currentTime: time,
                                 });
                             }
                           }, 600);

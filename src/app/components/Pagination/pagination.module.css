@@ -65,7 +65,7 @@
 
 .sort_option.active,
 .size_option.active {
-  background-color: unset;
+  background-color: rgb(120, 120, 120);
   border: 0.1rem solid rgb(50, 50, 50);
   border-right: none;
 }
