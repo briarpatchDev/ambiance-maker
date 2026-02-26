@@ -587,6 +587,7 @@ export default function AmbiancePlayer({
             <Rewind className={styles.rewind} />
           </button>
           <button
+            className={styles.desktop_button}
             onClick={jumpBack}
             title="Rewind 10s"
             aria-label="Rewind 10s"
@@ -594,7 +595,12 @@ export default function AmbiancePlayer({
           >
             <Backwards style={{ padding: "0.2rem 0" }} />
           </button>
-          <button onClick={jumpForward} title="Jump 10s" aria-label="Jump 10s">
+          <button
+            className={styles.desktop_button}
+            onClick={jumpForward}
+            title="Jump 10s"
+            aria-label="Jump 10s"
+          >
             <Backwards
               style={{ transform: "rotateZ(180deg)", padding: "0.2rem 0" }}
             />

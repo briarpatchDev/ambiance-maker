@@ -1,0 +1,167 @@
+.side_menu {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 19.2rem;
+  min-width: 19.2rem;
+  min-height: 100vh;
+  border-right: 0.1rem solid rgba(57, 50, 57);
+  background-color: #323232;
+  padding-top: 1.2rem;
+  transition:
+    width 0.2s,
+    min-width 0.2s;
+}
+
+.side_menu:not(.expanded) {
+  width: 6rem;
+  min-width: 6rem;
+  transition:
+    width 0.2s,
+    min-width 0.2s;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 8rem;
+}
+
+.header a {
+  display: flex;
+  width: 5.4rem;
+  height: 5.4rem;
+}
+
+.header a img {
+  width: 100%;
+  height: 100%;
+}
+
+button.menu_item,
+.menu_controls button {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.menu_controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 4.8rem;
+  width: 100%;
+  padding-left: 0rem;
+  margin: 1.8rem 0 3rem;
+}
+
+.menu_controls button {
+  margin-right: 1.6rem;
+  margin-left: 0rem;
+}
+
+.side_menu:not(.expanded) .menu_controls button {
+  margin-right: 0.6rem;
+  margin-left: 0.6rem;
+}
+
+.menu_controls svg {
+  width: 4.8rem;
+  height: auto;
+  fill: var(--grey-text);
+  transition: all 0.1s;
+}
+
+.side_menu a {
+  color: var(--grey-text);
+  cursor: pointer;
+}
+
+.menu_item,
+button.menu_item {
+  display: flex;
+  align-items: center;
+  padding: 0 0 0 2rem;
+  column-gap: 1.6rem;
+  height: 6rem;
+  width: 100%;
+  font-size: 2rem;
+  color: var(--grey-text);
+  background-color: rgb(75, 75, 75, 0);
+  transition: all 0.1s;
+  border-radius: 1.6rem;
+}
+
+.menu_item:hover,
+button.menu_item:hover {
+  background-color: rgb(75, 75, 75, 1);
+  transition: all 0.1s;
+  color: white;
+}
+
+.menu_item svg {
+  height: 3rem;
+  width: auto;
+  fill: var(--grey-text);
+  transition: all 0.1s;
+}
+
+.menu_item:hover svg,
+.menu_controls svg:hover {
+  fill: white;
+  transition: all 0.1s;
+}
+
+.profile_button:hover svg {
+  stroke: white !important;
+  transition: all 0.1s;
+}
+
+.menu_item.logout {
+  margin-top: 4.4rem;
+}
+
+.side_menu:not(.expanded) .menu_item,
+.side_menu:not(.expanded) button.menu_item {
+  padding: 0 0 0 1.2rem;
+}
+
+.side_menu:not(.expanded) span,
+.expanding span {
+  display: none;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  margin: auto 0 1.2rem;
+  width: 100%;
+  column-gap: 1.6rem;
+  row-gap: 0.4rem;
+  padding: 0 2rem;
+  flex-wrap: wrap;
+  font-size: 1.4rem;
+  padding-top: 4.4rem;
+}
+
+.footer a:hover {
+  color: white;
+}
+
+.side_menu:not(.expanded) .footer,
+.expanding .footer {
+  display: none;
+}
+
+.side_menu.hidden > * {
+  opacity: 0;
+}
+
+.side_menu button:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-outline-offset);
+  transition:
+    outline 0.1s ease-in-out,
+    outline-offset 0.1s ease-in-out;
+}

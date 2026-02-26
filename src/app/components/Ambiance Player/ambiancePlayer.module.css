@@ -92,3 +92,12 @@
     min-width: 40%;
   }
 }
+
+/* Mobile Styles */
+@media screen and (max-width: 440px) {
+  .controls_wrapper .desktop_button {
+    display: none;
+  }
+}
+
+

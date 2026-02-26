@@ -1,0 +1,92 @@
+.category {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 40rem;
+  width: 98%;
+  background:
+    linear-gradient(
+      270deg,
+      rgba(50, 50, 50, 0.5) 0%,
+      rgba(57, 50, 57, 0.6) 100%
+    ),
+    linear-gradient(180deg, rgb(50, 50, 50) 0%, rgb(57, 50, 57) 100%);
+  padding: 0.6rem 0.6rem 0.2rem;
+  color: var(--grey-text);
+  border-radius: 1.2rem;
+  border-bottom-left-radius: 0.6rem;
+  border: 0.05rem solid rgb(30, 0, 30);
+  user-select: none;
+  transition: all 0.1s;
+}
+
+.category:hover {
+  color: rgb(255, 255, 255);
+  transition: all 0.3s;
+}
+
+.category:hover .image {
+  transform: scale(1.1);
+  filter: blur(0) brightness(1.1);
+  transition:
+    transform 6s,
+    filter 2s;
+}
+
+.category > * {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.category h1 {
+  padding: 1rem 0.8rem 0.4rem;
+  margin: 0;
+  font-size: 3.2rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 1.8rem;
+  padding: 0 0.6rem 0.2rem;
+  column-gap: 0.5rem;
+}
+
+.description {
+  font-size: 1.6rem;
+  padding: 0.8rem 1.6rem 1.2rem;
+}
+
+.image_wrapper {
+  display: flex;
+  flex-grow: 1;
+  width: 100%;
+  height: 9.6rem;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  filter: blur(1.2);
+  border-radius: 0.4rem;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 30%);
+  mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    black 30%,
+    black 90%,
+    transparent 100%
+  );
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  filter: blur(1) brightness(1);
+  transform: scale(1);
+  transition: all 2s;
+}
+
+/* Desktop Styles */
+@media screen and (min-width: 651px) and (max-width: 1023px) {
+}
