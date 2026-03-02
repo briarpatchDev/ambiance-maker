@@ -7,6 +7,8 @@ import classNames from "classnames";
 import AmbianceInput from "@/app/components/Ambiance Input/ambianceInput";
 import AmbiancePlayer from "@/app/components/Ambiance Player/ambiancePlayer";
 import Button from "@/app/components/Buttons/Button Set/button";
+import Modal from "@/app/components/Modals/Modal Versatile Portal/modal";
+import SubmitAmbiance from "@/app/components/Submit Ambiance/submitAmbiance";
 import { updateObjectArr } from "@/app/lib/setStateFunctions";
 import { useRouter } from "next/navigation";
 
@@ -201,7 +203,10 @@ export default function AmbianceMaker({
     } catch {}
   }
 
-  // Saves the ambiance and submits it to the site for possible publication
+  // Used to show / hide the submit ambiance modal
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+
+  /*
   async function submitAmbiance() {
     try {
       const options = {
@@ -221,6 +226,7 @@ export default function AmbianceMaker({
       console.log(data);
     } catch {}
   }
+    */
 
   // Handles the title and description inputs
   const [inputData, setInputData] = useState({
@@ -367,12 +373,31 @@ export default function AmbianceMaker({
           {user && (mode === "create" || mode === "draft") && (
             <Button
               variant="primary"
-              onClick={submitAmbiance}
+              onClick={() => setShowSubmitModal(true)}
               disabled={!showButtons}
               style={{ maxWidth: "60%", flex: "1" }}
-            >{`Submit Ambiance`}</Button>
+            >{`Publish`}</Button>
           )}
         </div>
+      )}
+      {showSubmitModal && (
+        <Modal
+          closeFunction={() => setShowSubmitModal(false)}
+          closeButton={false}
+          closeOnEscape={true}
+          unstyled={true}
+          animate={true}
+          closeOnBackdropClick={true}
+        >
+          <SubmitAmbiance
+            username={user.username}
+            id={ambianceData?.id}
+            title={inputData.description}
+            description={inputData.description}
+            videoData={videoData}
+            closeFunction={() => setShowSubmitModal(false)}
+          />
+        </Modal>
       )}
     </div>
   );

@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <div className={styles.page}>
       <div className={styles.wrapper}>
-        <AmbianceMaker user={true} mode="create" />
+        <AmbianceMaker user={{ username: "burt73" }} mode="create" />
       </div>
     </div>
   );

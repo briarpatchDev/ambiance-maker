@@ -5,6 +5,24 @@ import Link from "next/link";
 import styles from "./videoRangeSlider.module.css";
 import classNames from "classnames";
 
+// Converts videoDuration to a timecode in HH:MM:SS
+export function convertToTimecode(videoDuration: number) {
+  let seconds = (videoDuration % 60).toString();
+  let minutes = (Math.floor(videoDuration / 60) % 60).toString();
+  while (seconds.length < 2) {
+    seconds = `0` + seconds;
+  }
+  while (minutes.toString().length < 2) {
+    minutes = `0` + minutes;
+  }
+  let timecode = `${minutes}:${seconds}`;
+  if (videoDuration >= 3600) {
+    let hours = Math.floor(videoDuration / 3600).toString();
+    timecode = `${hours}:${timecode}`;
+  }
+  return timecode;
+}
+
 // Creates a range slider for a video
 interface VideoRangeSliderProps {
   videoDuration: number;
@@ -206,24 +224,6 @@ export default function VideoRangeSlider({
       }, 0);
     }
     setIsDragging(true);
-  }
-
-  // Converts videoDuration to a timecode in HH:MM:SS
-  function convertToTimecode(videoDuration: number) {
-    let seconds = (videoDuration % 60).toString();
-    let minutes = (Math.floor(videoDuration / 60) % 60).toString();
-    while (seconds.length < 2) {
-      seconds = `0` + seconds;
-    }
-    while (minutes.toString().length < 2) {
-      minutes = `0` + minutes;
-    }
-    let timecode = `${minutes}:${seconds}`;
-    if (videoDuration >= 3600) {
-      let hours = Math.floor(videoDuration / 3600).toString();
-      timecode = `${hours}:${timecode}`;
-    }
-    return timecode;
   }
 
   // Moves the closet thumb when user presses down on the track

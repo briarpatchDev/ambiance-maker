@@ -20,6 +20,7 @@ export default function Page() {
           <Link href="/test_pages/share">{`Share`}</Link>
           <Link href="/test_pages/drafts/">{`Drafts`}</Link>
           <Link href="/test_pages/ambiance/">{`Ambiance`}</Link>
+          <Link href="/test_pages/submit_ambiance/">{`Submit Ambiance`}</Link>
         </div>
         <div>
           <h1>{`Ambiance Misc`}</h1>
