@@ -6,7 +6,10 @@ import styles from "./submitAmbiance.module.css";
 import { VideoData } from "@/app/components/Ambiance Maker/ambianceMaker";
 import { convertToTimecode } from "@/app/components/Sliders/Video Range Slider/videoRangeSlider";
 import Button from "@/app/components/Buttons/Button Set/button";
+import { getVideoId } from "@/app/lib/schemas/ambiance";
+import MessageBox from "@/app/components/Message Box/messageBox";
 import classNames from "classnames";
+import { useRouter } from "next/navigation";
 
 const categories = {
   Seasonal: {
@@ -67,6 +70,7 @@ interface SubmitAmbianceProps {
   description: string;
   videoData: VideoData[];
   closeFunction: () => void;
+  showCloseButton?: boolean;
   style?: React.CSSProperties;
 }
 
@@ -77,9 +81,15 @@ export default function SubmitAmbiance({
   description,
   videoData,
   closeFunction,
+  showCloseButton = true,
   style,
 }: SubmitAmbianceProps) {
+  const router = useRouter();
+  const [panel, setPanel] = useState<"default" | "success" | "failure">(
+    "default",
+  );
   const [isDisabled, setIsDisabled] = useState(true);
+  const redirectLink = useRef("");
   const [formData, setFormData] = useState<{
     categories: string[];
     checked: boolean;
@@ -88,6 +98,12 @@ export default function SubmitAmbiance({
     checked: false,
   });
   const selectRefs = useRef<HTMLSelectElement[]>([]);
+  const firstVideo = useRef(videoData.find((v) => v.src && getVideoId(v.src)));
+  const thumbnail = useRef(
+    firstVideo.current
+      ? `https://img.youtube.com//vi/${getVideoId(firstVideo.current.src!)}/mqdefault.jpg`
+      : null,
+  );
 
   // Checks if the form has valid inputs and enables / disables the submit button
   useEffect(() => {
@@ -96,22 +112,42 @@ export default function SubmitAmbiance({
     );
   }, [formData]);
 
+  // Use-states and refs for submitting the ambiance
+  const [submitButtonText, setSubmitButtonText] = useState<
+    "Submit" | "Submitting..."
+  >("Submit");
+  const submitting = useRef(false);
   // Submits the ambiance form
   async function submit() {
-    const options = {
-      method: "POST",
-      body: JSON.stringify({
-        id: id,
-        title: title,
-        description: description,
-        ...videoData.reduce((acc, video, index) => {
-          return { ...acc, [`v${index + 1}`]: video };
-        }, {}),
-      }),
-      headers: { "Content-Type": "application/json" },
-    };
-    const res = await fetch("/api/ambiance/submit", options);
-    const data = await res.json();
+    submitting.current = true;
+    setSubmitButtonText("Submitting...");
+    try {
+      const options = {
+        method: "POST",
+        body: JSON.stringify({
+          id: id,
+          title: title,
+          description: description,
+          ...videoData.reduce((acc, video, index) => {
+            return { ...acc, [`v${index + 1}`]: video };
+          }, {}),
+        }),
+        headers: { "Content-Type": "application/json" },
+      };
+      const res = await fetch("/api/ambiance/submit", options);
+      const data = await res.json();
+      if (data.success) {
+        if (data.ambiance && data.ambiance.id) {
+          redirectLink.current = `/test_pages/drafts/${data.ambiance.id}`;
+        }
+        setPanel("success");
+      } else {
+        setPanel("failure");
+      }
+    } catch {
+      setPanel("failure");
+    }
+    submitting.current = false;
   }
 
   // Gives arrow controls to the select elemnts
@@ -124,8 +160,43 @@ export default function SubmitAmbiance({
     }
   }
 
-  return (
+  // Closes the modal if not currently submitting
+  function close() {
+    if (!submitting.current) {
+      closeFunction();
+    }
+  }
+
+  // Lets user escape when focus'd on the "x"
+  function escapeKeydown(e: React.KeyboardEvent) {
+    if (e.key === "Escape") {
+      close();
+    }
+  }
+
+  return panel === "default" ? (
     <div style={{ ...style }} className={styles.submit_ambiance}>
+      {showCloseButton && (
+        <button
+          className={styles.close_button}
+          onClick={close}
+          aria-label={"Close Modal"}
+          tabIndex={0}
+          onKeyDown={escapeKeydown}
+        >
+          <svg
+            id="close-icon"
+            width="122.878px"
+            height="122.88px"
+            viewBox="0 0 122.878 122.88"
+            className={styles.close_icon}
+          >
+            <g>
+              <path d="M1.426,8.313c-1.901-1.901-1.901-4.984,0-6.886c1.901-1.902,4.984-1.902,6.886,0l53.127,53.127l53.127-53.127 c1.901-1.902,4.984-1.902,6.887,0c1.901,1.901,1.901,4.985,0,6.886L68.324,61.439l53.128,53.128c1.901,1.901,1.901,4.984,0,6.886 c-1.902,1.902-4.985,1.902-6.887,0L61.438,68.326L8.312,121.453c-1.901,1.902-4.984,1.902-6.886,0 c-1.901-1.901-1.901-4.984,0-6.886l53.127-53.128L1.426,8.313L1.426,8.313z" />
+            </g>
+          </svg>
+        </button>
+      )}
       <h1>Before you submit...</h1>
       <div className={styles.instructions}>
         <div className={styles.instruction}>
@@ -174,6 +245,11 @@ export default function SubmitAmbiance({
       <div className={styles.ambiance_wrapper}>
         <div className={styles.ambiance}>
           <h4>{title}</h4>
+          <img
+            className={styles.thumbnail}
+            src={thumbnail.current || ""}
+            alt="Video thumbnail"
+          />
           <div className={styles.videos_wrapper}>
             {videoData.map((video, index) => {
               if (video.title) {
@@ -263,25 +339,45 @@ export default function SubmitAmbiance({
           <div>
             <div>
               I have read and followed the instructions to the best of my
-              ability.
+              ability. I am ready to submit my ambiance for review.
             </div>
-            <div>I am ready to submit my ambiance for review.</div>
           </div>
         </div>
         <div className={styles.buttons_wrapper}>
           <Button
             variant="tertiary"
-            onClick={closeFunction}
+            onClick={close}
             width={"full"}
+            tabIndex={0}
           >{`Cancel`}</Button>
           <Button
             variant="primary"
             onClick={submit}
             width={"full"}
             disabled={isDisabled}
-          >{`Submit`}</Button>
+          >
+            {submitButtonText}
+          </Button>
         </div>
       </form>
     </div>
+  ) : panel === "success" ? (
+    <MessageBox
+      ariaLive="polite"
+      role="status"
+      message="Your ambiance has been submitted! You can still edit your draft and its categories before it has been reviewed."
+      buttonText="Return to Draft"
+      onClick={
+        redirectLink.current ? () => router.push(redirectLink.current) : close
+      }
+    />
+  ) : (
+    <MessageBox
+      ariaLive="polite"
+      role="status"
+      message="Something went wrong while submitting your ambiance. Try again soon..."
+      buttonText="Okay"
+      onClick={close}
+    />
   );
 }

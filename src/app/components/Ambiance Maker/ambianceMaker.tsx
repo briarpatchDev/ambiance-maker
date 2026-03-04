@@ -383,16 +383,15 @@ export default function AmbianceMaker({
       {showSubmitModal && (
         <Modal
           closeFunction={() => setShowSubmitModal(false)}
-          closeButton={false}
-          closeOnEscape={true}
+          closeOnEscape={false}
           unstyled={true}
           animate={true}
-          closeOnBackdropClick={true}
+          closeOnBackdropClick={false}
         >
           <SubmitAmbiance
             username={user.username}
             id={ambianceData?.id}
-            title={inputData.description}
+            title={inputData.title}
             description={inputData.description}
             videoData={videoData}
             closeFunction={() => setShowSubmitModal(false)}

@@ -4,6 +4,7 @@ import Link from "next/link";
 import styles from "./page.module.css";
 import SubmitAmbiance from "@/app/components/Submit Ambiance/submitAmbiance";
 import { VideoData } from "@/app/components/Ambiance Maker/ambianceMaker";
+import Modal from "@/app/components/Modals/Modal Versatile Portal/modal";
 
 const username = "CleverMonk149";
 const id = "5ARp542_m25daq";
@@ -55,6 +56,13 @@ export default function Page() {
   return (
     <div className={styles.page}>
       <div className={styles.wrapper}>
+               <Modal
+                  closeFunction={() => {}}
+                  closeOnEscape={false}
+                  unstyled={true}
+                  animate={true}
+                  closeOnBackdropClick={false}
+                >
         <SubmitAmbiance
           username={username}
           id={id}
@@ -63,6 +71,7 @@ export default function Page() {
           videoData={videoData}
           closeFunction={() => {}}
         />
+        </Modal>
       </div>
     </div>
   );

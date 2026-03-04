@@ -3,18 +3,50 @@
   flex-direction: column;
   background-color: rgb(55, 55, 55);
   color: var(--grey-text);
-  border: var(---border);
+  border: 0.1rem solid var(--border-color);
+  outline: 0.2rem solid black;
   border-radius: 1.2rem;
   width: 80rem;
   max-width: 96vw;
   margin: 1.6rem 0;
   padding: 0.4rem 3rem 4.8rem;
+  position: relative;
 }
 
 .submit_ambiance h1 {
   font-size: 3rem;
   margin: 2.4rem 0 1.6rem;
   padding: 0;
+}
+
+.close_button {
+  all: unset;
+  box-sizing: border-box;
+  background-color: var(--buttonBackground);
+  border: var(---border);
+  height: 2.4rem;
+  width: 2.4rem;
+  padding: 0.6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 1.2rem;
+  position: absolute;
+  right: 1.2rem;
+  top: 1.2rem;
+}
+
+.close_button:focus {
+  outline: 0.1rem solid var(--focus-color);
+  background-color: rgb(60, 60, 60);
+}
+
+.close_icon {
+  height: 2.4rem;
+  width: 2.4rem;
+  pointer-events: none;
+  fill: var(--grey-text);
 }
 
 .instructions {
@@ -61,14 +93,20 @@
   flex-direction: column;
   align-items: center;
   row-gap: 0.6rem;
+  width: 100%;
 }
 
 .ambiance h4 {
-  margin: 1.6rem 0 0.4rem;
+  margin: 1.6rem 0 0rem;
   font-size: 2.4rem;
-  transform: translateX(-2.8rem);
-  border-bottom: 0.1rem solid white;
-  padding: 0 2.4rem 0.2rem;
+  border-bottom: 0.05rem solid white;
+  padding: 0 0.8rem;
+}
+
+.thumbnail {
+  height: 7.2rem;
+  width: auto;
+  margin-bottom: 0.2rem;
 }
 
 .videos_wrapper {
@@ -87,7 +125,8 @@
   font-size: 2rem;
   color: rgb(100, 160, 200);
   border-bottom: 0.05rem solid transparent;
-  width: max-content;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .video a:hover {
@@ -96,6 +135,8 @@
 
 .video_details {
   font-size: 1.6rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .description {
@@ -137,10 +178,10 @@
 
 .checkbox_wrapper {
   display: flex;
+  justify-self: center;
   column-gap: 1.6rem;
   margin-top: 2.4rem;
-  padding: 0 2.4rem 0 3.6rem;
-  justify-self: flex-start;
+  max-width: 60rem;
 }
 
 .checkbox_wrapper input {
@@ -191,4 +232,11 @@
   display: flex;
   column-gap: 2.4rem;
   margin-top: 3.6rem;
+}
+
+/* Mobile Styles */
+@media screen and (max-width: 540px) {
+  .submit_ambiance {
+    padding: 0.4rem 1.2rem 4.8rem;
+  }
 }

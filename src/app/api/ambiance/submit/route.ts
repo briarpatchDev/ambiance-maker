@@ -185,13 +185,20 @@ export async function POST(req: NextRequest) {
             video_data: videoDataForStorage,
             thumbnail,
           })
-          .select("id, title, status, created_at")
+          .select("id, title, status, created_at, updated_at")
           .single();
 
         if (result.error) continue;
         ambiance = result.data;
         error = result.error;
         break;
+      }
+
+      if (!ambiance) {
+        return NextResponse.json(
+          { error: "Failed to create ambiance. Please try again." },
+          { status: 500 },
+        );
       }
     }
 
@@ -207,7 +214,7 @@ export async function POST(req: NextRequest) {
       success: true,
       message:
         "Ambiance submitted successfully! It will be reviewed for publication.",
-      ambiance,
+      ...(id ? {} : { ambiance }),
     });
   } catch (error) {
     console.error("Unexpected error in submit route:", error);
