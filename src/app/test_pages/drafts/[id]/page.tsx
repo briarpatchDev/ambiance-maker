@@ -17,7 +17,7 @@ interface PageProps {
 async function getDraft(
   ambianceId: string,
   userId: string,
-): Promise<AmbianceData | null> {
+): Promise<{ ambianceData: AmbianceData; status: "draft" | "submitted" } | null> {
   const isDev = process.env.NODE_ENV === "development";
   const supabase = isDev ? createAdminClient() : createClient(cookies());
 
@@ -47,10 +47,13 @@ async function getDraft(
   }));
 
   return {
-    id: ambiance.id,
-    title: ambiance.title,
-    description: ambiance.description,
-    videoData,
+    ambianceData: {
+      id: ambiance.id,
+      title: ambiance.title,
+      description: ambiance.description,
+      videoData,
+    },
+    status: ambiance.status as "draft" | "submitted",
   };
 }
 
@@ -71,13 +74,18 @@ export default async function Page({ params }: PageProps) {
     redirect("/login");
   }
 
-  const ambianceData = await getDraft(id, user.id);
+  const draft = await getDraft(id, user.id);
 
   return (
     <div className={styles.page}>
       <div className={styles.wrapper}>
-        {ambianceData ? (
-          <AmbianceMaker mode="draft" ambianceData={ambianceData} user={user} />
+        {draft ? (
+          <AmbianceMaker
+            mode="draft"
+            ambianceData={draft.ambianceData}
+            user={user}
+            status={draft.status}
+          />
         ) : (
           <NotFound
             errorMessage="Draft not found"

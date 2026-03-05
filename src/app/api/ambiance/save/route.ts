@@ -102,17 +102,10 @@ export async function POST(req: NextRequest) {
         .eq("id", id)
         .single();
 
-      if (!existing) {
+      if (!existing || existing.user_id !== user.id) {
         return NextResponse.json(
-          { error: "Ambiance not found." },
+          { error: "Ambiance not found.", code: "NOT_FOUND" },
           { status: 404 },
-        );
-      }
-
-      if (existing.user_id !== user.id) {
-        return NextResponse.json(
-          { error: "You do not own this ambiance." },
-          { status: 403 },
         );
       }
 
@@ -151,6 +144,7 @@ export async function POST(req: NextRequest) {
           {
             error:
               "You've reached the maximum of 50 unpublished ambiances. Please delete some drafts to create new ones.",
+            code: "MAX_DRAFTS",
           },
           { status: 400 },
         );
@@ -177,6 +171,13 @@ export async function POST(req: NextRequest) {
         ambiance = result.data;
         error = result.error;
         break;
+      }
+
+      if (!ambiance) {
+        return NextResponse.json(
+          { error: "Failed to save ambiance. Please try again." },
+          { status: 500 },
+        );
       }
     }
 

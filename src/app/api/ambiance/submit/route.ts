@@ -68,6 +68,7 @@ export async function POST(req: NextRequest) {
         id: transformedBody.id,
         title: transformedBody.title,
         description: transformedBody.description,
+        category: transformedBody.category,
         videoData,
       };
     }
@@ -83,7 +84,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { id, title, description, videoData } = parseResult.data;
+    const { id, title, description, category, videoData } = parseResult.data;
 
     // Ensure at least 2 videos have valid sources
     const validVideoCount = videoData.filter(
@@ -108,6 +109,13 @@ export async function POST(req: NextRequest) {
     let ambiance;
     let error;
 
+    // Check submitted ambiance limit (max 5 submitted at once)
+    const { count: submittedCount } = await supabase
+      .from("ambiances")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("status", "submitted");
+
     if (id) {
       // Update existing ambiance to submitted - verify ownership first
       const { data: existing } = await supabase
@@ -116,17 +124,10 @@ export async function POST(req: NextRequest) {
         .eq("id", id)
         .single();
 
-      if (!existing) {
+      if (!existing || existing.user_id !== user.id) {
         return NextResponse.json(
-          { error: "Ambiance not found." },
+          { error: "Ambiance not found.", code: "NOT_FOUND" },
           { status: 404 },
-        );
-      }
-
-      if (existing.user_id !== user.id) {
-        return NextResponse.json(
-          { error: "You do not own this ambiance." },
-          { status: 403 },
         );
       }
 
@@ -137,12 +138,25 @@ export async function POST(req: NextRequest) {
         );
       }
 
+      // If changing from draft to submitted, enforce the 5-submitted limit
+      if (existing.status === "draft" && submittedCount !== null && submittedCount >= 5) {
+        return NextResponse.json(
+          {
+            error:
+              "You can only have 5 ambiances submitted for review at a time. Please wait for one to be reviewed.",
+            code: "MAX_SUBMISSIONS",
+          },
+          { status: 400 },
+        );
+      }
+
       // Update and submit
       const result = await supabase
         .from("ambiances")
         .update({
           title,
           description,
+          category,
           status: "submitted",
           video_data: videoDataForStorage,
           thumbnail,
@@ -166,6 +180,19 @@ export async function POST(req: NextRequest) {
           {
             error:
               "You've reached the maximum of 50 unpublished ambiances. Please delete some drafts to create new ones.",
+            code: "MAX_DRAFTS",
+          },
+          { status: 400 },
+        );
+      }
+
+      // Check submitted limit for new submissions
+      if (submittedCount !== null && submittedCount >= 5) {
+        return NextResponse.json(
+          {
+            error:
+              "You can only have 5 ambiances submitted for review at a time. Please wait for one to be reviewed.",
+            code: "MAX_SUBMISSIONS",
           },
           { status: 400 },
         );
@@ -181,6 +208,7 @@ export async function POST(req: NextRequest) {
             user_id: user.id,
             title,
             description,
+            category,
             status: "submitted",
             video_data: videoDataForStorage,
             thumbnail,
@@ -218,6 +246,63 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error("Unexpected error in submit route:", error);
+    return NextResponse.json(
+      { error: "An unexpected error occurred." },
+      { status: 500 },
+    );
+  }
+}
+
+// Lightweight pre-check: returns whether the user can submit
+export async function GET(req: NextRequest) {
+  try {
+    const isDev = process.env.NODE_ENV === "development";
+    const cookieStore = cookies();
+    const supabase = isDev ? createAdminClient() : createClient(cookieStore);
+
+    const {
+      data: { user },
+      error: authError,
+    } = isDev
+      ? { data: { user: { id: DEV_USER_ID } }, error: null }
+      : await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: "Unauthorized." },
+        { status: 401 },
+      );
+    }
+
+    // If an id is provided, check if the ambiance still exists and its status
+    const ambianceId = req.nextUrl.searchParams.get("id");
+    if (ambianceId) {
+      const { data: existing } = await supabase
+        .from("ambiances")
+        .select("user_id, status")
+        .eq("id", ambianceId)
+        .single();
+
+      if (!existing || existing.user_id !== user.id) {
+        return NextResponse.json(
+          { canSubmit: false, code: "NOT_FOUND" },
+        );
+      }
+
+      // Re-submitting an already-submitted ambiance doesn't increase the count
+      if (existing.status === "submitted") {
+        return NextResponse.json({ canSubmit: true });
+      }
+    }
+
+    const { count } = await supabase
+      .from("ambiances")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("status", "submitted");
+
+    return NextResponse.json({ canSubmit: (count ?? 0) < 5 });
+  } catch {
     return NextResponse.json(
       { error: "An unexpected error occurred." },
       { status: 500 },

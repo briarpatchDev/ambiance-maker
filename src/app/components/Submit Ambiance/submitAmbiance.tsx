@@ -70,6 +70,7 @@ interface SubmitAmbianceProps {
   description: string;
   videoData: VideoData[];
   closeFunction: () => void;
+  onSuccess?: () => void;
   showCloseButton?: boolean;
   style?: React.CSSProperties;
 }
@@ -81,6 +82,7 @@ export default function SubmitAmbiance({
   description,
   videoData,
   closeFunction,
+  onSuccess,
   showCloseButton = true,
   style,
 }: SubmitAmbianceProps) {
@@ -90,6 +92,7 @@ export default function SubmitAmbiance({
   );
   const [isDisabled, setIsDisabled] = useState(true);
   const redirectLink = useRef("");
+  const failureMessage = useRef("");
   const [formData, setFormData] = useState<{
     categories: string[];
     checked: boolean;
@@ -128,6 +131,7 @@ export default function SubmitAmbiance({
           id: id,
           title: title,
           description: description,
+          category: formData.categories.filter(Boolean).join("/"),
           ...videoData.reduce((acc, video, index) => {
             return { ...acc, [`v${index + 1}`]: video };
           }, {}),
@@ -140,11 +144,27 @@ export default function SubmitAmbiance({
         if (data.ambiance && data.ambiance.id) {
           redirectLink.current = `/test_pages/drafts/${data.ambiance.id}`;
         }
+        onSuccess?.();
         setPanel("success");
       } else {
+        if (data.code === "MAX_SUBMISSIONS") {
+          failureMessage.current =
+            "You've reached the maximum of 5 pending submissions. Withdraw one to make room for this ambiance.";
+        } else if (data.code === "MAX_DRAFTS") {
+          failureMessage.current =
+            "You've reached the maximum of 50 drafts. Delete some drafts to make room for new ones.";
+        } else if (data.code === "NOT_FOUND") {
+          failureMessage.current =
+            "This draft could not be found. It may have been deleted.";
+        } else {
+          failureMessage.current =
+            "Something went wrong while submitting your ambiance. Try again soon...";
+        }
         setPanel("failure");
       }
     } catch {
+      failureMessage.current =
+        "Something went wrong while submitting your ambiance. Try again soon...";
       setPanel("failure");
     }
     submitting.current = false;
@@ -200,44 +220,74 @@ export default function SubmitAmbiance({
       <h1>Before you submit...</h1>
       <div className={styles.instructions}>
         <div className={styles.instruction}>
-          <h2>1. Check your title and description</h2>
+          <h2>
+            <div>1.</div>
+            <div>Confirm your username</div>
+          </h2>
           <p>
-            Make sure your title and description are good and stuff. I don't
-            want any bad titles or descriptions here bud.
+            If you haven't published before, make sure your username —{" "}
+            {username} — is original, appropriate, and the one you want to stick
+            with going forward. Once you've published an ambiance, you won't be
+            able to change it later.
           </p>
         </div>
 
         <div className={styles.instruction}>
-          <h2>2. Choose the perfect thumbnail</h2>
+          <h2>
+            <div>2.</div>
+            <div>Make sure your ambiance is family-friendly</div>
+          </h2>
           <p>
-            The ambiance will use the first video for its thumbnail. Place the
-            video whose thumbnail you want into that position.
+            Your ambiance should be appropriate for all audiences. No graphic,
+            explicit, or controversial material. If you're questioning whether
+            something crosses the line, it probably does.
           </p>
         </div>
 
         <div className={styles.instruction}>
-          <h2>3. Check your username</h2>
+          <h2>
+            <div>3.</div>
+            <div>Polish your title and description</div>
+          </h2>
           <p>
-            If you've never published an ambiance before, be sure that your
-            username, {username}, is unique, appropriate, and the one you want
-            to stick with going forward. Once you've published an ambiance, you
-            won't be able to change it later.
+            Your title should be clear and descriptive, something a first-time
+            visitor would immediately understand. Use the description to set the
+            scene and give your ambiance some context.
           </p>
         </div>
 
         <div className={styles.instruction}>
-          <h2>4. Choose a category below for your ambiance</h2>
+          <h2>
+            <div>4.</div>
+            <div>Choose the perfect thumbnail</div>
+          </h2>
           <p>
-            Take your time familiarizing yourself with the categories of the
-            site and choose the category that best fits your ambiance. If the
-            ambiance doesn't fit the category, it may be rejected.
+            Your ambiance will use the first video's thumbnail. If you'd prefer
+            a different one, move that video into the first slot before
+            submitting.
           </p>
         </div>
 
         <div className={styles.instruction}>
-          <h2>5. Confirm below you read the instructions</h2>
+          <h2>
+            <div>5.</div>
+            <div>Select the right category</div>
+          </h2>
           <p>
-            Sign the pledge that says you read and followed the instructions.
+            Take your time getting familiar with the site's categories and
+            choose the one that best fits your ambiance. Ambiances placed in the
+            wrong category may be rejected.
+          </p>
+        </div>
+
+        <div className={styles.instruction}>
+          <h2>
+            <div>6.</div>
+            <div>Check the box below</div>
+          </h2>
+          <p>
+            Check the box below to confirm you've read and followed these
+            instructions before submitting.
           </p>
         </div>
       </div>
@@ -338,8 +388,8 @@ export default function SubmitAmbiance({
           />
           <div>
             <div>
-              I have read and followed the instructions to the best of my
-              ability. I am ready to submit my ambiance for review.
+              I've read and followed the instructions above. I'm now ready to
+              submit my ambiance for review.
             </div>
           </div>
         </div>
@@ -365,7 +415,7 @@ export default function SubmitAmbiance({
     <MessageBox
       ariaLive="polite"
       role="status"
-      message="Your ambiance has been submitted! You can still edit your draft and its categories before it has been reviewed."
+      message="Your ambiance has been submitted! You can still make edits to your draft while it's pending review."
       buttonText="Return to Draft"
       onClick={
         redirectLink.current ? () => router.push(redirectLink.current) : close
@@ -375,7 +425,7 @@ export default function SubmitAmbiance({
     <MessageBox
       ariaLive="polite"
       role="status"
-      message="Something went wrong while submitting your ambiance. Try again soon..."
+      message={failureMessage.current}
       buttonText="Okay"
       onClick={close}
     />

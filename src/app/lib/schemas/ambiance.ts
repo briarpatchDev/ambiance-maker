@@ -74,6 +74,11 @@ export const submitAmbianceSchema = z.object({
     .string()
     .trim()
     .max(500, "Description must be 500 characters or less"),
+  category: z
+    .string()
+    .trim()
+    .min(1, "Category is required")
+    .max(200, "Category path too long"),
   videoData: z
     .array(videoDataSchema)
     .length(6, "Must provide exactly 6 video slots"),
@@ -154,6 +159,7 @@ export interface AmbianceRow {
   description: string;
   status: "draft" | "submitted" | "published";
   video_data: VideoDataStored[]; // Stored with videoId
+  category: string;
   created_at: string;
   updated_at: string;
   published_at: string | null;

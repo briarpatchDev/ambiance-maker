@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS ambiances (
   description TEXT NOT NULL DEFAULT '',
   status VARCHAR(20) NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'submitted', 'published')),
   video_data JSONB NOT NULL,
+  category TEXT NOT NULL DEFAULT '',
   thumbnail VARCHAR(255),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -29,6 +30,9 @@ CREATE INDEX idx_ambiances_status ON ambiances(status);
 
 -- Create index for sorting by created_at
 CREATE INDEX idx_ambiances_created_at ON ambiances(created_at DESC);
+
+-- Create index for category prefix lookups (e.g. WHERE category LIKE 'Seasonal/Autumn%')
+CREATE INDEX idx_ambiances_category ON ambiances(category text_pattern_ops);
 
 -- Create ambiance_ratings table (prevents duplicate votes)
 CREATE TABLE IF NOT EXISTS ambiance_ratings (

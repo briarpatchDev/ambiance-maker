@@ -16,6 +16,7 @@ interface AmbianceMakerProps {
   mode: "create" | "draft" | "shared" | "published";
   ambianceData?: AmbianceData;
   user?: any;
+  status?: "draft" | "submitted";
   style?: React.CSSProperties;
 }
 
@@ -62,9 +63,13 @@ export default function AmbianceMaker({
   mode,
   ambianceData,
   user,
+  status: initialStatus,
   style,
 }: AmbianceMakerProps) {
   const router = useRouter();
+  const [status, setStatus] = useState<"draft" | "submitted">(
+    initialStatus || "draft",
+  );
   // Handles when an inputs link / src changes
   function onLinkChange(link: string, index = 0) {
     updateObjectArr(setVideoData, index, { [`src`]: link });
@@ -160,17 +165,19 @@ export default function AmbianceMaker({
     }, 1600);
   }
 
+  // Shared lock to prevent save and publish from overlapping
+  const busy = useRef(false);
+
   // Saves an ambiance for a logged in user
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [saveButtonText, setSaveButtonText] = useState(
     mode === "draft" ? `Save Draft` : `Save as Draft`,
   );
-  const saving = useRef(false);
   // Save function
   async function saveAmbiance() {
-    if (saving.current) return;
+    if (busy.current) return;
     setSaveButtonText("Saving...");
-    saving.current = true;
+    busy.current = true;
     try {
       const options = {
         method: "POST",
@@ -187,17 +194,24 @@ export default function AmbianceMaker({
       const res = await fetch("/api/ambiance/save", options);
       const data = await res.json();
       if (data.error) {
-        setSaveButtonText("Try Again");
+        setSaveButtonText(
+          data.code === "MAX_DRAFTS"
+            ? "Max Reached"
+            : data.code === "NOT_FOUND"
+              ? "Draft Not Found"
+              : "Try Again",
+        );
       } else {
         setSaveButtonText("Saved!");
       }
       if (data.ambiance?.id && !ambianceData?.id) {
         router.replace(`/test_pages/drafts/${data.ambiance.id}`);
+      } else {
+        busy.current = false;
       }
       saveTimeoutRef.current && clearTimeout(saveTimeoutRef.current);
       saveTimeoutRef.current = setTimeout(() => {
         setSaveButtonText(mode === "draft" ? `Save Draft` : `Save as Draft`);
-        saving.current = false;
       }, 1200);
       console.log(data);
     } catch {}
@@ -205,6 +219,85 @@ export default function AmbianceMaker({
 
   // Used to show / hide the submit ambiance modal
   const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const publishTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [publishButtonText, setPublishButtonText] = useState(
+    initialStatus === "submitted" ? "Categories" : "Publish",
+  );
+
+  async function handlePublishClick() {
+    if (busy.current) return;
+    busy.current = true;
+    setPublishButtonText("Checking...");
+    try {
+      const url = ambianceData?.id
+        ? `/api/ambiance/submit?id=${ambianceData.id}`
+        : `/api/ambiance/submit`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.canSubmit) {
+        setPublishButtonText(status === "submitted" ? "Categories" : "Publish");
+        setShowSubmitModal(true);
+        busy.current = false;
+        return;
+      }
+      if (data.code === "NOT_FOUND") {
+        setPublishButtonText("Draft Not Found");
+      } else {
+        setPublishButtonText("Max Reached");
+      }
+    } catch {
+      setPublishButtonText("Try Again");
+    }
+    busy.current = false;
+    publishTimeoutRef.current && clearTimeout(publishTimeoutRef.current);
+    publishTimeoutRef.current = setTimeout(() => {
+      setPublishButtonText(status === "submitted" ? "Categories" : "Publish");
+    }, 2400);
+  }
+
+  // Called when submitAmbiance succeeds
+  function handleSubmitSuccess() {
+    setStatus("submitted");
+    setPublishButtonText("Categories");
+  }
+
+  // Withdraws a submitted ambiance back to draft
+  const withdrawTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [withdrawButtonText, setWithdrawButtonText] = useState(
+    "Withdraw Submission",
+  );
+
+  async function handleWithdraw() {
+    if (busy.current || !ambianceData?.id) return;
+    busy.current = true;
+    setWithdrawButtonText("Withdrawing...");
+    try {
+      const res = await fetch("/api/ambiance/withdraw", {
+        method: "POST",
+        body: JSON.stringify({ id: ambianceData.id }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStatus("draft");
+        setWithdrawButtonText("Withdrawn");
+        setPublishButtonText("Publish");
+      } else {
+        setWithdrawButtonText(
+          data.code === "NOT_FOUND" ? "Draft Not Found" : "Try Again",
+        );
+      }
+    } catch {
+      setWithdrawButtonText("Try Again");
+    }
+    busy.current = false;
+    withdrawTimeoutRef.current && clearTimeout(withdrawTimeoutRef.current);
+    withdrawTimeoutRef.current = setTimeout(() => {
+      setWithdrawButtonText(
+        status === "submitted" ? "Withdraw Submission" : "Withdrawn",
+      );
+    }, 2400);
+  }
 
   /*
   async function submitAmbiance() {
@@ -350,36 +443,51 @@ export default function AmbianceMaker({
           </div>
         )
       )}
-      {mode !== "published" && (
-        <div className={styles.share}>
-          <Button
-            variant="primary"
-            onClick={shareLink}
-            disabled={!showButtons}
-            style={{ maxWidth: "60%", flex: "1" }}
-          >
-            {shareButtonText}
-          </Button>
-          {user && (
+      <div className={styles.share}>
+        {mode !== "published" && (
+          <div className={styles.buttons_wrapper}>
             <Button
               variant="primary"
-              onClick={saveAmbiance}
+              onClick={shareLink}
               disabled={!showButtons}
               style={{ maxWidth: "60%", flex: "1" }}
             >
-              {saveButtonText}
+              {shareButtonText}
             </Button>
-          )}
-          {user && (mode === "create" || mode === "draft") && (
+            {user && (
+              <Button
+                variant="primary"
+                onClick={saveAmbiance}
+                disabled={!showButtons}
+                style={{ maxWidth: "60%", flex: "1" }}
+              >
+                {saveButtonText}
+              </Button>
+            )}
+            {user && (mode === "create" || mode === "draft") && (
+              <Button
+                variant="primary"
+                onClick={handlePublishClick}
+                disabled={!showButtons}
+                style={{ maxWidth: "60%", flex: "1" }}
+              >
+                {publishButtonText}
+              </Button>
+            )}
+          </div>
+        )}
+        {user && mode === "draft" && status === "submitted" && (
+          <div className={styles.buttons_wrapper}>
             <Button
-              variant="primary"
-              onClick={() => setShowSubmitModal(true)}
-              disabled={!showButtons}
+              variant="tertiary"
+              onClick={handleWithdraw}
               style={{ maxWidth: "60%", flex: "1" }}
-            >{`Publish`}</Button>
-          )}
-        </div>
-      )}
+            >
+              {withdrawButtonText}
+            </Button>
+          </div>
+        )}
+      </div>
       {showSubmitModal && (
         <Modal
           closeFunction={() => setShowSubmitModal(false)}
@@ -395,6 +503,7 @@ export default function AmbianceMaker({
             description={inputData.description}
             videoData={videoData}
             closeFunction={() => setShowSubmitModal(false)}
+            onSuccess={handleSubmitSuccess}
           />
         </Modal>
       )}

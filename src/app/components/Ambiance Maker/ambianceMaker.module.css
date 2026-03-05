@@ -90,12 +90,19 @@
 
 .share {
   display: flex;
+  flex-direction: column;
+  margin-top: 2.4rem;
+  row-gap: 1.2rem;
+  width: 100%;
+}
+
+.buttons_wrapper {
+  display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
   column-gap: 2.4rem;
   row-gap: 1.2rem;
-  margin-top: 2.4rem;
   padding: 0 0.8rem;
   width: 100%;
 }
