@@ -1,5 +1,9 @@
--- Migration: Create users table for app-specific profile data
+-- Migration 001: Create users table for app-specific profile data
 -- This links to auth.users (managed by Supabase Auth / Google OAuth)
+-- Must be created first since ambiances and ambiance_ratings reference it.
+
+-- Enable UUID extension if not already enabled
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Create users table
 CREATE TABLE IF NOT EXISTS users (

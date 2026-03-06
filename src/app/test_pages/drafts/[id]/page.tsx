@@ -17,7 +17,10 @@ interface PageProps {
 async function getDraft(
   ambianceId: string,
   userId: string,
-): Promise<{ ambianceData: AmbianceData; status: "draft" | "submitted" } | null> {
+): Promise<{
+  ambianceData: AmbianceData;
+  status: "draft" | "submitted";
+} | null> {
   const isDev = process.env.NODE_ENV === "development";
   const supabase = isDev ? createAdminClient() : createClient(cookies());
 

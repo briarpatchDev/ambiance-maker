@@ -36,6 +36,11 @@ export default function Page() {
           <Link href="/test_pages/breadcrumb/categories/horror">{`Breadcrumb`}</Link>
         </div>
         <div>
+          <h1>{`Admin`}</h1>
+          <Link href="/test_pages/admin/submitted">{`View Submitted`}</Link>
+          <Link href="/test_pages/admin/submitted/G0593m295">{`Review`}</Link>
+        </div>
+        <div>
           <h1>{`Inputs`}</h1>
           <Link href="/test_pages/inputs/speed_slider">{`Speed Slider`}</Link>
           <Link href="/test_pages/inputs/volume_slider">{`Volume Slider`}</Link>

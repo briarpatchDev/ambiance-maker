@@ -8,6 +8,8 @@ interface ConfirmationBoxProps {
   message: string;
   onConfirm: () => void;
   onCancel: () => void;
+  confirmText?: string;
+  cancelText?: string;
   ariaLabel?: string;
   style?: React.CSSProperties;
 }
@@ -16,6 +18,8 @@ export default function ConfirmationBox({
   message,
   onConfirm,
   onCancel,
+  confirmText = "Confirm",
+  cancelText = "Cancel",
   ariaLabel,
   style,
 }: ConfirmationBoxProps) {
@@ -31,12 +35,12 @@ export default function ConfirmationBox({
           variant="tertiary"
           onClick={onCancel}
           width={"full"}
-        >{`Cancel`}</Button>
+        >{cancelText}</Button>
         <Button
           variant="primary"
           onClick={onConfirm}
           width={"full"}
-        >{`Confirm`}</Button>
+        >{confirmText}</Button>
       </div>
     </div>
   );

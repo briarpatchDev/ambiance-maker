@@ -1,13 +1,13 @@
--- Migration: Create ambiances and ambiance_ratings tables
--- Run this in your Supabase SQL Editor
-
--- Enable UUID extension if not already enabled
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Migration 002: Create ambiances and ambiance_ratings tables
+-- Both tables reference public.users(id) for profile joins (username, account_status)
+-- and auth.users(id) for auth-level cascade deletes.
 
 -- Create ambiances table
 CREATE TABLE IF NOT EXISTS ambiances (
   id VARCHAR(12) PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID NOT NULL
+    REFERENCES auth.users(id) ON DELETE CASCADE
+    REFERENCES public.users(id) ON DELETE CASCADE,
   title VARCHAR(64) NOT NULL,
   description TEXT NOT NULL DEFAULT '',
   status VARCHAR(20) NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'submitted', 'published')),
@@ -38,7 +38,9 @@ CREATE INDEX idx_ambiances_category ON ambiances(category text_pattern_ops);
 CREATE TABLE IF NOT EXISTS ambiance_ratings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   ambiance_id VARCHAR(12) REFERENCES ambiances(id) ON DELETE CASCADE NOT NULL,
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID NOT NULL
+    REFERENCES auth.users(id) ON DELETE CASCADE
+    REFERENCES public.users(id) ON DELETE CASCADE,
   rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE(ambiance_id, user_id)  -- One vote per user per ambiance
