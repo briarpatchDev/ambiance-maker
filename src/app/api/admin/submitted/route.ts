@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createAdminClient } from "@/app/lib/supabase/admin";
+import { verifyAdmin } from "@/app/lib/auth/adminAuth";
 
 // Returns paginated submitted ambiances from accounts with "good" status
 export async function GET(req: NextRequest) {
   try {
+    const auth = await verifyAdmin();
+    if ("error" in auth) return auth.error;
+
     const DEFAULT_PAGE_SIZE = 24;
     const DEFAULT_SORT = "oldest";
 

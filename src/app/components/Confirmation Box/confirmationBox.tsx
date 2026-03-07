@@ -31,16 +31,12 @@ export default function ConfirmationBox({
     >
       <div className={styles.message}>{message}</div>
       <div className={styles.buttons_wrapper}>
-        <Button
-          variant="tertiary"
-          onClick={onCancel}
-          width={"full"}
-        >{cancelText}</Button>
-        <Button
-          variant="primary"
-          onClick={onConfirm}
-          width={"full"}
-        >{confirmText}</Button>
+        <Button variant="tertiary" onClick={onCancel} width={"full"}>
+          {cancelText}
+        </Button>
+        <Button variant="primary" onClick={onConfirm} width={"full"}>
+          {confirmText}
+        </Button>
       </div>
     </div>
   );

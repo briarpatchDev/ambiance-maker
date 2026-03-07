@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT NOT NULL,
   username VARCHAR(32) UNIQUE NOT NULL,
+  role VARCHAR(20) NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'admin')),
   account_status VARCHAR(20) NOT NULL DEFAULT 'good' CHECK (account_status IN ('good', 'shadowbanned')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -150,11 +151,12 @@ VALUES (
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert dev user profile (trigger won't fire for manual inserts above)
-INSERT INTO public.users (id, email, username, account_status)
+INSERT INTO public.users (id, email, username, role, account_status)
 VALUES (
   '00000000-0000-0000-0000-000000000000',
   'dev@localhost.local',
   'dev_user',
+  'admin',
   'good'
 )
 ON CONFLICT (id) DO NOTHING;

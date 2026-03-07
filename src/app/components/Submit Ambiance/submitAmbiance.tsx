@@ -10,58 +10,7 @@ import { getVideoId } from "@/app/lib/schemas/ambiance";
 import MessageBox from "@/app/components/Message Box/messageBox";
 import classNames from "classnames";
 import { useRouter } from "next/navigation";
-
-const categories = {
-  Seasonal: {
-    Spring: {
-      Birds: {},
-      "Light Rain": {},
-    },
-    Summer: {
-      Waves: {},
-      Cicadas: {},
-    },
-    Autumn: {
-      "Rustling Leaves": {},
-      Halloween: {
-        Eerie: {},
-        Frightening: {},
-      },
-    },
-    Winter: {
-      Snowstorm: {},
-      Cabin: {},
-    },
-  },
-  Moods: {
-    Relaxing: {},
-    Energetic: {},
-    Melancholic: {},
-  },
-  Locations: {
-    Forest: {
-      Rainforest: {},
-      "Pine Woods": {},
-    },
-    Beach: {},
-    Mountain: {},
-  },
-  "Time of Day": {
-    Morning: {},
-    Afternoon: {},
-    Night: {},
-  },
-  Activities: {
-    Reading: {},
-    Cooking: {},
-  },
-  Nature: {
-    Rain: {},
-    Wind: {},
-    Fire: {},
-  },
-  Abstract: {},
-};
+import categories from "@/app/lib/categories";
 
 interface SubmitAmbianceProps {
   username: string;
