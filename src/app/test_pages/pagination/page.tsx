@@ -189,7 +189,11 @@ export default function Page() {
   return (
     <div className={styles.page} ref={containerRef}>
       <div className={styles.wrapper}>
-        <Pagination collection="default" containerRef={containerRef} />
+        <Pagination
+          collection="default"
+          title="Winter Cabin"
+          containerRef={containerRef}
+        />
       </div>
     </div>
   );

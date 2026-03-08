@@ -13,6 +13,7 @@ const Hamburger = ({ className, style }: SvgProps) => (
     style={{
       ...style,
     }}
+    aria-hidden="true"
   >
     <path
       fillRule="nonzero"

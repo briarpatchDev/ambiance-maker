@@ -8,6 +8,24 @@
   color: var(--grey-text);
 }
 
+.pagination_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 1.2rem;
+  width: 100%;
+  padding: 0 5%;
+}
+
+.pagination_header h1 {
+  margin: 0;
+  padding: 0;
+  font-size: 2.4rem;
+  padding: 0.8rem 1.6rem;
+  border-radius: 1.6rem;
+  background-color: rgb(50, 50, 50);
+}
+
 .current_page {
   font-weight: bolder;
   font-size: 2.8rem;
@@ -19,7 +37,11 @@
   align-items: center;
   column-gap: 1.8rem;
   font-size: 2.2rem;
-  padding: 2.8rem 0;
+  margin: 1.6rem 0;
+  padding: 1.2rem 4rem 0.8rem;
+  border-radius: 2.4rem;
+  background-color: rgb(50, 50, 50);
+  border: 0.05rem solid black;
 }
 
 .pagination_menu a {
@@ -33,9 +55,6 @@
 .options_container {
   display: flex;
   flex-direction: column;
-  align-self: flex-end;
-  margin-right: 5%;
-  padding-bottom: 1.2rem;
 }
 
 .options_container a {
@@ -52,15 +71,17 @@
 }
 
 .sort_option,
-.size_option {
+.size_option,
+.corner_effect {
   padding: 0.6rem;
   border: var(--smallBorder);
-  width: 8rem;
+  width: 8.2rem;
   height: 3.2rem;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: rgb(50, 50, 50);
+  z-index: 1;
 }
 
 .sort_option.active,
@@ -77,6 +98,23 @@
 .sort_option.active:last-child,
 .size_option.active:last-child {
   border-right: 0.1rem solid rgb(50, 50, 50);
+}
+
+.sort_option:first-of-type,
+.size_option:first-child {
+  border-top-left-radius: 0.8rem;
+}
+
+.size_option:first-child {
+  border-bottom-left-radius: 0.8rem;
+}
+
+.sort_option:last-child {
+  border-top-right-radius: 0.8rem;
+}
+
+.size_option:last-child {
+  border-bottom-right-radius: 0.8rem;
 }
 
 .error_container {
@@ -167,6 +205,12 @@
   opacity: 0;
 }
 
-/* Desktop Styles */
-@media screen and (min-width: 651px) and (max-width: 1023px) {
+@media screen and (max-width: 640px) {
+  .pagination_header {
+    justify-content: flex-end;
+  }
+
+  .pagination_header h1 {
+    display: none;
+  }
 }

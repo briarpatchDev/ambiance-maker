@@ -6,8 +6,9 @@
   min-width: 19.2rem;
   min-height: 100vh;
   border-right: 0.1rem solid rgba(57, 50, 57);
-  background-color: #323232;
+  background-color: rgb(50, 50, 50);
   padding-top: 1.2rem;
+  padding-left: 0.1rem;
   transition:
     width 0.2s,
     min-width 0.2s;
@@ -62,8 +63,8 @@ button.menu_item,
 }
 
 .side_menu:not(.expanded) .menu_controls button {
-  margin-right: 0.6rem;
-  margin-left: 0.6rem;
+  margin-right: 0.5rem;
+  margin-left: 0.7rem;
 }
 
 .menu_controls svg {
@@ -81,20 +82,27 @@ button.menu_item,
 .menu_item,
 button.menu_item {
   display: flex;
-  align-items: center;
-  padding: 0 0 0 2rem;
-  column-gap: 1.6rem;
   height: 6rem;
   width: 100%;
   font-size: 2rem;
   color: var(--grey-text);
   background-color: rgb(75, 75, 75, 0);
-  transition: all 0.1s;
-  border-radius: 1.6rem;
 }
 
-.menu_item:hover,
-button.menu_item:hover {
+.item_content {
+  display: flex;
+  align-items: center;
+  column-gap: 1.6rem;
+  width: 100%;
+  height: 100%;
+  transition: all 0.1s;
+  border-radius: 1.6rem;
+  background-color: rgb(75, 75, 75, 0);
+  padding: 0 0 0 2rem;
+}
+
+.menu_item:hover .item_content,
+button.menu_item:hover .item_content {
   background-color: rgb(75, 75, 75, 1);
   transition: all 0.1s;
   color: white;
@@ -118,12 +126,13 @@ button.menu_item:hover {
   transition: all 0.1s;
 }
 
-.menu_item.logout {
-  margin-top: 4.4rem;
+.menu_items {
+  margin-bottom: 4.4rem;
 }
 
-.side_menu:not(.expanded) .menu_item,
-.side_menu:not(.expanded) button.menu_item {
+
+.side_menu:not(.expanded) .menu_item .item_content,
+.side_menu:not(.expanded) button.menu_item .item_content {
   padding: 0 0 0 1.2rem;
 }
 
@@ -132,17 +141,27 @@ button.menu_item:hover {
   display: none;
 }
 
+.footer_wrapper {
+  margin: auto 0 1.2rem;
+}
+
+.menu_item.logout {
+  margin-bottom: 4.4rem;
+}
+
+.side_menu:not(.expanded) .logout, .expanding .logout{
+  margin-bottom: 8.019rem;
+}
+
 .footer {
   display: flex;
   justify-content: center;
-  margin: auto 0 1.2rem;
   width: 100%;
   column-gap: 1.6rem;
   row-gap: 0.4rem;
   padding: 0 2rem;
   flex-wrap: wrap;
   font-size: 1.4rem;
-  padding-top: 4.4rem;
 }
 
 .footer a:hover {

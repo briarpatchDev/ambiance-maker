@@ -39,6 +39,12 @@ export default function VolumeSlider({
     setVolume(parseInt(value));
   }
 
+  useEffect(()=>{
+    if (currentVolume !== undefined && volume != currentVolume){
+      setVolume(currentVolume);
+    }
+  },[currentVolume]);
+
   return (
     <div style={{ ...style }} className={styles.volume_slider}>
       {volume === 0 && <VolumeMuted />}

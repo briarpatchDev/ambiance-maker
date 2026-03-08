@@ -15,6 +15,7 @@ const Profile = ({ className, style }: SvgProps) => (
       stroke: "var(--grey-text)",
       ...style,
     }}
+    aria-hidden="true"
   >
     <circle
       cx={16}

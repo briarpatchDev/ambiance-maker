@@ -33,8 +33,14 @@ export default function SideMenu({ user, style }: SideMenuProps) {
   useEffect(() => {
     if (window.innerWidth < breakpoint.current) {
       setIsExpanded(false);
+    } else {
+      const wantsExpanded = window.localStorage.getItem("menuExpanded");
+      if (wantsExpanded === "false") {
+        setIsExpanded(false);
+      }
     }
     setInitalized(true);
+    //window.localStorage.setItem("menuExpanded", isExpanded.toString());
     return () => {
       if (expandTimeout.current) {
         clearTimeout(expandTimeout.current);
@@ -56,9 +62,16 @@ export default function SideMenu({ user, style }: SideMenuProps) {
     if (expandTimeout.current) {
       clearTimeout(expandTimeout.current);
     }
+    window.localStorage.setItem("menuExpanded", "true");
     expandTimeout.current = setTimeout(() => {
       setIsExpanding(false);
     }, 150);
+  }
+
+  // Collapses the menu
+  function collapse() {
+    setIsExpanded(false);
+    window.localStorage.setItem("menuExpanded", "false");
   }
 
   function login() {
@@ -72,8 +85,7 @@ export default function SideMenu({ user, style }: SideMenuProps) {
   }
 
   return (
-    <div
-      role="navigation"
+    <nav
       style={{ ...style }}
       className={classNames(styles.side_menu, {
         [styles.expanded]: isExpanded,
@@ -121,7 +133,7 @@ export default function SideMenu({ user, style }: SideMenuProps) {
           <button
             className={styles.menu_controls}
             title="Collapse Menu"
-            onClick={() => setIsExpanded(false)}
+            onClick={collapse}
           >
             <CloseMenuIcon />
           </button>
@@ -142,17 +154,21 @@ export default function SideMenu({ user, style }: SideMenuProps) {
           className={styles.menu_item}
           onClick={linkClicked}
         >
-          <PencilIcon />
-          <span>Create</span>
+          <div className={styles.item_content}>
+            <PencilIcon />
+            <span>Create</span>
+          </div>
         </Link>
         <Link
           href="/categories"
-          title="Discover"
+          title="Browse"
           className={styles.menu_item}
           onClick={linkClicked}
         >
-          <MagnifyingGlass />
-          <span>Discover</span>
+          <div className={styles.item_content}>
+            <MagnifyingGlass />
+            <span>Browse</span>
+          </div>
         </Link>
         {!isLoggedIn && (
           <button
@@ -161,8 +177,10 @@ export default function SideMenu({ user, style }: SideMenuProps) {
             aria-label={"Open login options"}
             title="Login"
           >
-            <Profile style={{ transform: "scale(1.1) translateX(0.2rem)" }} />
-            <span>Login</span>
+            <div className={styles.item_content}>
+              <Profile style={{ transform: "scale(1.1) translateX(0.2rem)" }} />
+              <span>Login</span>
+            </div>
           </button>
         )}
         {isLoggedIn && (
@@ -172,8 +190,10 @@ export default function SideMenu({ user, style }: SideMenuProps) {
             className={styles.menu_item}
             onClick={linkClicked}
           >
-            <DraftIcon />
-            <span>Drafts</span>
+            <div className={styles.item_content}>
+              <DraftIcon />
+              <span>Drafts</span>
+            </div>
           </Link>
         )}
         {isLoggedIn && (
@@ -183,27 +203,34 @@ export default function SideMenu({ user, style }: SideMenuProps) {
             className={classNames(styles.menu_item, styles.profile_button)}
             onClick={linkClicked}
           >
-            <Profile />
-            <span>Profile</span>
+            <div className={styles.item_content}>
+              <Profile />
+              <span>Profile</span>
+            </div>
           </Link>
         )}
       </div>
-      {isLoggedIn && (
-        <button
-          onClick={logout}
-          className={classNames(styles.menu_item, styles.logout)}
-          title="Logout"
-          aria-label="Logout"
-        >
-          <LogoutIcon />
-          <span>Logout</span>
-        </button>
-      )}
-      <footer className={styles.footer}>
-        <Link href="/policy/tos">Terms</Link>
-        <Link href="/policy/pp">Privacy</Link>
-        <Link href="/contact-us">Contact</Link>
-      </footer>
-    </div>
+
+      <div className={styles.footer_wrapper}>
+        {isLoggedIn && (
+          <button
+            onClick={logout}
+            className={classNames(styles.menu_item, styles.logout)}
+            title="Logout"
+            aria-label="Logout"
+          >
+            <div className={styles.item_content}>
+              <LogoutIcon />
+              <span>Logout</span>
+            </div>
+          </button>
+        )}
+        <footer className={styles.footer}>
+          <Link href="/policy/tos">Terms</Link>
+          <Link href="/policy/pp">Privacy</Link>
+          <Link href="/contact-us">Contact</Link>
+        </footer>
+      </div>
+    </nav>
   );
 }
