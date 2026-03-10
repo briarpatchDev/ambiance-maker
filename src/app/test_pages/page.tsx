@@ -46,6 +46,7 @@ export default function Page() {
           <Link href="/test_pages/inputs/volume_slider">{`Volume Slider`}</Link>
           <Link href="/test_pages/inputs/video_slider">{`Video Slider`}</Link>
           <Link href="/test_pages/inputs/ambiance_input">{`Ambiance Input`}</Link>
+          <Link href="/test_pages/buttons">{`Buttons`}</Link>
         </div>
         <div>
           <h1>{`Misc`}</h1>

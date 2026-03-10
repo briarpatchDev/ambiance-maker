@@ -56,22 +56,14 @@ export default function Page() {
   return (
     <div className={styles.page}>
       <div className={styles.wrapper}>
-               <Modal
-                  closeFunction={() => {}}
-                  closeOnEscape={false}
-                  unstyled={true}
-                  animate={true}
-                  closeOnBackdropClick={false}
-                >
-        <SubmitAmbiance
-          username={username}
-          id={id}
-          title={title}
-          description={description}
-          videoData={videoData}
-          closeFunction={() => {}}
-        />
-        </Modal>
+          <SubmitAmbiance
+            username={username}
+            id={id}
+            title={title}
+            description={description}
+            videoData={videoData}
+            closeFunction={() => {}}
+          />
       </div>
     </div>
   );

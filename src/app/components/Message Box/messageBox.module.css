@@ -1,15 +1,15 @@
 .message_box {
-  border: var(--border);
-  border: 0.05rem solid light-dark(black, white);
-  background-color: var(--background);
-  width: 36rem;
-  max-width: 36rem;
+  border: 0.1rem solid black;
+  background-color: rgb(80, 80, 80);
+  color: white;
+  width: 48rem;
+  max-width: 98vw;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2.4rem 1.2rem 2rem;
-  border-radius: 0.4rem;
-  row-gap: 1.6rem;
+  padding: 3.6rem 2.4rem 2.4rem;
+  border-radius: 0.8rem;
+  row-gap: 2.0rem;
   height: max-content;
 }
 
@@ -18,5 +18,6 @@
   justify-content: center;
   align-content: center;
   text-align: center;
-  text-wrap: pretty;
+  max-width: 36rem;
+  font-size: 1.6rem;
 }

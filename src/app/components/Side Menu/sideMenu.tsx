@@ -102,20 +102,31 @@ export default function SideMenu({ user, style }: SideMenuProps) {
           closeOnEscape={true}
           closeOnBackdropClick={true}
         >
-          <Button
-            variant={"primary"}
-            onClick={login}
-            icon={
-              <Image
-                height="160"
-                width="160"
-                alt="Google icon"
-                src="/images/google-icon.svg"
-              />
-            }
-            text={"Login with Google"}
-            style={{ margin: "1.6rem 1.6rem 1.2rem" }}
-          />
+          <div className={styles.login_modal}>
+            <Button
+              variant={"primary"}
+              onClick={login}
+              width="default"
+              icon={
+                <Image
+                  height="160"
+                  width="160"
+                  alt="Google icon"
+                  src="/images/google-icon.svg"
+                  className={styles.google_logo}
+                />
+              }
+              text={"Sign in with Google"}
+              style={{
+                color: "rgb(20,20,20)",
+                backgroundColor: "rgb(240,240,240)",
+                padding: "1.6rem 2.4rem",
+                borderRadius: "2.4rem",
+                minWidth: "30rem",
+                height: "8.0rem",
+              }}
+            />
+          </div>
         </Modal>
       )}
       <header className={styles.header}>

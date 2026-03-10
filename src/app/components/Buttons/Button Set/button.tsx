@@ -66,7 +66,7 @@ export function Button(
     id,
     style,
   }: ButtonProps,
-  ref: React.Ref<HTMLButtonElement>
+  ref: React.Ref<HTMLButtonElement>,
 ) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   useImperativeHandle(ref, () => buttonRef.current!);
@@ -150,7 +150,7 @@ export function Button(
       const touch = e.touches[0];
       if (
         !buttonRef.current.contains(
-          document.elementFromPoint(touch.clientX, touch.clientY)
+          document.elementFromPoint(touch.clientX, touch.clientY),
         )
       ) {
         setActive(false);
@@ -187,7 +187,14 @@ export function Button(
       autoFocus={autoFocus}
       tabIndex={disabled ? -1 : tabIndex}
       style={
-        typeof width === "number" ? { width: `${width}%`, ...style } : style
+        typeof width === "number"
+          ? {
+              width: `${width}%`,
+              maxWidth: `${width}%`,
+              flexShrink: "unset",
+              ...style,
+            }
+          : style
       }
     >
       {icon && <div className={styles.icon_container}>{icon}</div>}

@@ -1,6 +1,6 @@
 .button {
-  --height: 4.2rem;
-  --buttonColor: rgb(45, 104, 200);
+  --height: 5.2rem;
+  --buttonColor: rgb(120, 80, 140);
   all: unset;
   box-sizing: border-box;
   cursor: pointer;
@@ -13,7 +13,7 @@
   flex-shrink: 0;
   justify-content: center;
   align-items: center;
-  column-gap: 1.2rem;
+  column-gap: 1.8rem;
   text-align: center;
   text-wrap: pretty;
   user-select: none;
@@ -26,7 +26,7 @@
   transform: translateZ(0); /* Helps Mobile */
   will-change: transform;
   /* color: light-dark(var(--grey-text), var(--grey-text)); */
-  color: light-dark(rgb(240, 240, 240), rgb(230, 230, 230));
+  color: var(--grey-text);
 }
 
 .default {
@@ -64,38 +64,37 @@
 }
 
 .secondary {
-  border: 0.2rem solid var(--buttonColor);
   /* color: light-dark(var(--buttonColor), var(--grey-text)); */
-  color: light-dark(var(--buttonColor), rgb(230, 230, 230));
+  border: 0.1rem solid var(--buttonColor);
+  color: var(--buttonColor);
+  color: var(--grey-text);
+
   font-weight: bolder;
-  background-color: var(--background);
+  background-color: rgb(40, 40, 40);
 }
 
 .tertiary {
-  background-color: transparent;
-  border: 0.1rem solid light-dark(rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 0.4));
-  color: light-dark(rgba(0, 0, 0, 0.8), rgba(255, 255, 255, 0.8));
+  background-color: rgba(0, 0, 0, 0.2);
+  color: var(--grey-text);
+  border: 0.1rem solid rgba(175, 175, 175, 0.8);
 }
 
 /* Stops button from changing color after click on IOS */
 /* We can either extend or possibly remove this part */
 @media (hover: hover) {
   .primary:hover {
-    color: light-dark(rgb(255, 255, 255), rgb(245, 245, 245));
-    filter: brightness(1.1);
+    color: white;
+    filter: brightness(1.03);
   }
   .secondary:hover {
-    background-color: light-dark(rgb(245, 245, 245), rgb(60, 60, 60));
-    color: light-dark(var(--buttonColor), rgb(245, 245, 245));
+    color: white;
+    background-color: rgb(45, 45, 45);
   }
   .tertiary:hover {
-    border-color: light-dark(var(--buttonColor), rgb(240, 240, 240));
-    color: light-dark(rgba(0, 0, 0, 1), rgba(255, 255, 255));
+    background-color: rgba(0, 0, 0, 0.175);
+    border: 0.1rem solid rgba(175, 175, 175, 0.85);
+    color: white;
   }
-}
-
-.text_container {
-  width: 100%;
 }
 
 .icon_container {
@@ -112,19 +111,28 @@
 }
 
 .disabled {
-  background-color: transparent;
+  background-color: rgba(0, 0, 0, 0.1);
   cursor: auto;
-  color: rgb(150, 150, 150);
-  border-color: rgb(150, 150, 150);
+  color: rgb(180, 180, 180);
+  border-color: rgb(100, 100, 100);
   border-width: 0rem;
   border-top-width: 0.05rem;
-  font-weight: 100;
-  opacity: 0.6;
+  font-weight: 500;
+  opacity: 0.7;
+  box-shadow: 0px 2px 1px 1px rgba(0, 0, 0, 0);
+}
+
+.button_text.disabled {
+  opacity: 0;
+}
+
+.button_text {
+  opacity: 1;
 }
 
 .disabled:hover {
-  background-color: transparent;
-  color: rgb(150, 150, 150);
-  border-color: rgb(150, 150, 150);
+  background-color: rgba(0, 0, 0, 0.1);
+  color: rgb(180, 180, 180);
+  border-color: rgb(100, 100, 100);
   filter: brightness(1);
 }

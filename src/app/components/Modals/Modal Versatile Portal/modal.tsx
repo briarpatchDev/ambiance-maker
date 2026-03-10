@@ -1,10 +1,5 @@
 "use client";
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-} from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import styles from "./modal.module.css";
 import { FocusTrap } from "focus-trap-react";
 import classNames from "classnames";
@@ -69,7 +64,7 @@ export default function Modal({
 
   //Closes the modal when user hits ESC
   const escapeKey = useCallback(
-    (e: KeyboardEvent) => {
+    (e: React.KeyboardEvent | KeyboardEvent) => {
       if (e.key === "Escape") {
         if (animate) {
           setClosing(true);
@@ -81,22 +76,22 @@ export default function Modal({
         }
       }
     },
-    [closeFunction]
+    [closeFunction, animate],
   );
 
   //Adds a keydown listener for escapeKey, and prevents the page from scrolling
   useEffect(() => {
     document.body.style.overflow = "hidden";
     if (closeOnEscape) {
-      window.addEventListener("keydown", escapeKey);
+      window.addEventListener("keydown", escapeKey, true);
     }
     return () => {
       document.body.style.overflow = "";
       if (closeOnEscape) {
-        window.removeEventListener("keydown", escapeKey);
+        window.removeEventListener("keydown", escapeKey, true);
       }
     };
-  }, [escapeKey]);
+  }, [escapeKey, closeOnEscape]);
 
   //Closes the modal on click: for the backdrop and other buttons
   function closeModal(event: React.MouseEvent): void {
@@ -148,6 +143,7 @@ export default function Modal({
             <button
               className={styles.close_button}
               onClick={closeModal}
+              onKeyDown={escapeKey}
               aria-label={"Close Modal"}
               tabIndex={0}
             >
@@ -168,6 +164,6 @@ export default function Modal({
         </div>
       </div>
     </FocusTrap>,
-    modal
+    modal,
   );
 }

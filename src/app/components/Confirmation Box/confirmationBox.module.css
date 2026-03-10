@@ -1,14 +1,14 @@
 .confirmation_box {
-  border: var(--border);
-  border: 0.05rem solid light-dark(black, white);
-  background-color: var(--background);
-  width: 36rem;
-  max-width: 36rem;
+  border: 0.1rem solid black;
+  background-color: rgb(80, 80, 80);
+  color: white;
+  width: 48rem;
+  max-width: 98vw;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 3.6rem 2.4rem 2.46rem;
-  border-radius: 0.4rem;
+  padding: 4.0rem 2.4rem 2.8rem;
+  border-radius: 0.8rem;
   row-gap: 2.4rem;
   height: max-content;
 }
@@ -18,12 +18,13 @@
   justify-content: center;
   align-content: center;
   text-align: center;
-  text-wrap: pretty;
+  max-width: 36rem;
+  font-size: 1.8rem;
 }
 
 .buttons_wrapper {
   display: flex;
   justify-content: center;
-  column-gap: 1.2rem;
+  column-gap: 1.6rem;
   width: 100%;
 }

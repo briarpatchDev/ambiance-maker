@@ -63,7 +63,7 @@
 }
 
 .instruction h2 {
-    display: flex;
+  display: flex;
   font-size: 2.4rem;
   column-gap: 0.8rem;
 }
@@ -115,12 +115,14 @@
   display: flex;
   flex-direction: column;
   row-gap: 0.4rem;
+  max-width: 100%;
 }
 
 .video {
   display: flex;
   flex-direction: column;
   row-gap: 0.1rem;
+  max-width: 100%;
 }
 
 .video a {
@@ -130,7 +132,6 @@
   margin-bottom: 0.05rem;
   overflow-wrap: break-word;
   word-break: break-word;
-  width: max-content;
 }
 
 .video a:hover {

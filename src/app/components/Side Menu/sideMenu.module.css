@@ -130,7 +130,6 @@ button.menu_item:hover .item_content {
   margin-bottom: 4.4rem;
 }
 
-
 .side_menu:not(.expanded) .menu_item .item_content,
 .side_menu:not(.expanded) button.menu_item .item_content {
   padding: 0 0 0 1.2rem;
@@ -149,7 +148,8 @@ button.menu_item:hover .item_content {
   margin-bottom: 4.4rem;
 }
 
-.side_menu:not(.expanded) .logout, .expanding .logout{
+.side_menu:not(.expanded) .logout,
+.expanding .logout {
   margin-bottom: 8.019rem;
 }
 
@@ -183,4 +183,23 @@ button.menu_item:hover .item_content {
   transition:
     outline 0.1s ease-in-out,
     outline-offset 0.1s ease-in-out;
+}
+
+.login_modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  width: 48rem;
+  max-width: 98vw;
+  height: 16rem;
+}
+
+.google_logo {
+  border: 0.05rem solid black;
+  border-radius: 0.6rem;
+  padding: 0.2rem;
+  background-color: white;
+  height: 5.8rem !important;
+  width: 5.8rem !important;
 }

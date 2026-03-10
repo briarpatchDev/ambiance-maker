@@ -1,5 +1,4 @@
 .backdrop {
-  background-color: var(--modalBackdropColor);
   width: 100vw;
   height: 100vh;
   position: fixed;
@@ -10,7 +9,20 @@
   justify-content: center;
   z-index: 1000;
   overflow-y: scroll;
-  padding: 2vh 0 25vh;
+  overscroll-behavior: none;
+  padding: 2vh 0 10vh;
+}
+
+.backdrop::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .animate.backdrop {
@@ -39,11 +51,13 @@
   }
 }
 
+/*
 .pointer {
   cursor: pointer;
 }
+*/
 
-.transparent {
+.transparent::before {
   background-color: transparent;
 }
 
@@ -52,8 +66,8 @@
 }
 
 .modal {
-  border: var(--smallBorder);
-  background-color: var(--background);
+  border: 0.1rem solid black;
+  background-color: rgb(55, 55, 55);
   height: max-content;
   padding: 1.2rem 0rem;
   margin: auto 2vw;
@@ -62,6 +76,7 @@
   width: max-content;
   min-width: max-content;
   position: relative;
+  border-radius: 0.8rem;
 }
 
 .top_padding {
@@ -98,13 +113,12 @@
 }
 
 .close_button:focus {
-  outline: 0.1rem solid var(--foreground);
-  background-color: var(--buttonHoverColor);
+  outline: 0.05rem solid var(--grey-text);
 }
 
 .close_icon {
   height: 100%;
   width: 100%;
   pointer-events: none;
-  fill: var(--iconColor);
+  fill: var(--grey-text);
 }
