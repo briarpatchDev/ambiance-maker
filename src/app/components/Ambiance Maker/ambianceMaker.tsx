@@ -9,6 +9,7 @@ import AmbiancePlayer from "@/app/components/Ambiance Player/ambiancePlayer";
 import Button from "@/app/components/Buttons/Button Set/button";
 import Modal from "@/app/components/Modals/Modal Versatile Portal/modal";
 import SubmitAmbiance from "@/app/components/Submit Ambiance/submitAmbiance";
+import ConfirmationBox from "@/app/components/Confirmation Box/confirmationBox";
 import { updateObjectArr } from "@/app/lib/setStateFunctions";
 import { useRouter } from "next/navigation";
 
@@ -262,15 +263,18 @@ export default function AmbianceMaker({
   }
 
   // Withdraws a submitted ambiance back to draft
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const withdrawTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [withdrawButtonText, setWithdrawButtonText] = useState(
     "Withdraw Submission",
   );
 
   async function handleWithdraw() {
+    setShowWithdrawModal(false);
     if (busy.current || !ambianceData?.id) return;
     busy.current = true;
     setWithdrawButtonText("Withdrawing...");
+    let withdrawn = false;
     try {
       const res = await fetch("/api/ambiance/withdraw", {
         method: "POST",
@@ -280,8 +284,9 @@ export default function AmbianceMaker({
       const data = await res.json();
       if (data.success) {
         setStatus("draft");
-        setWithdrawButtonText("Withdrawn");
+        setWithdrawButtonText("Withdraw Submission");
         setPublishButtonText("Publish");
+        withdrawn = true;
       } else {
         setWithdrawButtonText(
           data.code === "NOT_FOUND" ? "Draft Not Found" : "Try Again",
@@ -291,12 +296,12 @@ export default function AmbianceMaker({
       setWithdrawButtonText("Try Again");
     }
     busy.current = false;
-    withdrawTimeoutRef.current && clearTimeout(withdrawTimeoutRef.current);
-    withdrawTimeoutRef.current = setTimeout(() => {
-      setWithdrawButtonText(
-        status === "submitted" ? "Withdraw Submission" : "Withdrawn",
-      );
-    }, 2400);
+    if (!withdrawn) {
+      withdrawTimeoutRef.current && clearTimeout(withdrawTimeoutRef.current);
+      withdrawTimeoutRef.current = setTimeout(() => {
+        setWithdrawButtonText("Withdraw Submission");
+      }, 2400);
+    }
   }
 
   /*
@@ -355,7 +360,12 @@ export default function AmbianceMaker({
             {ambianceData.author && (
               <div className={styles.author_wrapper}>
                 <div className={styles.by}>{`by`}</div>
-                <div className={styles.author}>{ambianceData.author}</div>
+                <Link
+                  href={`/@${ambianceData.author}`}
+                  className={styles.author}
+                >
+                  {ambianceData.author}
+                </Link>
               </div>
             )}
           </div>
@@ -363,7 +373,7 @@ export default function AmbianceMaker({
       ) : (
         user && (
           <div className={styles.header_wrapper}>
-            <div className={styles.header}>
+            <div className={classNames(styles.header, styles.with_input)}>
               <input
                 id="title"
                 name="title"
@@ -480,7 +490,11 @@ export default function AmbianceMaker({
           <div className={styles.buttons_wrapper}>
             <Button
               variant="tertiary"
-              onClick={handleWithdraw}
+              onClick={() => {
+                if (!busy.current) {
+                  setShowWithdrawModal(true);
+                }
+              }}
               style={{ maxWidth: "60%", flex: "1" }}
             >
               {withdrawButtonText}
@@ -495,6 +509,7 @@ export default function AmbianceMaker({
           unstyled={true}
           animate={true}
           closeOnBackdropClick={false}
+          backdropStyle={{ padding: "0 0 10vh" }}
         >
           <SubmitAmbiance
             username={user.username}
@@ -504,6 +519,23 @@ export default function AmbianceMaker({
             videoData={videoData}
             closeFunction={() => setShowSubmitModal(false)}
             onSuccess={handleSubmitSuccess}
+          />
+        </Modal>
+      )}
+      {showWithdrawModal && (
+        <Modal
+          closeFunction={() => setShowWithdrawModal(false)}
+          closeOnEscape={true}
+          unstyled={true}
+          animate={true}
+          closeOnBackdropClick={false}
+        >
+          <ConfirmationBox
+            message="Are you sure you want to withdraw this submission?"
+            onCancel={() => setShowWithdrawModal(false)}
+            onConfirm={handleWithdraw}
+            confirmText="Withdraw"
+            cancelText="Cancel"
           />
         </Modal>
       )}

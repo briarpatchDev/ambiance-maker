@@ -5,6 +5,7 @@
   --background: light-dark(white, rgb(50, 50, 50));
   --foreground: light-dark(black, white);
   --border-color: light-dark(rgb(50, 50, 50), rgb(220, 220, 220));
+  --border-color: light-dark(rgb(50, 50, 50), rgb(50, 50, 50));
   --border: 0.05rem solid var(--border-color);
   --backdrop-color: light-dark(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2));
   --link-color: light-dark(blue, rgb(170, 170, 255));
@@ -28,7 +29,9 @@
 *:focus-visible {
   outline: var(--focus-outline);
   outline-offset: var(--focus-outline-offset);
-  transition: outline 0.1s ease-in-out, outline-offset 0.1s ease-in-out;
+  transition:
+    outline 0.1s ease-in-out,
+    outline-offset 0.1s ease-in-out;
 }
 
 input {
