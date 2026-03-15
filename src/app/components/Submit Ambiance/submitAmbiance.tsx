@@ -36,9 +36,9 @@ export default function SubmitAmbiance({
   style,
 }: SubmitAmbianceProps) {
   const router = useRouter();
-  const [panel, setPanel] = useState<"default" | "success" | "failure">(
-    "default",
-  );
+  const [panel, setPanel] = useState<
+    "default" | "submitting" | "success" | "failure"
+  >("default");
   const [isDisabled, setIsDisabled] = useState(true);
   const redirectLink = useRef("");
   const failureMessage = useRef("");
@@ -64,15 +64,9 @@ export default function SubmitAmbiance({
     );
   }, [formData]);
 
-  // Use-states and refs for submitting the ambiance
-  const [submitButtonText, setSubmitButtonText] = useState<
-    "Submit" | "Submitting..."
-  >("Submit");
-  const submitting = useRef(false);
   // Submits the ambiance form
   async function submit() {
-    submitting.current = true;
-    setSubmitButtonText("Submitting...");
+    setPanel("submitting");
     try {
       const options = {
         method: "POST",
@@ -116,7 +110,6 @@ export default function SubmitAmbiance({
         "Something went wrong while submitting your ambiance. Try again soon...";
       setPanel("failure");
     }
-    submitting.current = false;
   }
 
   // Gives arrow controls to the select elemnts
@@ -131,7 +124,7 @@ export default function SubmitAmbiance({
 
   // Closes the modal if not currently submitting
   function close() {
-    if (!submitting.current) {
+    if (panel !== "submitting") {
       closeFunction();
     }
   }
@@ -355,11 +348,17 @@ export default function SubmitAmbiance({
             width={"full"}
             disabled={isDisabled}
           >
-            {submitButtonText}
+            Submit
           </Button>
         </div>
       </form>
     </div>
+  ) : panel === "submitting" ? (
+    <MessageBox
+      ariaLive="polite"
+      role="status"
+      message="Submitting..."
+    />
   ) : panel === "success" ? (
     <MessageBox
       ariaLive="polite"

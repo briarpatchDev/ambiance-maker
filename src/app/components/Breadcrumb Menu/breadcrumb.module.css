@@ -5,6 +5,11 @@
   width: 100%;
   flex-wrap: wrap;
   color: var(--grey-text);
+  background: rgb(40, 30, 45);
+  width: max-content;
+  padding: 0.8rem 1.2rem 0;
+  border-radius: 1rem;
+  min-height: 5.2rem;
 }
 
 .segment {
@@ -16,7 +21,6 @@
 
 .breadcrumb a {
   color: var(--grey-text);
-  border-bottom: 0.1rem solid var(--grey-text);
   padding-bottom: 0.1rem;
   font-family: sans-serif;
   transition: all 0.1;
@@ -24,8 +28,9 @@
 
 .breadcrumb a:hover {
   color: white;
-  border-bottom: 0.1rem solid white;
-  transition: all 0.2s;
+  text-underline-offset: 0.4rem;
+  text-decoration: underline;
+  text-decoration-thickness: 0.1rem;
 }
 
 .dash {
