@@ -460,7 +460,7 @@ export default function AmbianceMaker({
               variant="primary"
               onClick={shareLink}
               disabled={!showButtons}
-              style={{ maxWidth: "60%", flex: "1" }}
+              style={{ minWidth: "20rem", maxWidth: "60%", flex: "1" }}
             >
               {shareButtonText}
             </Button>
@@ -469,7 +469,7 @@ export default function AmbianceMaker({
                 variant="primary"
                 onClick={saveAmbiance}
                 disabled={!showButtons}
-                style={{ maxWidth: "60%", flex: "1" }}
+                style={{ minWidth: "20rem", maxWidth: "60%", flex: "1" }}
               >
                 {saveButtonText}
               </Button>
@@ -479,7 +479,7 @@ export default function AmbianceMaker({
                 variant="primary"
                 onClick={handlePublishClick}
                 disabled={!showButtons}
-                style={{ maxWidth: "60%", flex: "1" }}
+                style={{ minWidth: "20rem", maxWidth: "60%", flex: "1" }}
               >
                 {publishButtonText}
               </Button>
