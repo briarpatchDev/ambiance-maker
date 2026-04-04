@@ -39,6 +39,8 @@ export default function Page() {
           <h1>{`Admin`}</h1>
           <Link href="/test_pages/admin/submitted">{`View Submitted`}</Link>
           <Link href="/test_pages/admin/submitted/G0593m295">{`Review`}</Link>
+          <Link href="/test_pages/admin/reports">{`View Reports`}</Link>
+          <Link href="/test_pages/admin/reports/G0593m295">{`Review Report`}</Link>
         </div>
         <div>
           <h1>{`Inputs`}</h1>

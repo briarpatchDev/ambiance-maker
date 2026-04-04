@@ -6,6 +6,12 @@
   max-width: 130rem;
 }
 
+.fullscreen .videos {
+  height: calc(100vh - 4.8rem);
+  max-width: unset;
+  padding: 0.8rem 0.8rem;
+}
+
 .control_bar {
   display: flex;
   justify-content: space-between;
@@ -20,6 +26,7 @@
 
 .controls_wrapper {
   display: flex;
+  cursor: pointer;
 }
 
 .controls_wrapper button {
@@ -48,12 +55,17 @@
   fill: var(--grey-text);
 }
 
+.controls_wrapper button > svg > path {
+  stroke: var(--grey-text);
+}
+
 .rewind {
   height: 2.6rem; /* 54% of control bar */
 }
 
 .videos {
   display: flex;
+  position: relative;
   justify-content: center;
   flex-wrap: wrap;
   row-gap: 0.6rem;
@@ -61,10 +73,55 @@
   width: 100%;
   min-height: 33.6rem;
   min-height: 42rem;
-  background-color: rgba(35, 35, 35);
+  background-color: rgba(20, 20, 20);
   border-top-left-radius: 1.2rem;
   border-top-right-radius: 1.2rem;
   padding: 0.6rem 0.6rem;
+}
+
+.play_button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  border-top-left-radius: 1.2rem;
+  border-top-right-radius: 1.2rem;
+  border: 0.1rem solid black;
+  cursor: pointer;
+  position: absolute;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  container-type: size;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.play_button .circle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30cqh;
+  width: 30cqh;
+  border-radius: 30cqh;
+  background-color: rgb(90, 60, 120);
+  animation: appear 0.2s;
+}
+
+@keyframes appear {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.play_button .circle > svg {
+  fill: var(--grey-text);
+  padding-left: 12.5%;
+  height: 60%;
 }
 
 .video_wrapper {

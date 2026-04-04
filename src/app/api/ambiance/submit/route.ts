@@ -289,6 +289,11 @@ export async function GET(req: NextRequest) {
         );
       }
 
+      // Published ambiances cannot be submitted
+      if (existing.status === "published") {
+        return NextResponse.json({ canSubmit: false });
+      }
+
       // Re-submitting an already-submitted ambiance doesn't increase the count
       if (existing.status === "submitted") {
         return NextResponse.json({ canSubmit: true });

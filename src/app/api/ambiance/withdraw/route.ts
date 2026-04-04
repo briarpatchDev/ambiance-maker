@@ -22,10 +22,7 @@ export async function POST(req: NextRequest) {
       : await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: "Unauthorized." },
-        { status: 401 },
-      );
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
     }
 
     let body: unknown;
@@ -69,7 +66,8 @@ export async function POST(req: NextRequest) {
     const { error } = await supabase
       .from("ambiances")
       .update({ status: "draft" })
-      .eq("id", id);
+      .eq("id", id)
+      .eq("status", "submitted");
 
     if (error) {
       return NextResponse.json(

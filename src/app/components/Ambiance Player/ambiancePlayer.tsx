@@ -18,6 +18,9 @@ import Backwards from "@/app/components/Icons/backwards";
 import Rewind from "@/app/components/Icons/reset";
 import classNames from "classnames";
 import { updateObjectArr } from "@/app/lib/setStateFunctions";
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
+import FullscreenOpen from "@/app/components/Icons/fullscreen_open";
+import FullscreenClose from "@/app/components/Icons/fullscreen_close";
 
 // YouTube API type declarations
 declare global {
@@ -31,6 +34,7 @@ interface AmbiancePlayerProps {
   videoData: VideoData[];
   setVideoData?: React.Dispatch<React.SetStateAction<VideoData[]>>;
   initialVideoData?: VideoData[];
+  showInitialPlayButton?: boolean;
   style?: React.CSSProperties;
 }
 
@@ -72,6 +76,7 @@ export default function AmbiancePlayer({
   videoData,
   initialVideoData,
   setVideoData,
+  showInitialPlayButton = false,
   style,
 }: AmbiancePlayerProps) {
   // Setting up the ambiance player / video players
@@ -94,6 +99,13 @@ export default function AmbiancePlayer({
   const lastVolumeRef = useRef<(number | undefined)[]>([]);
   // Tracks which players are currently being initialized
   const initializingRef = useRef<boolean[]>([]);
+
+  // Handles fullscreen mode on the ambiance player
+  const fullscreenHandle = useFullScreenHandle();
+
+  // Handles the play button that appears on a published video
+  const [showPlayOverlay, setShowPlayOverlay] = useState(showInitialPlayButton);
+  const [allPlayersReady, setAllPlayersReady] = useState(false);
 
   // Calls updateVideos when the videoData changes
   useEffect(() => {
@@ -161,6 +173,9 @@ export default function AmbiancePlayer({
               video.startTime !== prevStartTime
             ) {
               // Plays video when user adjusts start thumb
+              if (showPlayOverlay) {
+                setShowPlayOverlay(false);
+              }
               player.seekTo(video.startTime);
               player.playVideo();
             }
@@ -248,6 +263,13 @@ export default function AmbiancePlayer({
                   onReady: (e: any) => {
                     playerRefs.current[index] = e.target;
                     initializingRef.current[index] = false;
+                    if (
+                      initializingRef.current.every((entry) => {
+                        return entry === false;
+                      })
+                    ) {
+                      setAllPlayersReady(true);
+                    }
                     console.log(`${playerId} is ready now`);
                     setVideoData &&
                       updateObjectArr(setVideoData, index, {
@@ -390,13 +412,45 @@ export default function AmbiancePlayer({
                   onError: (e: any) => {
                     console.log(`🚨 Player ${index} error:`, e.data);
                     console.log("Error code:", e.data);
-                    if (e.data === 100 || e.data === 150 || e.data === 101) {
+                    if (e.data === 100) {
                       setVideoData &&
                         updateObjectArr(setVideoData, index, {
                           title: undefined,
                           duration: undefined,
-                          linkError: `Video unavailable`,
+                          linkError: `Video not found`,
                         });
+                    } else if (e.data === 150 || e.data === 101) {
+                      // 150/101 can mean unembeddable or unavailable — check via oEmbed
+                      const currentSrc = videoDataRef.current[index].src;
+                      const vid = currentSrc?.match(
+                        /(?:v=|shorts\/|embed\/)([\w-]+)/,
+                      )?.[1];
+                      if (vid) {
+                        (async () => {
+                          try {
+                            const res = await fetch(
+                              `https://www.youtube.com/oembed?url=${encodeURIComponent(`https://www.youtube.com/watch?v=${vid}`)}&format=json`,
+                            );
+                            const text = await res.text();
+                            setVideoData &&
+                              updateObjectArr(setVideoData, index, {
+                                title: undefined,
+                                duration: undefined,
+                                linkError:
+                                  text === "Bad Request"
+                                    ? `Video not found`
+                                    : `Video cannot be embedded`,
+                              });
+                          } catch {
+                            setVideoData &&
+                              updateObjectArr(setVideoData, index, {
+                                title: undefined,
+                                duration: undefined,
+                                linkError: `Video not found`,
+                              });
+                          }
+                        })();
+                      }
                     }
                   },
                 },
@@ -414,12 +468,19 @@ export default function AmbiancePlayer({
               wrapperElement?.replaceChild(newPlayerElement, playerElement);
               console.log("video id prob doesn't exist");
               initializingRef.current[index] = false;
+              if (
+                initializingRef.current.every((entry) => {
+                  return entry === false;
+                })
+              ) {
+                setAllPlayersReady(true);
+              }
               if (videoDataRef.current[index].linkError) continue; // stops infinite render
               setVideoData &&
                 updateObjectArr(setVideoData, index, {
                   title: undefined,
                   duration: undefined,
-                  linkError: `Video unavailable`,
+                  linkError: `Video not found`,
                 });
             }
           }
@@ -464,10 +525,20 @@ export default function AmbiancePlayer({
   );
 
   const play = useCallback(() => {
-    //if (!isPlayerReady.current) return;
+    if (
+      initializingRef.current.length === 0 ||
+      initializingRef.current.some((entry) => {
+        return entry === true;
+      })
+    ) {
+      return;
+    }
     playerRefs.current.forEach((player) => {
       player && player.playVideo();
     });
+    if (showPlayOverlay) {
+      setShowPlayOverlay(false);
+    }
   }, []);
 
   const pause = useCallback(() => {
@@ -500,6 +571,9 @@ export default function AmbiancePlayer({
       player.playVideo();
       player.unMute();
     });
+    if (showPlayOverlay) {
+      setShowPlayOverlay(false);
+    }
     setMuted(false);
   }, []);
 
@@ -517,6 +591,9 @@ export default function AmbiancePlayer({
       player.playVideo();
       player.unMute();
     });
+    if (showPlayOverlay) {
+      setShowPlayOverlay(false);
+    }
     setMuted(false);
   }, []);
 
@@ -537,76 +614,118 @@ export default function AmbiancePlayer({
       player.playVideo();
       player.unMute();
     });
+    if (showPlayOverlay) {
+      setShowPlayOverlay(false);
+    }
     setMuted(false);
   }, []);
 
   return (
-    <div style={{ ...style }} className={styles.player}>
-      <div className={styles.videos} id={`videos`}>
-        {videoData.map((video, i) => {
-          return (
-            <div
-              className={classNames(styles.video_wrapper, {
-                [styles.visible]: video.title,
-              })}
-              id={`video-wrapper-${i}`}
-              key={`video-wrapper-${i}`}
+    <div
+      style={{ ...style }}
+      className={classNames(styles.player, {
+        [styles.fullscreen]: fullscreenHandle.active,
+      })}
+    >
+      <FullScreen handle={fullscreenHandle}>
+        <div className={styles.videos} id={`videos`}>
+          {showPlayOverlay && (
+            <button
+              className={styles.play_button}
+              aria-label="Play Videos"
+              onClick={play}
             >
-              <div id={`player-${i}`} />
-            </div>
-          );
-        })}
-      </div>
-      <div className={styles.control_bar}>
-        <div className={styles.controls_wrapper}>
-          <button onClick={play} title="Play Videos" aria-label="Play Videos">
-            <PlayIcon />
-          </button>
-          <button
-            onClick={pause}
-            title="Pause Videos"
-            aria-label="Pause Videos"
-          >
-            <PauseIcon />
-          </button>
-          <button
-            onClick={muted ? unmute : mute}
-            title={muted ? "Unmute Videos" : "Mute Videos"}
-            aria-label={muted ? "Unmute Videos" : "Mute Videos"}
-            aria-pressed={muted}
-          >
-            {muted ? <VolumeMutedIcon /> : <VolumeHighIcon />}
-          </button>
+              {allPlayersReady && (
+                <div className={styles.circle}>
+                  <PlayIcon />
+                </div>
+              )}
+            </button>
+          )}
+          {videoData.map((video, i) => {
+            return (
+              <div
+                className={classNames(styles.video_wrapper, {
+                  [styles.visible]: video.title,
+                })}
+                id={`video-wrapper-${i}`}
+                key={`video-wrapper-${i}`}
+              >
+                <div id={`player-${i}`} />
+              </div>
+            );
+          })}
         </div>
-        <div className={styles.controls_wrapper}>
-          <button
-            onClick={rewind}
-            title="Rewind Videos"
-            aria-label="Rewind Videos"
-          >
-            <Rewind className={styles.rewind} />
-          </button>
-          <button
-            className={styles.desktop_button}
-            onClick={jumpBack}
-            title="Rewind 10s"
-            aria-label="Rewind 10s"
-            style={{ paddingRight: "0.4rem" }}
-          >
-            <Backwards style={{ padding: "0.2rem 0" }} />
-          </button>
-          <button
-            className={styles.desktop_button}
-            onClick={jumpForward}
-            title="Jump 10s"
-            aria-label="Jump 10s"
-          >
-            <Backwards
-              style={{ transform: "rotateZ(180deg)", padding: "0.2rem 0" }}
-            />
-          </button>
+        <div className={styles.control_bar}>
+          <div className={styles.controls_wrapper}>
+            <button onClick={play} title="Play Videos" aria-label="Play Videos">
+              <PlayIcon />
+            </button>
+            <button
+              onClick={pause}
+              title="Pause Videos"
+              aria-label="Pause Videos"
+            >
+              <PauseIcon />
+            </button>
+            <button
+              onClick={muted ? unmute : mute}
+              title={muted ? "Unmute Videos" : "Mute Videos"}
+              aria-label={muted ? "Unmute Videos" : "Mute Videos"}
+              aria-pressed={muted}
+            >
+              {muted ? <VolumeMutedIcon /> : <VolumeHighIcon />}
+            </button>
+          </div>
+          <div className={styles.controls_wrapper}>
+            <button
+              onClick={rewind}
+              title="Rewind Videos"
+              aria-label="Rewind Videos"
+            >
+              <Rewind className={styles.rewind} />
+            </button>
+            <button
+              className={styles.desktop_button}
+              onClick={jumpBack}
+              title="Rewind 10s"
+              aria-label="Rewind 10s"
+              style={{ paddingRight: "0.2rem" }}
+            >
+              <Backwards style={{ padding: "0.2rem 0" }} />
+            </button>
+            <button
+              className={styles.desktop_button}
+              onClick={jumpForward}
+              title="Jump 10s"
+              aria-label="Jump 10s"
+            >
+              <Backwards
+                style={{ transform: "rotateZ(180deg)", padding: "0.2rem 0" }}
+              />
+            </button>
+            {fullscreenHandle.active ? (
+              <button
+                className={styles.desktop_button}
+                onClick={fullscreenHandle.exit}
+                title="Exit full screen"
+                aria-label="Exit full screen"
+              >
+                <FullscreenClose />
+              </button>
+            ) : (
+              <button
+                className={styles.desktop_button}
+                onClick={fullscreenHandle.enter}
+                title="Full screen"
+                aria-label="Full screen"
+              >
+                <FullscreenOpen style={{ padding: "0.2rem 0" }} />
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      </FullScreen>
     </div>
   );
 }

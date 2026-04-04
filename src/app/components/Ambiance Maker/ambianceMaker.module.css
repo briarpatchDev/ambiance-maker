@@ -23,10 +23,11 @@
   -webkit-text-fill-color: var(--grey-text);
   background: linear-gradient(
     to bottom right,
-    rgb(60, 60, 60),
-    rgb(70, 70, 70)
+    rgb(40, 40, 40),
+    rgb(60, 60, 60)
   );
   width: max-content;
+  overflow-x: hidden;
   padding: 0.6rem 0 0.6rem 1.8rem;
   margin: 0 0.8rem;
   border-radius: 1.2rem;
@@ -76,6 +77,43 @@
   color: white;
   text-underline-offset: 0.3rem;
   text-decoration: underline;
+  text-decoration-thickness: 0.1rem;
+}
+
+.metadata {
+  display: flex;
+  align-items: center;
+  column-gap: 1.2rem;
+  width: 100%;
+  padding: 0.4rem 0 0.2rem;
+  font-size: 1.6rem;
+  color: var(--grey-text);
+}
+
+.date_published {
+  margin-left: 0.4rem;
+}
+
+.date_published,
+.views,
+.rating {
+  opacity: 0.7;
+}
+
+.report_button {
+  all: unset;
+  cursor: pointer;
+  margin: 0 1.6rem 0 auto;
+  font-size: 1.4rem;
+  border-radius: 0.4rem;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+
+.report_button:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
   text-decoration-thickness: 0.1rem;
 }
 

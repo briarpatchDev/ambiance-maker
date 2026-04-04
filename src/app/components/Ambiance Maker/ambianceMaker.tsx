@@ -9,6 +9,7 @@ import AmbiancePlayer from "@/app/components/Ambiance Player/ambiancePlayer";
 import Button from "@/app/components/Buttons/Button Set/button";
 import Modal from "@/app/components/Modals/Modal Versatile Portal/modal";
 import SubmitAmbiance from "@/app/components/Submit Ambiance/submitAmbiance";
+import ReportAmbiance from "@/app/components/Report Ambiance/reportAmbiance";
 import ConfirmationBox from "@/app/components/Confirmation Box/confirmationBox";
 import { updateObjectArr } from "@/app/lib/setStateFunctions";
 import { useRouter } from "next/navigation";
@@ -304,27 +305,8 @@ export default function AmbianceMaker({
     }
   }
 
-  /*
-  async function submitAmbiance() {
-    try {
-      const options = {
-        method: "POST",
-        body: JSON.stringify({
-          id: ambianceData?.id,
-          title: inputData.title,
-          description: inputData.description,
-          ...videoData.reduce((acc, video, index) => {
-            return { ...acc, [`v${index + 1}`]: video };
-          }, {}),
-        }),
-        headers: { "Content-Type": "application/json" },
-      };
-      const res = await fetch("/api/ambiance/submit", options);
-      const data = await res.json();
-      console.log(data);
-    } catch {}
-  }
-    */
+  // Used to show / hide the report modal
+  const [showReportModal, setShowReportModal] = useState(false);
 
   // Handles the title and description inputs
   const [inputData, setInputData] = useState({
@@ -368,6 +350,47 @@ export default function AmbianceMaker({
                 </Link>
               </div>
             )}
+            <div className={styles.metadata}>
+              {ambianceData.datePublished && (
+                <span className={styles.date_published}>
+                  {new Date(ambianceData.datePublished).toLocaleDateString(
+                    undefined,
+                    { year: "numeric", month: "short", day: "numeric" },
+                  )}
+                </span>
+              )}
+              {ambianceData.datePublished &&
+                ambianceData.views !== undefined && (
+                  <span className={styles.separator}>{`●`}</span>
+                )}
+              {ambianceData.views !== undefined && (
+                <span className={styles.views}>
+                  {ambianceData.views.toLocaleString()} views
+                </span>
+              )}
+              {ambianceData.ratingCount !== undefined && (
+                <span className={styles.separator}>{`●`}</span>
+              )}
+              {ambianceData.ratingCount !== undefined &&
+                ambianceData.ratingCount > 0 &&
+                ambianceData.ratingTotal !== undefined && (
+                  <span className={styles.rating}>
+                    {(
+                      ambianceData.ratingTotal / ambianceData.ratingCount
+                    ).toFixed(1)}{" "}
+                    / 5
+                  </span>
+                )}
+              {user && (
+                <button
+                  className={styles.report_button}
+                  aria-label="Report ambiance"
+                  onClick={() => setShowReportModal(true)}
+                >
+                  Report
+                </button>
+              )}
+            </div>
           </div>
         </div>
       ) : (
@@ -395,6 +418,7 @@ export default function AmbianceMaker({
           videoData={videoData}
           initialVideoData={ambianceData?.videoData}
           setVideoData={setVideoData}
+          showInitialPlayButton={mode === "published"}
         />
       </div>
       {isIOS && (
@@ -536,6 +560,20 @@ export default function AmbianceMaker({
             onConfirm={handleWithdraw}
             confirmText="Withdraw"
             cancelText="Cancel"
+          />
+        </Modal>
+      )}
+      {showReportModal && ambianceData?.id && (
+        <Modal
+          closeFunction={() => setShowReportModal(false)}
+          closeOnEscape={true}
+          unstyled={true}
+          animate={true}
+          closeOnBackdropClick={false}
+        >
+          <ReportAmbiance
+            ambianceId={ambianceData.id}
+            closeFunction={() => setShowReportModal(false)}
           />
         </Modal>
       )}
