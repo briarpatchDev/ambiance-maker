@@ -13,17 +13,17 @@ import DraftIcon from "@/app/components/Icons/draft";
 import LogoutIcon from "@/app/components/Icons/logout";
 import PencilIcon from "@/app/components/Icons/pencil";
 import MagnifyingGlass from "@/app/components/Icons/magnifying_glass";
+import { useUser } from "@/app/contexts/userContext";
 
 interface SideMenuProps {
-  user?: any;
   style?: React.CSSProperties;
 }
 
-export default function SideMenu({ user, style }: SideMenuProps) {
+export default function SideMenu({ style }: SideMenuProps) {
+  const user = useUser();
   const menuRef = useRef<HTMLDivElement | null>(null);
   const breakpoint = useRef(540);
   const [showModal, setShowModal] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(user);
   const [isExpanded, setIsExpanded] = useState(true);
   const [isExpanding, setIsExpanding] = useState(false);
   const [isInitalized, setInitalized] = useState(false);
@@ -74,14 +74,34 @@ export default function SideMenu({ user, style }: SideMenuProps) {
     window.localStorage.setItem("menuExpanded", "false");
   }
 
+  //Sends user to google login
   function login() {
+    const path = window.location.pathname;
+    window.location.href = `/api/auth/google/login?path=${encodeURIComponent(
+      path,
+    )}`;
+    /*2
     setShowModal(false);
     setIsLoggedIn(true);
+    */
   }
 
-  function logout() {
+  async function logout() {
+    try {
+      const options = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      };
+
+      await fetch("/api/auth/logout", options);
+      window.location.reload();
+    } catch {
+      window.location.reload();
+    }
+    /*
     linkClicked();
     setIsLoggedIn(false);
+    */
   }
 
   return (
@@ -181,7 +201,7 @@ export default function SideMenu({ user, style }: SideMenuProps) {
             <span>Browse</span>
           </div>
         </Link>
-        {!isLoggedIn && (
+        {!user && (
           <button
             className={classNames(styles.menu_item, styles.profile_button)}
             onClick={() => setShowModal(true)}
@@ -194,7 +214,7 @@ export default function SideMenu({ user, style }: SideMenuProps) {
             </div>
           </button>
         )}
-        {isLoggedIn && (
+        {user && (
           <Link
             href="/drafts"
             title="Drafts"
@@ -207,7 +227,7 @@ export default function SideMenu({ user, style }: SideMenuProps) {
             </div>
           </Link>
         )}
-        {isLoggedIn && (
+        {user && (
           <Link
             href="/profile"
             title="Profile"
@@ -215,7 +235,22 @@ export default function SideMenu({ user, style }: SideMenuProps) {
             onClick={linkClicked}
           >
             <div className={styles.item_content}>
-              <Profile />
+              {user && user.avatar ? (
+                <Image
+                  src={user.avatar}
+                  alt="Profile picture"
+                  width={256}
+                  height={256}
+                  style={{
+                    height: "auto",
+                    width: "3.4rem",
+                    borderRadius: "4.2rem",
+
+                  }}
+                />
+              ) : (
+                <Profile />
+              )}
               <span>Profile</span>
             </div>
           </Link>
@@ -223,7 +258,7 @@ export default function SideMenu({ user, style }: SideMenuProps) {
       </div>
 
       <div className={styles.footer_wrapper}>
-        {isLoggedIn && (
+        {user && (
           <button
             onClick={logout}
             className={classNames(styles.menu_item, styles.logout)}

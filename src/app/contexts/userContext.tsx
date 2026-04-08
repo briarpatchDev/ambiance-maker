@@ -3,8 +3,11 @@
 import { createContext, useContext } from "react";
 
 export type User = {
-  session?: string;
+  id: string;
+  email?: string;
   avatar?: string;
+  username?: string;
+  role?: string;
 };
 
 const UserContext = createContext<User | null>(null);

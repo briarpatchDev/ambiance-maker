@@ -28,7 +28,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getCurrentUser(["avatar"]);
+  const user = await getCurrentUser();
   return (
     <UserProvider user={user}>
       <html>

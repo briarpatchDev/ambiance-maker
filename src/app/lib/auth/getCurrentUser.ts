@@ -1,39 +1,37 @@
-//import { connectToDatabase } from "@/app/lib/mongodb";
+import { createAdminClient } from "@/app/lib/supabase/admin";
 import { cookies } from "next/headers";
 
-// Fetches user data for a logged in user using their sessionId
-// This will be used in server layouts, server pages, and in userContexts
-export async function getCurrentUser(fields?: string[]) {
-  return null;
-  /*
+export async function getCurrentUser() {
   try {
     const cookieStore = await cookies();
     const sessionId = cookieStore.get("sessionId")?.value;
     if (!sessionId) return null;
-    const db = await connectToDatabase("accounts");
-    const accounts = db.collection("accounts");
-    const account = await accounts.findOne({ sessionId: sessionId });
-    if (!account) {
-      cookieStore.delete("sessionId");
-      return null;
-    }
-    const returnObject: any = {
-      loggedIn: true,
+
+    const supabase = createAdminClient();
+    const { data: session, error: sessionError } = await supabase
+      .from("sessions")
+      .select("user_id")
+      .eq("session_id", sessionId)
+      .single();
+
+    if (sessionError || !session) return null;
+
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("id, email, username, avatar, role")
+      .eq("id", session.user_id)
+      .single();
+
+    if (error || !user) return null;
+
+    return {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      avatar: user.avatar,
+      role: user.role,
     };
-    fields?.forEach((field) => {
-      if (field in account) {
-        returnObject[field] = account[field];
-      }
-    });
-    const forbiddenFields = ["_id", "password"];
-    forbiddenFields.forEach((field) => {
-      if (field in returnObject) {
-        delete returnObject[field];
-      }
-    });
-    return returnObject;
   } catch {
     return null;
   }
-    */
 }

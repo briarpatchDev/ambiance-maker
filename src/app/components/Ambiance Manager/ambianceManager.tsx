@@ -41,6 +41,11 @@ export default function SelectionManager({
   const componentRef = useRef<HTMLDivElement | null>(null);
   const lastCheckboxChecked = useRef(0);
 
+  // Update the items when itemsArr changes
+  useEffect(() => {
+    setItems(itemsArr);
+  }, [itemsArr]);
+
   // Initalizes the component with correct width value for the entries container, updates it on resize
   const [entriesWidth, setEntriesWidth] = useState(0); // in rem
   const [isInitialized, setIsInitialized] = useState(false);

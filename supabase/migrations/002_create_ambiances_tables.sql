@@ -1,12 +1,11 @@
 -- Migration 002: Create ambiances and ambiance_ratings tables
--- Both tables reference public.users(id) for profile joins (username, account_status)
--- and auth.users(id) for auth-level cascade deletes.
+-- Both tables reference public.users(id) for profile joins and cascade deletes.
+-- All DB operations go through the admin client (service role key) which bypasses RLS.
 
 -- Create ambiances table
 CREATE TABLE IF NOT EXISTS ambiances (
   id VARCHAR(12) PRIMARY KEY,
   user_id UUID NOT NULL
-    REFERENCES auth.users(id) ON DELETE CASCADE
     REFERENCES public.users(id) ON DELETE CASCADE,
   title VARCHAR(64) NOT NULL,
   description TEXT NOT NULL DEFAULT '',
@@ -39,7 +38,6 @@ CREATE TABLE IF NOT EXISTS ambiance_ratings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   ambiance_id VARCHAR(12) REFERENCES ambiances(id) ON DELETE CASCADE NOT NULL,
   user_id UUID NOT NULL
-    REFERENCES auth.users(id) ON DELETE CASCADE
     REFERENCES public.users(id) ON DELETE CASCADE,
   rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -97,55 +95,24 @@ CREATE TRIGGER update_rating_stats
   EXECUTE FUNCTION update_ambiance_rating_stats();
 
 -- Row Level Security (RLS) policies
+-- RLS is enabled as a safety net. All app operations use the admin client (bypasses RLS).
 
 -- Enable RLS on ambiances
 ALTER TABLE ambiances ENABLE ROW LEVEL SECURITY;
-
--- Users can view their own ambiances (any status)
-CREATE POLICY "Users can view own ambiances"
-  ON ambiances FOR SELECT
-  USING (auth.uid() = user_id);
 
 -- Anyone can view published ambiances
 CREATE POLICY "Anyone can view published ambiances"
   ON ambiances FOR SELECT
   USING (status = 'published');
 
--- Users can insert their own ambiances
-CREATE POLICY "Users can insert own ambiances"
-  ON ambiances FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-
--- Users can update their own ambiances (but not change to published - that's for moderators)
-CREATE POLICY "Users can update own ambiances"
-  ON ambiances FOR UPDATE
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id AND status != 'published');
-
--- Users can delete their own draft ambiances
-CREATE POLICY "Users can delete own drafts"
-  ON ambiances FOR DELETE
-  USING (auth.uid() = user_id AND status = 'draft');
+-- No direct insert/update/delete via public client
 
 -- Enable RLS on ambiance_ratings
 ALTER TABLE ambiance_ratings ENABLE ROW LEVEL SECURITY;
 
--- Users can view all ratings
+-- Anyone can view ratings
 CREATE POLICY "Anyone can view ratings"
   ON ambiance_ratings FOR SELECT
   USING (true);
 
--- Users can insert their own ratings
-CREATE POLICY "Users can insert own ratings"
-  ON ambiance_ratings FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-
--- Users can update their own ratings
-CREATE POLICY "Users can update own ratings"
-  ON ambiance_ratings FOR UPDATE
-  USING (auth.uid() = user_id);
-
--- Users can delete their own ratings
-CREATE POLICY "Users can delete own ratings"
-  ON ambiance_ratings FOR DELETE
-  USING (auth.uid() = user_id);
+-- No direct insert/update/delete via public client

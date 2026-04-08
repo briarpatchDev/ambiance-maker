@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/app/lib/supabase/server";
 import { createAdminClient } from "@/app/lib/supabase/admin";
 import { cookies } from "next/headers";
 
@@ -13,41 +12,83 @@ export async function verifyAdmin(): Promise<
   { userId: string } | { error: NextResponse }
 > {
   const isDev = process.env.NODE_ENV === "development";
-  const supabase = isDev ? createAdminClient() : createClient(cookies());
+  const supabase = createAdminClient();
 
-  // Authenticate
-  const {
-    data: { user },
-    error: authError,
-  } = isDev
-    ? { data: { user: { id: DEV_USER_ID } }, error: null }
-    : await supabase.auth.getUser();
+  let userId: string;
 
-  if (authError || !user) {
-    return {
-      error: NextResponse.json(
-        { error: "Unauthorized. Please log in." },
-        { status: 401 },
-      ),
-    };
+  if (isDev) {
+    userId = DEV_USER_ID;
+  } else {
+    const cookieStore = await cookies();
+    const sessionId = cookieStore.get("sessionId")?.value;
+    if (!sessionId) {
+      return {
+        error: NextResponse.json(
+          { error: "Unauthorized. Please log in." },
+          { status: 401 },
+        ),
+      };
+    }
+
+    const { data: session, error: sessionError } = await supabase
+      .from("sessions")
+      .select("user_id")
+      .eq("session_id", sessionId)
+      .single();
+
+    if (sessionError || !session) {
+      return {
+        error: NextResponse.json(
+          { error: "Unauthorized. Please log in." },
+          { status: 401 },
+        ),
+      };
+    }
+
+    const { data: user, error: authError } = await supabase
+      .from("users")
+      .select("id, role")
+      .eq("id", session.user_id)
+      .single();
+
+    if (authError || !user) {
+      return {
+        error: NextResponse.json(
+          { error: "Unauthorized. Please log in." },
+          { status: 401 },
+        ),
+      };
+    }
+
+    if (user.role !== "admin") {
+      return {
+        error: NextResponse.json(
+          { error: "Forbidden. Admin access required." },
+          { status: 403 },
+        ),
+      };
+    }
+
+    userId = user.id;
   }
 
-  // Check admin role
-  const adminClient = createAdminClient();
-  const { data: profile, error: profileError } = await adminClient
-    .from("users")
-    .select("role")
-    .eq("id", user.id)
-    .single();
+  // Dev mode: still verify admin role exists
+  if (isDev) {
+    const { data: profile, error: profileError } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", userId)
+      .single();
 
-  if (profileError || !profile || profile.role !== "admin") {
-    return {
-      error: NextResponse.json(
-        { error: "Forbidden. Admin access required." },
-        { status: 403 },
-      ),
-    };
+    if (profileError || !profile || profile.role !== "admin") {
+      return {
+        error: NextResponse.json(
+          { error: "Forbidden. Admin access required." },
+          { status: 403 },
+        ),
+      };
+    }
   }
 
-  return { userId: user.id };
+  return { userId };
 }

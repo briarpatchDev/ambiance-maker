@@ -4,7 +4,7 @@
   flex: 1;
   position: relative;
   width: 100%;
-  max-width: 150rem;
+  max-width: 180rem;
   color: var(--grey-text);
 }
 
@@ -73,6 +73,7 @@
 
 .trash_btn_wrapper svg {
   height: 80%;
+  fill: var(--grey-text);
 }
 
 .delete_menu {
@@ -80,7 +81,9 @@
   justify-content: flex-end;
   column-gap: 0.8rem;
   margin-bottom: 0.8rem;
+  /*
   animation: selectAllWrapperAppear 0.2s;
+  */
 }
 
 .entries_and_select_all_wrapper {
@@ -121,7 +124,9 @@
   justify-content: flex-start;
   align-items: center;
   column-gap: 0.4rem;
+  /*
   animation: selectAllWrapperAppear 0.2s;
+  */
   height: 1.8rem;
   font-size: 1.6rem;
   margin-bottom: 1.2rem;
@@ -156,7 +161,9 @@
 
   left: 0.4rem;
   z-index: 1;
+  /*
   animation: checkboxWrapperAppear 0.3s;
+  */
 }
 
 @keyframes checkboxWrapperAppear {

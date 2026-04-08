@@ -171,6 +171,13 @@ const drafts = [
   draftData1,
 ];
 
+drafts.forEach((draft) => {
+  draft.description = undefined;
+});
+ambiances.forEach((ambiance) => {
+  ambiance.description = undefined;
+});
+
 export default function Page() {
   const containerRef = useRef<HTMLDivElement>(null);
   return (
