@@ -10,7 +10,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://website.com"),
-  title: "Ambiance",
+  title: "Ambiance Maker",
   description: `This description will appear in search results`,
   openGraph: {
     title: "Website",

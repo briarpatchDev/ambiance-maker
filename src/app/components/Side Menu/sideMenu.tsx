@@ -80,10 +80,6 @@ export default function SideMenu({ style }: SideMenuProps) {
     window.location.href = `/api/auth/google/login?path=${encodeURIComponent(
       path,
     )}`;
-    /*2
-    setShowModal(false);
-    setIsLoggedIn(true);
-    */
   }
 
   async function logout() {
@@ -92,16 +88,11 @@ export default function SideMenu({ style }: SideMenuProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       };
-
       await fetch("/api/auth/logout", options);
       window.location.reload();
     } catch {
       window.location.reload();
     }
-    /*
-    linkClicked();
-    setIsLoggedIn(false);
-    */
   }
 
   return (
@@ -245,7 +236,6 @@ export default function SideMenu({ style }: SideMenuProps) {
                     height: "auto",
                     width: "3.4rem",
                     borderRadius: "4.2rem",
-
                   }}
                 />
               ) : (

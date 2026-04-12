@@ -354,7 +354,7 @@ export default function AmbianceMaker({
               {ambianceData.datePublished && (
                 <span className={styles.date_published}>
                   {new Date(ambianceData.datePublished).toLocaleDateString(
-                    undefined,
+                    "en-US",
                     { year: "numeric", month: "short", day: "numeric" },
                   )}
                 </span>

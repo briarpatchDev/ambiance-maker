@@ -18,19 +18,36 @@ export async function getCurrentUser() {
 
     const { data: user, error } = await supabase
       .from("users")
-      .select("id, email, username, avatar, role")
+      .select("username, avatar")
       .eq("id", session.user_id)
       .single();
 
     if (error || !user) return null;
 
     return {
-      id: user.id,
-      email: user.email,
       username: user.username,
       avatar: user.avatar,
-      role: user.role,
     };
+  } catch {
+    return null;
+  }
+}
+
+export async function getUserId(): Promise<string | null> {
+  try {
+    const cookieStore = await cookies();
+    const sessionId = cookieStore.get("sessionId")?.value;
+    if (!sessionId) return null;
+
+    const supabase = createAdminClient();
+    const { data: session, error } = await supabase
+      .from("sessions")
+      .select("user_id")
+      .eq("session_id", sessionId)
+      .single();
+
+    if (error || !session) return null;
+    return session.user_id;
   } catch {
     return null;
   }

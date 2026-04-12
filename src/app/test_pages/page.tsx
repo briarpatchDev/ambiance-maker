@@ -52,6 +52,7 @@ export default function Page() {
         </div>
         <div>
           <h1>{`Misc`}</h1>
+          <Link href="/test_pages/hero">{`Hero`}</Link>
           <Link href="/test_pages/contact-us">{`Contact Us`}</Link>
           <Link href="/test_pages/404">{`404`}</Link>
         </div>
