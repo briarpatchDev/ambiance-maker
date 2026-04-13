@@ -10,7 +10,7 @@ import { getVideoId } from "@/app/lib/schemas/ambiance";
 import MessageBox from "@/app/components/Message Box/messageBox";
 import classNames from "classnames";
 import { useRouter } from "next/navigation";
-import categories from "@/app/lib/categories";
+import { categories } from "@/app/lib/categories";
 
 interface SubmitAmbianceProps {
   username: string;
@@ -354,11 +354,7 @@ export default function SubmitAmbiance({
       </form>
     </div>
   ) : panel === "submitting" ? (
-    <MessageBox
-      ariaLive="polite"
-      role="status"
-      message="Submitting..."
-    />
+    <MessageBox ariaLive="polite" role="status" message="Submitting..." />
   ) : panel === "success" ? (
     <MessageBox
       ariaLive="polite"

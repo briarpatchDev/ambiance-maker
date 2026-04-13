@@ -1,0 +1,13 @@
+.homepage {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding-bottom: 24rem;
+}
+
+.ambiance_maker_wrapper {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  padding: 0 0.8rem;
+}

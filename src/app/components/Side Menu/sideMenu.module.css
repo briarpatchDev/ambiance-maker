@@ -1,10 +1,8 @@
 .side_menu {
   display: flex;
   flex-direction: column;
-  height: 100%;
   width: 19.2rem;
   min-width: 19.2rem;
-  min-height: 100vh;
   border-right: 0.1rem solid rgba(57, 50, 57);
   background-color: rgb(50, 50, 50);
   padding-top: 1.2rem;
@@ -12,6 +10,9 @@
   transition:
     width 0.2s,
     min-width 0.2s;
+  height: 100vh;
+  max-height: 100vh;
+  overflow-y: scroll;
 }
 
 .side_menu:not(.expanded) {
@@ -175,6 +176,10 @@ button.menu_item:hover .item_content {
 
 .side_menu.hidden > * {
   opacity: 0;
+}
+
+.side_menu.no_transition {
+  transition: none;
 }
 
 .side_menu button:focus-visible {

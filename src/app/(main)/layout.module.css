@@ -1,0 +1,65 @@
+.page {
+  display: flex;
+  width: 100vw;
+  overflow-x: hidden;
+  height: max-content;
+  background:
+    linear-gradient(
+      210deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0) 75%
+    ),
+    radial-gradient(
+      ellipse 150% 20vh at 50% 0%,
+      rgba(255, 255, 255, 0.04) 0%,
+      rgba(255, 255, 255, 0.06) 30%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0.03) 70%,
+      transparent 100%
+    ),
+    linear-gradient(
+      85deg,
+      rgba(116, 107, 121, 0.5) 0%,
+      rgba(73, 70, 83, 0.5) 100%
+    ),
+    linear-gradient(185deg, rgb(116, 107, 121) 0%, rgb(73, 70, 83) 100%);
+}
+
+.content_wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.page_content {
+  position: relative;
+  padding: 0.8rem 0 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  height: max-content;
+}
+
+.page_content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("/images/background/cardboard.png");
+  opacity: 0.3;
+  backdrop-filter: brightness(0.05);
+  pointer-events: none;
+  z-index: 0;
+  min-height: 100vh;
+}
+
+.page_content > * {
+  position: relative;
+  z-index: 1;
+}

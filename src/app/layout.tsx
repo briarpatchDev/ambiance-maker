@@ -9,13 +9,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://website.com"),
+  metadataBase: new URL("https://ambiancemaker.com"),
   title: "Ambiance Maker",
   description: `This description will appear in search results`,
   openGraph: {
-    title: "Website",
+    title: "Ambiance Maker",
     description: "The opengraph description appears below the image and title",
-    url: "https://website.com",
+    url: "https://ambiancemaker.com",
     images: ["/og-image.png"],
   },
   icons: {
@@ -23,17 +23,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+async function UserWrapper({ children }: { children: React.ReactNode }) {
+  const user = await getCurrentUser();
+  return <UserProvider user={user}>{children}</UserProvider>;
+}
+
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getCurrentUser();
   return (
-    <UserProvider user={user}>
-      <html>
-        <body>{children}</body>
-      </html>
-    </UserProvider>
+    <html>
+      <body>
+        <UserWrapper>{children}</UserWrapper>
+      </body>
+    </html>
   );
 }

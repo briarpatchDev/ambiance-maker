@@ -22,11 +22,12 @@ interface SideMenuProps {
 export default function SideMenu({ style }: SideMenuProps) {
   const user = useUser();
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const breakpoint = useRef(540);
+  const breakpoint = useRef(580);
   const [showModal, setShowModal] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
   const [isExpanding, setIsExpanding] = useState(false);
   const [isInitalized, setInitalized] = useState(false);
+  const [transitionsReady, setTransitionsReady] = useState(false);
   const expandTimeout = useRef<NodeJS.Timeout>(undefined);
 
   // Collapses the menu on mobile on mount
@@ -40,7 +41,12 @@ export default function SideMenu({ style }: SideMenuProps) {
       }
     }
     setInitalized(true);
-    //window.localStorage.setItem("menuExpanded", isExpanded.toString());
+
+    // Enable transitions after the browser paints the correct initial width
+    requestAnimationFrame(() => {
+      setTransitionsReady(true);
+    });
+
     return () => {
       if (expandTimeout.current) {
         clearTimeout(expandTimeout.current);
@@ -102,6 +108,7 @@ export default function SideMenu({ style }: SideMenuProps) {
         [styles.expanded]: isExpanded,
         [styles.expanding]: isExpanding,
         [styles.hidden]: !isInitalized,
+        [styles.no_transition]: !transitionsReady,
       })}
       ref={menuRef}
     >
