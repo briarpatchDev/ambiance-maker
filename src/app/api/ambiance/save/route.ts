@@ -10,9 +10,7 @@ import {
   getVideoId,
   type VideoDataInput,
 } from "@/app/lib/schemas/ambiance";
-
-// Dev user ID - used consistently across development
-const DEV_USER_ID = "00000000-0000-0000-0000-000000000000";
+import { getUserId } from "@/app/lib/auth/getCurrentUser";
 
 // Saves the ambiance as a draft
 export async function POST(req: NextRequest) {
@@ -24,14 +22,8 @@ export async function POST(req: NextRequest) {
     const supabase = isDev ? createAdminClient() : createClient(cookieStore);
 
     // Get authenticated user
-    const {
-      data: { user },
-      error: authError,
-    } = isDev
-      ? { data: { user: { id: DEV_USER_ID } }, error: null }
-      : await supabase.auth.getUser();
-
-    if (authError || !user) {
+    const userId = await getUserId();
+    if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized. Please log in to save an ambiance." },
         { status: 401 },
@@ -102,7 +94,7 @@ export async function POST(req: NextRequest) {
         .eq("id", id)
         .single();
 
-      if (!existing || existing.user_id !== user.id) {
+      if (!existing || existing.user_id !== userId) {
         return NextResponse.json(
           { error: "Ambiance not found.", code: "NOT_FOUND" },
           { status: 404 },
@@ -136,7 +128,7 @@ export async function POST(req: NextRequest) {
       const { count } = await supabase
         .from("ambiances")
         .select("*", { count: "exact", head: true })
-        .eq("user_id", user.id)
+        .eq("user_id", userId)
         .in("status", ["draft", "submitted"]);
 
       if (count !== null && count >= 50) {
@@ -157,7 +149,7 @@ export async function POST(req: NextRequest) {
           .from("ambiances")
           .insert({
             id: newId,
-            user_id: user.id,
+            user_id: userId,
             title: title || "Untitled",
             description: description || "",
             status: "draft",

@@ -1,0 +1,15 @@
+.drafts {
+  display: flex;
+}
+
+.manager_wrapper {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  padding: 2.4rem 2.4rem 16rem;
+}
+
+.not_found{
+  padding: 0 0.8rem;
+  margin-top: 20vh;
+}

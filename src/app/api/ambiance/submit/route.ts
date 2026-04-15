@@ -10,9 +10,7 @@ import {
   transformVideoDataForStorage,
   type VideoDataInput,
 } from "@/app/lib/schemas/ambiance";
-
-// Dev user ID - used consistently across development
-const DEV_USER_ID = "00000000-0000-0000-0000-000000000000";
+import { getUserId } from "@/app/lib/auth/getCurrentUser";
 
 // Submits the video for publication
 export async function POST(req: NextRequest) {
@@ -24,14 +22,8 @@ export async function POST(req: NextRequest) {
     const supabase = isDev ? createAdminClient() : createClient(cookieStore);
 
     // Get authenticated user
-    const {
-      data: { user },
-      error: authError,
-    } = isDev
-      ? { data: { user: { id: DEV_USER_ID } }, error: null }
-      : await supabase.auth.getUser();
-
-    if (authError || !user) {
+    const userId = await getUserId();
+    if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized. Please log in to submit an ambiance." },
         { status: 401 },
@@ -68,7 +60,7 @@ export async function POST(req: NextRequest) {
         id: transformedBody.id,
         title: transformedBody.title,
         description: transformedBody.description,
-        category: transformedBody.category,
+        category_id: transformedBody.category_id,
         videoData,
       };
     }
@@ -84,7 +76,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { id, title, description, category, videoData } = parseResult.data;
+    const { id, title, description, category_id, videoData } = parseResult.data;
 
     // Ensure at least 2 videos have valid sources
     const validVideoCount = videoData.filter(
@@ -113,7 +105,7 @@ export async function POST(req: NextRequest) {
     const { count: submittedCount } = await supabase
       .from("ambiances")
       .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("status", "submitted");
 
     if (id) {
@@ -124,7 +116,7 @@ export async function POST(req: NextRequest) {
         .eq("id", id)
         .single();
 
-      if (!existing || existing.user_id !== user.id) {
+      if (!existing || existing.user_id !== userId) {
         return NextResponse.json(
           { error: "Ambiance not found.", code: "NOT_FOUND" },
           { status: 404 },
@@ -156,7 +148,7 @@ export async function POST(req: NextRequest) {
         .update({
           title,
           description,
-          category,
+          category_id,
           status: "submitted",
           video_data: videoDataForStorage,
           thumbnail,
@@ -172,7 +164,7 @@ export async function POST(req: NextRequest) {
       const { count } = await supabase
         .from("ambiances")
         .select("*", { count: "exact", head: true })
-        .eq("user_id", user.id)
+        .eq("user_id", userId)
         .in("status", ["draft", "submitted"]);
 
       if (count !== null && count >= 50) {
@@ -205,10 +197,10 @@ export async function POST(req: NextRequest) {
           .from("ambiances")
           .insert({
             id: newId,
-            user_id: user.id,
+            user_id: userId,
             title,
             description,
-            category,
+            category_id,
             status: "submitted",
             video_data: videoDataForStorage,
             thumbnail,
@@ -260,14 +252,8 @@ export async function GET(req: NextRequest) {
     const cookieStore = cookies();
     const supabase = isDev ? createAdminClient() : createClient(cookieStore);
 
-    const {
-      data: { user },
-      error: authError,
-    } = isDev
-      ? { data: { user: { id: DEV_USER_ID } }, error: null }
-      : await supabase.auth.getUser();
-
-    if (authError || !user) {
+    const userId = await getUserId();
+    if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized." },
         { status: 401 },
@@ -283,7 +269,7 @@ export async function GET(req: NextRequest) {
         .eq("id", ambianceId)
         .single();
 
-      if (!existing || existing.user_id !== user.id) {
+      if (!existing || existing.user_id !== userId) {
         return NextResponse.json(
           { canSubmit: false, code: "NOT_FOUND" },
         );
@@ -303,7 +289,7 @@ export async function GET(req: NextRequest) {
     const { count } = await supabase
       .from("ambiances")
       .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("status", "submitted");
 
     return NextResponse.json({ canSubmit: (count ?? 0) < 5 });

@@ -1,4 +1,7 @@
 import { z } from "zod";
+import { categoryMeta } from "@/app/lib/categories";
+
+const validCategoryIds = new Set(Object.values(categoryMeta).map((c) => c.id));
 
 // Helper to extract YouTube video ID from URL (exported for use elsewhere)
 export function getVideoId(url: string): string | null {
@@ -74,11 +77,10 @@ export const submitAmbianceSchema = z.object({
     .string()
     .trim()
     .max(500, "Description must be 500 characters or less"),
-  category: z
-    .string()
-    .trim()
-    .min(1, "Category is required")
-    .max(200, "Category path too long"),
+  category_id: z
+    .number()
+    .int("Category must be an integer ID")
+    .refine((id) => validCategoryIds.has(id), { message: "Invalid category" }),
   videoData: z
     .array(videoDataSchema)
     .length(6, "Must provide exactly 6 video slots"),

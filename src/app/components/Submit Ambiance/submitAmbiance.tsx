@@ -10,7 +10,7 @@ import { getVideoId } from "@/app/lib/schemas/ambiance";
 import MessageBox from "@/app/components/Message Box/messageBox";
 import classNames from "classnames";
 import { useRouter } from "next/navigation";
-import { categories } from "@/app/lib/categories";
+import { categories, categoryMeta } from "@/app/lib/categories";
 
 interface SubmitAmbianceProps {
   username: string;
@@ -68,13 +68,15 @@ export default function SubmitAmbiance({
   async function submit() {
     setPanel("submitting");
     try {
+      const selectedName = formData.categories.filter(Boolean).at(-1);
+      const category_id = selectedName ? categoryMeta[selectedName]?.id : undefined;
       const options = {
         method: "POST",
         body: JSON.stringify({
           id: id,
           title: title,
           description: description,
-          category: formData.categories.filter(Boolean).join("/"),
+          category_id,
           ...videoData.reduce((acc, video, index) => {
             return { ...acc, [`v${index + 1}`]: video };
           }, {}),

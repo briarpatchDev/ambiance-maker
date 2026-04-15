@@ -1,4 +1,4 @@
-.homepage {
+.drafts {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -10,4 +10,9 @@
   justify-content: center;
   flex: 1;
   padding: 0.2rem 0.8rem 0;
+}
+
+.not_found{
+  padding: 0 0.8rem;
+  margin-top: 20vh;
 }

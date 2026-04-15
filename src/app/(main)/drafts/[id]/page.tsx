@@ -1,49 +1,42 @@
+import AmbianceMaker from "@/app/components/Ambiance Maker/ambianceMaker";
 import styles from "./page.module.css";
-import Review from "@/app/components/Admin/Review Ambiance/review";
+import { redirect } from "next/navigation";
+import { AmbianceData } from "@/app/components/Ambiance Maker/ambianceMaker";
 import { createClient } from "@/app/lib/supabase/server";
 import { createAdminClient } from "@/app/lib/supabase/admin";
 import { cookies } from "next/headers";
-import { AmbianceData } from "@/app/components/Ambiance Maker/ambianceMaker";
+import { getUserId } from "@/app/lib/auth/getCurrentUser";
 import NotFound from "@/app/components/Errors/Not Found/notFound";
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-interface SubmissionData {
-  ambianceData: AmbianceData;
-  categoryId: number;
-}
-
-async function getSubmission(
+async function getDraft(
   ambianceId: string,
-): Promise<SubmissionData | null> {
+  userId: string,
+): Promise<{
+  ambianceData: AmbianceData;
+  status: "draft" | "submitted";
+} | null> {
   const isDev = process.env.NODE_ENV === "development";
   const supabase = isDev ? createAdminClient() : createClient(cookies());
 
   const { data: ambiance, error } = await supabase
     .from("ambiances")
-    .select(
-      "id, title, description, video_data, category_id, user_id, status, users:user_id(username, account_status)",
-    )
+    .select("id, title, description, video_data, user_id, status")
     .eq("id", ambianceId)
-    .eq("status", "submitted")
     .single();
-
   if (error || !ambiance) {
     return null;
   }
-
-  // users comes back as an object from a single foreign-key join
-  const userProfile = ambiance.users as unknown as {
-    username: string;
-    account_status: string;
-  };
-
-  if (!userProfile || userProfile.account_status !== "good") {
+  if (ambiance.user_id !== userId) {
     return null;
   }
-
+  // If published, redirect to the page
+  if (ambiance.status === "published") {
+    redirect(`/ambiance/${ambianceId}`);
+  }
   // Transform video_data from stored format to VideoData[]
   const videoData = (ambiance.video_data as any[]).map((v: any) => ({
     src: v.videoId ? `https://www.youtube.com/watch?v=${v.videoId}` : "",
@@ -58,33 +51,38 @@ async function getSubmission(
       id: ambiance.id,
       title: ambiance.title,
       description: ambiance.description,
-      author: userProfile.username,
       videoData,
     },
-    categoryId: ambiance.category_id,
+    status: ambiance.status as "draft" | "submitted",
   };
 }
 
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
-  const submission = await getSubmission(id);
+  const userId = await getUserId();
+  if (!userId) {
+    redirect("/login");
+  }
+  const draft = await getDraft(id, userId);
 
-  return (
-    <div className={styles.page}>
-      <div className={styles.wrapper}>
-        {submission ? (
-          <Review
-            ambianceData={submission.ambianceData}
-            categoryId={submission.categoryId}
-          />
-        ) : (
-          <NotFound
-            errorMessage="Submission not found"
-            buttonText="Go Back"
-            href="/test_pages/admin"
-          />
-        )}
+  return draft ? (
+    <div className={styles.drafts}>
+      <div className={styles.ambiance_maker_wrapper}>
+        <AmbianceMaker
+          mode="draft"
+          ambianceData={draft.ambianceData}
+          user={true}
+          status={draft.status}
+        />
       </div>
+    </div>
+  ) : (
+    <div className={styles.not_found}>
+      <NotFound
+        errorMessage="Draft not found"
+        buttonText="Go Back"
+        href="/drafts"
+      />
     </div>
   );
 }

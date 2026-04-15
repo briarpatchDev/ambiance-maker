@@ -133,7 +133,7 @@ export default function AmbianceMaker({
     if (shareTimeoutRef.current) {
       clearTimeout(shareTimeoutRef.current);
     }
-    let text = `${process.env.NEXT_PUBLIC_PROTOCOL}${process.env.NEXT_PUBLIC_DOMAIN}/test_pages/share?`;
+    let text = `${process.env.NEXT_PUBLIC_PROTOCOL}${process.env.NEXT_PUBLIC_DOMAIN}/share?`;
     let ampersand = false;
     videoData.forEach((video, index) => {
       const match =
@@ -207,7 +207,7 @@ export default function AmbianceMaker({
         setSaveButtonText("Saved!");
       }
       if (data.ambiance?.id && !ambianceData?.id) {
-        router.replace(`/test_pages/drafts/${data.ambiance.id}`);
+        router.replace(`/drafts/${data.ambiance.id}`);
       } else {
         busy.current = false;
       }
@@ -394,6 +394,7 @@ export default function AmbianceMaker({
           </div>
         </div>
       ) : (
+        mode !== "shared" &&
         user && (
           <div className={styles.header_wrapper}>
             <div className={classNames(styles.header, styles.with_input)}>
@@ -460,6 +461,7 @@ export default function AmbianceMaker({
           <div className={styles.description}>{ambianceData.description}</div>
         </div>
       ) : (
+        mode !== "shared" &&
         user && (
           <div className={styles.description_wrapper}>
             <textarea

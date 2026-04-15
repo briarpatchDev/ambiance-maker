@@ -3,9 +3,7 @@ import type { NextRequest } from "next/server";
 import { createClient } from "@/app/lib/supabase/server";
 import { createAdminClient } from "@/app/lib/supabase/admin";
 import { cookies } from "next/headers";
-
-// Dev user ID - used consistently across development
-const DEV_USER_ID = "00000000-0000-0000-0000-000000000000";
+import { getUserId } from "@/app/lib/auth/getCurrentUser";
 
 // Withdraws a submitted ambiance back to draft status
 export async function POST(req: NextRequest) {
@@ -14,14 +12,8 @@ export async function POST(req: NextRequest) {
     const cookieStore = cookies();
     const supabase = isDev ? createAdminClient() : createClient(cookieStore);
 
-    const {
-      data: { user },
-      error: authError,
-    } = isDev
-      ? { data: { user: { id: DEV_USER_ID } }, error: null }
-      : await supabase.auth.getUser();
-
-    if (authError || !user) {
+    const userId = await getUserId();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
     }
 
@@ -49,7 +41,7 @@ export async function POST(req: NextRequest) {
       .eq("id", id)
       .single();
 
-    if (!existing || existing.user_id !== user.id) {
+    if (!existing || existing.user_id !== userId) {
       return NextResponse.json(
         { error: "Ambiance not found.", code: "NOT_FOUND" },
         { status: 404 },

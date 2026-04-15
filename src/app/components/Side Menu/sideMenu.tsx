@@ -243,6 +243,7 @@ export default function SideMenu({ style }: SideMenuProps) {
                     height: "auto",
                     width: "3.4rem",
                     borderRadius: "4.2rem",
+                    transform: "translateX(-0.2rem)",
                   }}
                 />
               ) : (

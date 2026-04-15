@@ -7,16 +7,31 @@ import MessageBox from "@/app/components/Message Box/messageBox";
 import Button from "@/app/components/Buttons/Button Set/button";
 import Modal from "@/app/components/Modals/Modal Versatile Portal/modal";
 import { AmbianceData } from "@/app/components/Ambiance Maker/ambianceMaker";
-import categoryTree from "@/app/lib/categories";
+import { categories as categoryTree, categoryMeta } from "@/app/lib/categories";
 
 interface ReviewProps {
-  categories?: string;
+  categoryId?: number;
   ambianceData?: AmbianceData;
   style?: React.CSSProperties;
 }
 
+function findCategoryPath(
+  name: string,
+  tree: Record<string, any>,
+  path: string[] = [],
+): string[] | null {
+  if (name in tree) return [...path, name];
+  for (const key of Object.keys(tree)) {
+    if (tree[key] && typeof tree[key] === "object") {
+      const found = findCategoryPath(name, tree[key], [...path, key]);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
 export default function Review({
-  categories,
+  categoryId,
   ambianceData,
   style,
 }: ReviewProps) {
@@ -24,26 +39,22 @@ export default function Review({
   const [showSuccess, setShowSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Category editing state — initialise from the submitted category string
+  // Category editing state — initialise from the submitted category ID
   const [selectedCategories, setSelectedCategories] = useState<string[]>(() => {
-    if (!categories) return [""];
-    const parts = categories.split("/");
-    // Verify each segment exists in the tree; if the path ends at a branch, append an empty placeholder
+    if (!categoryId) return [""];
+    const name = Object.entries(categoryMeta).find(
+      ([, meta]) => meta.id === categoryId,
+    )?.[0];
+    if (!name) return [""];
+    const path = findCategoryPath(name, categoryTree);
+    if (!path) return [""];
+    // If the leaf node still has children, add an empty placeholder
     let node: any = categoryTree;
-    const valid: string[] = [];
-    for (const part of parts) {
-      if (node && node[part] !== undefined) {
-        valid.push(part);
-        node = node[part];
-      } else {
-        break;
-      }
-    }
-    // If the last valid node still has children, append empty string so another select renders
+    for (const segment of path) node = node[segment];
     if (node && typeof node === "object" && Object.keys(node).length > 0) {
-      valid.push("");
+      path.push("");
     }
-    return valid.length > 0 ? valid : [""];
+    return path;
   });
 
   function handleCategoryChange(value: string, depth: number) {
@@ -62,10 +73,11 @@ export default function Review({
     setSelectedCategories(newArr);
   }
 
-  // Build the resolved category string (only non-empty segments)
-  const resolvedCategory = selectedCategories.filter(Boolean).join("/");
-  const resolvedCategoryRef = useRef(resolvedCategory);
-  resolvedCategoryRef.current = resolvedCategory;
+  // Build the resolved category ID from the last selected name
+  const resolvedCategoryId = (() => {
+    const leaf = selectedCategories.filter(Boolean).at(-1);
+    return leaf ? categoryMeta[leaf]?.id : undefined;
+  })();
 
   // Category is complete when every select has a value (no empty placeholders)
   const isCategoryComplete =
@@ -76,7 +88,7 @@ export default function Review({
       const res = await fetch("/api/admin/approve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: ambianceData?.id, category: resolvedCategoryRef.current }),
+        body: JSON.stringify({ id: ambianceData?.id, category_id: resolvedCategoryId }),
       });
       if (!res.ok) throw new Error();
       setShowSuccess(true);

@@ -8,11 +8,18 @@ export async function POST(req: NextRequest) {
     const auth = await verifyAdmin();
     if ("error" in auth) return auth.error;
 
-    const { id, category } = await req.json();
+    const { id, category_id } = await req.json();
 
     if (!id || typeof id !== "string") {
       return NextResponse.json(
         { error: "Missing ambiance id" },
+        { status: 400 },
+      );
+    }
+
+    if (category_id !== undefined && (typeof category_id !== "number" || !Number.isInteger(category_id))) {
+      return NextResponse.json(
+        { error: "Invalid category_id" },
         { status: 400 },
       );
     }
@@ -24,8 +31,8 @@ export async function POST(req: NextRequest) {
       published_at: new Date().toISOString(),
     };
 
-    if (category && typeof category === "string") {
-      updateFields.category = category;
+    if (category_id !== undefined) {
+      updateFields.category_id = category_id;
     }
 
     const { error } = await supabase

@@ -184,6 +184,12 @@ export default function Page() {
     <div className={styles.page} ref={containerRef}>
       <div className={styles.wrapper}>
         <AmbianceManager
+          itemsArr={[draftData2, draftData4]}
+          containerRef={containerRef}
+          headlineText="Drafts"
+          itemType="draft"
+        />
+        <AmbianceManager
           itemsArr={drafts}
           containerRef={containerRef}
           headlineText="Drafts"
