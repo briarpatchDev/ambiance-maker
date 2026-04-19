@@ -79,7 +79,9 @@ export default function Pagination({
       const entryWidth =
         entryContainersRef.current[0].getBoundingClientRect().width;
       const componentWidth = componentRef.current.getBoundingClientRect().width;
-      return (entryWidth * Math.floor(componentWidth / entryWidth)) / 10;
+      let numEntries = Math.floor(componentWidth / entryWidth);
+      if (items.length < numEntries) numEntries = items.length;
+      return (entryWidth * numEntries) / 10;
     }
     return 0;
   }

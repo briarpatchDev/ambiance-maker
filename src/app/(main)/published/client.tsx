@@ -6,10 +6,10 @@ import AmbianceManager from "@/app/components/Ambiance Manager/ambianceManager";
 import ExpectedError from "@/app/components/Errors/Expected Error/errorExpected";
 import { AmbianceData } from "@/app/components/Ambiance Maker/ambianceMaker";
 
-export default function DraftsContent({
-  drafts,
+export default function PublishedContent({
+  ambiances,
 }: {
-  drafts: AmbianceData[] | null;
+  ambiances: AmbianceData[] | null;
 }) {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -19,21 +19,21 @@ export default function DraftsContent({
     router.refresh();
   }, [router]);
 
-  return drafts ? (
-    <div className={styles.drafts} ref={containerRef}>
+  return ambiances ? (
+    <div className={styles.published} ref={containerRef}>
       <div className={styles.manager_wrapper}>
         <AmbianceManager
-          itemsArr={drafts}
+          itemsArr={ambiances}
           containerRef={containerRef}
-          headlineText="Drafts"
-          itemType="draft"
+          headlineText="Published Ambiances"
+          itemType="published"
         />
       </div>
     </div>
   ) : (
     <div className={styles.not_found}>
       <ExpectedError
-        errorMessage="Something went wrong getting your drafts."
+        errorMessage="Something went wrong getting your ambiances."
         buttonText="Try Again"
         reset={() => router.refresh()}
       />

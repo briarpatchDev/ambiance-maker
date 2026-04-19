@@ -33,6 +33,7 @@ interface TooltipLinkProps {
   shiftTooltipPercent?: number;
   fadeEffect?: boolean;
   closingTime?: number;
+  delay?: number;
   containerRef?: React.RefObject<HTMLElement | null>;
   focusable?: boolean;
 }
@@ -83,6 +84,7 @@ export default function TooltipLink({
   shiftTooltipPercent = 0,
   fadeEffect = true,
   closingTime = 300,
+  delay = 300,
   containerRef,
   focusable = true,
 }: TooltipLinkProps) {
@@ -95,16 +97,16 @@ export default function TooltipLink({
   const [position, setPosition] = useState(positionObject);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  //Clears the timer
+  const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
+  //Clears the timers
   useEffect(() => {
     return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
+      if (timerRef.current) clearTimeout(timerRef.current);
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
     };
   }, []);
 
-  // Adds the tooltip
+  // Adds the tooltip immediately, used on focus
   function addTooltip() {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -112,8 +114,18 @@ export default function TooltipLink({
     setClosing(false);
     setActive(true);
   }
+  // Resets the hover delay timer each time the mouse moves; tooltip appears once the mouse stops
+  function resetHoverDelay() {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setClosing(false);
+    if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    hoverTimerRef.current = setTimeout(() => {
+      setActive(true);
+    }, delay);
+  }
   // Removes the tooltip
   function removeTooltip() {
+    if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
     if (timerRef.current) clearTimeout(timerRef.current);
     setClosing(true);
     timerRef.current = setTimeout(() => {
@@ -324,7 +336,8 @@ export default function TooltipLink({
       ref={childrenRef}
       onFocus={focusable ? updateTooltipStatus : undefined}
       onBlur={focusable ? updateTooltipStatus : undefined}
-      onMouseEnter={updateTooltipStatus}
+      onMouseEnter={resetHoverDelay}
+      onMouseMove={resetHoverDelay}
       onMouseLeave={updateTooltipStatus}
       className={styles.expandable}
       aria-describedby={tooltipId}

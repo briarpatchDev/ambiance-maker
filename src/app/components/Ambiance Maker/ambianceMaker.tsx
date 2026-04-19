@@ -45,6 +45,7 @@ export interface AmbianceData {
   ratingCount?: number;
   description?: string;
   thumbnail?: string;
+  status?: "draft" | "submitted" | "published";
   videoData: VideoData[];
 }
 
@@ -419,7 +420,7 @@ export default function AmbianceMaker({
           videoData={videoData}
           initialVideoData={ambianceData?.videoData}
           setVideoData={setVideoData}
-          showInitialPlayButton={mode === "published"}
+          showInitialPlayButton={mode === "shared" || mode === "published"}
         />
       </div>
       {isIOS && (

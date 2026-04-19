@@ -25,6 +25,8 @@ export function Description({
   );
 }
 
+export type AmbianceCardBanner = "submitted" | "featured";
+
 export interface AmbianceCardProps {
   id: string;
   title: string;
@@ -41,6 +43,7 @@ export interface AmbianceCardProps {
   dateUpdated?: Date;
   mode?: "vertical" | "horizontal";
   style?: React.CSSProperties;
+  banner?: AmbianceCardBanner;
 }
 
 export default function AmbianceCard({
@@ -59,6 +62,7 @@ export default function AmbianceCard({
   dateUpdated,
   mode = "vertical",
   style,
+  banner,
 }: AmbianceCardProps) {
   // Takes the number of views and abbreviates it
   function formatViews(views: number): string {
@@ -96,6 +100,16 @@ export default function AmbianceCard({
         containerRef={containerRef}
       >
         <div style={{ ...style }} className={styles.card}>
+          {banner && (
+            <div
+              className={classNames(styles.ribbon, {
+                [styles.ribbon_submitted]: banner === "submitted",
+                [styles.ribbon_featured]: banner === "featured",
+              })}
+            >
+              {banner}
+            </div>
+          )}
           <div className={styles.image_wrapper}>
             <img
               className={styles.thumbnail}

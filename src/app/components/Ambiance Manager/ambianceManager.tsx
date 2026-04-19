@@ -56,7 +56,6 @@ export default function SelectionManager({
     });
     observer.observe(componentRef.current);
     setEntriesWidth(calcEntriesWidth());
-
     setIsInitialized(true);
     return () => observer.disconnect();
   }, [items]);
@@ -71,7 +70,9 @@ export default function SelectionManager({
       const entryWidth =
         entryContainersRef.current[0].getBoundingClientRect().width;
       const componentWidth = componentRef.current.getBoundingClientRect().width;
-      return (entryWidth * Math.floor(componentWidth / entryWidth)) / 10;
+      let numEntries = Math.floor(componentWidth / entryWidth);
+      if (items.length < numEntries) numEntries = items.length;
+      return (entryWidth * numEntries) / 10;
     }
     return 0;
   }
@@ -152,7 +153,7 @@ export default function SelectionManager({
 
   //Does identical things as handleCheckboxClick for keydown
   function handleCheckboxKeydown(
-    e: React.KeyboardEvent<HTMLInputElement>,
+    e: React.KeyboardEvent<HTMLInputElement | HTMLDivElement>,
     index: number,
   ) {
     if (e.key === "Enter" || e.key === "Space") {
@@ -334,7 +335,6 @@ export default function SelectionManager({
             {headlineText}
           </h1>
 
-          <div>
             {!showDeleteMenu && (
               <div className={styles.trash_btn_wrapper}>
                 <Button
@@ -347,7 +347,7 @@ export default function SelectionManager({
                 </Button>
               </div>
             )}
-          </div>
+       
         </div>
         {showDeleteMenu && (
           <div className={styles.delete_menu}>
@@ -431,7 +431,7 @@ export default function SelectionManager({
                     title={item.title || ``}
                     thumbnail={item.thumbnail || ``}
                     linkTo={item.datePublished ? "ambiance" : "draft"}
-                    linkTarget={"_blank"}
+                    linkTarget={showDeleteMenu ? "_blank" : "_self"}
                     containerRef={containerRef}
                     views={item.views}
                     author={item.author}
@@ -440,6 +440,9 @@ export default function SelectionManager({
                     datePublished={item.datePublished}
                     dateUpdated={item.dateUpdated}
                     description={item.description}
+                    banner={
+                      item.status === "submitted" ? "submitted" : undefined
+                    }
                     mode={entriesWidth <= 40 ? "horizontal" : "vertical"}
                     key={index}
                   />
@@ -456,12 +459,14 @@ export default function SelectionManager({
         <div className={classNames(styles.selection_manager_header)}>
           <h1>
             {itemType === "draft" ? <DraftIcon /> : <PublishedIcon />}
-            {headlineText}{" "}
+            {headlineText}
           </h1>
         </div>
-        <div
-          className={styles.message}
-        >{`You don't have any ${itemType === "draft" ? "drafts" : "published ambiances"} right now...`}</div>
+        <div className={styles.message_wrapper}>
+          <div
+            className={styles.message}
+          >{`You don't have any ${itemType === "draft" ? "drafts" : "published ambiances"} at this time...`}</div>
+        </div>
       </div>
     </div>
   );

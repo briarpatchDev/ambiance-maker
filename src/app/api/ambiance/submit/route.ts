@@ -131,7 +131,11 @@ export async function POST(req: NextRequest) {
       }
 
       // If changing from draft to submitted, enforce the 5-submitted limit
-      if (existing.status === "draft" && submittedCount !== null && submittedCount >= 5) {
+      if (
+        existing.status === "draft" &&
+        submittedCount !== null &&
+        submittedCount >= 5
+      ) {
         return NextResponse.json(
           {
             error:
@@ -254,10 +258,7 @@ export async function GET(req: NextRequest) {
 
     const userId = await getUserId();
     if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized." },
-        { status: 401 },
-      );
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
     }
 
     // If an id is provided, check if the ambiance still exists and its status
@@ -270,9 +271,7 @@ export async function GET(req: NextRequest) {
         .single();
 
       if (!existing || existing.user_id !== userId) {
-        return NextResponse.json(
-          { canSubmit: false, code: "NOT_FOUND" },
-        );
+        return NextResponse.json({ canSubmit: false, code: "NOT_FOUND" });
       }
 
       // Published ambiances cannot be submitted
