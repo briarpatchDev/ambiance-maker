@@ -1,0 +1,46 @@
+.nav {
+  display: flex;
+  align-items: center;
+  column-gap: 0.4rem;
+  align-self: center;
+  margin-bottom: 0.4rem;
+  font-size: 1.8rem;
+  color: var(--grey-text);
+  font-weight: 600;
+  border: 0.05rem solid var(--grey-text);
+  border-radius: 4rem;
+  padding: 0.4rem;
+  background-color: rgb(50, 50, 50);
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  column-gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4rem;
+  color: var(--grey-text);
+  transition: background-color 0.15s ease;
+
+}
+
+.link:hover {
+  background-color: rgb(70, 70, 70);
+}
+
+.active {
+  font-weight: 600;
+}
+
+.active:hover {
+}
+
+.icon {
+  fill: var(--grey-text);
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.separator {
+  user-select: none;
+}

@@ -33,17 +33,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 6rem;
+  min-height: 6rem;
   width: 100%;
-  padding: 1.2rem;
-  margin-bottom: 1.6rem;
+  padding: 0.4rem;
   column-gap: 4.8rem;
+  padding-right: 5%;
 }
 
 .selection_manager_header > * {
   display: flex;
   align-items: center;
-  height: 100%;
 }
 
 .selection_manager_header h1 {
@@ -57,7 +56,6 @@
   font-family: "Manrope", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
   padding: 0.8rem 2rem 1.2rem;
   border-radius: 1.6rem;
-  min-height: max-content;
   background-color: rgb(50, 50, 50);
 }
 
@@ -72,8 +70,7 @@
 .trash_btn_wrapper {
   display: flex;
   align-items: center;
-  height: 100%;
-  margin-right: 5%;
+  height: 3.6rem;
 }
 
 .trash_btn_wrapper button {
@@ -292,7 +289,6 @@
   .selection_manager_header {
     display: flex;
     flex-direction: column;
-    height: max-content;
     row-gap: 0.4rem;
     margin: 0;
     padding-bottom: 0;

@@ -5,6 +5,7 @@ import styles from "./page.module.css";
 import AmbianceManager from "@/app/components/Ambiance Manager/ambianceManager";
 import ExpectedError from "@/app/components/Errors/Expected Error/errorExpected";
 import { AmbianceData } from "@/app/components/Ambiance Maker/ambianceMaker";
+import AmbianceManagerNav from "@/app/components/Ambiance Manager Nav/ambianceManagerNav";
 
 export default function DraftsContent({
   drafts,
@@ -21,6 +22,7 @@ export default function DraftsContent({
 
   return drafts ? (
     <div className={styles.drafts} ref={containerRef}>
+      <AmbianceManagerNav />
       <div className={styles.manager_wrapper}>
         <AmbianceManager
           itemsArr={drafts}
@@ -32,6 +34,7 @@ export default function DraftsContent({
     </div>
   ) : (
     <div className={styles.not_found}>
+      <AmbianceManagerNav />
       <ExpectedError
         errorMessage="Something went wrong getting your drafts."
         buttonText="Try Again"

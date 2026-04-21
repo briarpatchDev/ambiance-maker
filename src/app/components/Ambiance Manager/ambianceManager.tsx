@@ -53,10 +53,10 @@ export default function SelectionManager({
     if (!componentRef.current) return;
     const observer = new ResizeObserver(() => {
       setEntriesWidth(calcEntriesWidth());
+      setIsInitialized(true);
     });
     observer.observe(componentRef.current);
     setEntriesWidth(calcEntriesWidth());
-    setIsInitialized(true);
     return () => observer.disconnect();
   }, [items]);
 
@@ -219,20 +219,16 @@ export default function SelectionManager({
       .filter((index) => index !== -1);
     const itemsToBeDeleted = checkboxRefs.current
       .map((checkbox) =>
-        checkbox?.checked === true ? checkbox.dataset.id : -1,
+        checkbox?.checked === true ? checkbox.dataset.itemId : -1,
       )
       .filter((itemId) => itemId !== -1);
-    console.log(indexesToBeDeleted);
     const options = {
       method: "DELETE",
       body: JSON.stringify({ items: itemsToBeDeleted }),
       headers: { "Content-Type": "application/json" },
     };
-    /*
-    const res = await fetch("/api/deleteItems", options);
+    const res = await fetch("/api/ambiance/delete", options);
     const data = await res.json();
-    */
-    const data = { success: true, logout: false };
     if (data.success) {
       const newItems: AmbianceData[] = [];
       items.map((item, index) => {
@@ -321,7 +317,7 @@ export default function SelectionManager({
       )}
       {showLoading && (
         <LoaderFullscreen ariaLabel={`Deleting... Please wait.`}>
-          <AmbianceLoader />
+          <AmbianceLoader color="var(--grey-text)" />
         </LoaderFullscreen>
       )}
       <div className={styles.content_wrapper}>
@@ -335,6 +331,7 @@ export default function SelectionManager({
             {headlineText}
           </h1>
 
+          <div>
             {!showDeleteMenu && (
               <div className={styles.trash_btn_wrapper}>
                 <Button
@@ -347,7 +344,7 @@ export default function SelectionManager({
                 </Button>
               </div>
             )}
-       
+          </div>
         </div>
         {showDeleteMenu && (
           <div className={styles.delete_menu}>
