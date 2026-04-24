@@ -1,99 +1,148 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { createClient } from "@/app/lib/supabase/server";
 import { createAdminClient } from "@/app/lib/supabase/admin";
-import { randomString } from "@/app/lib/randomString";
-import { cookies } from "next/headers";
-import path from "path";
-import { promises as fs } from "fs";
+
+const AMBIANCE_SELECT_FIELDS =
+  "id, title, description, thumbnail, views, published_at, rating_count, rating_score";
 
 export async function GET(req: NextRequest) {
   try {
     const DEFAULT_PAGE_SIZE = 24;
     const DEFAULT_SORT = "newest";
     const searchParams = req.nextUrl.searchParams;
-    let collection = searchParams.get("collection") || "default";
+    const collection = searchParams.get("collection") || "";
     let page = Number(searchParams.get("page")) || 1;
+    if (page < 1 || isNaN(page)) page = 1;
     let sort = searchParams.get("sort") || DEFAULT_SORT;
-    //Page size and page size validation
-    let pageSize = Number(searchParams.get("page_size")) || DEFAULT_PAGE_SIZE; //Items that will appear on each page
-    if (pageSize < 12) {
-      pageSize = 12;
-    } else if (pageSize > 48) {
-      pageSize = 48;
+
+    // Clamp page size between 12 and 48
+    let pageSize = Number(searchParams.get("page_size")) || DEFAULT_PAGE_SIZE;
+    if (pageSize < 12) pageSize = 12;
+    else if (pageSize > 48) pageSize = 48;
+
+    // Validate sort param
+    const validSorts = ["newest", "oldest", "popular", "best"];
+    if (!validSorts.includes(sort)) sort = DEFAULT_SORT;
+
+    const supabase = createAdminClient();
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let query: any = null;
+
+    if (collection.startsWith("user_")) {
+      // --- User collection ---
+      const username = collection.slice(5); // strip "user_" prefix
+
+      // Look up user_id by username (server-only, never sent to client)
+      const { data: userData, error: userError } = await supabase
+        .from("users")
+        .select("id")
+        .eq("username", username)
+        .single();
+
+      if (userError || !userData) {
+        return NextResponse.json({ errors: "User not found" }, { status: 404 });
+      }
+
+      query = supabase
+        .from("ambiances")
+        .select(AMBIANCE_SELECT_FIELDS, { count: "exact" })
+        .eq("user_id", userData.id)
+        .eq("status", "published");
+    } else {
+      // --- Category collection ---
+      const categoryId = Number(collection);
+      if (!collection || isNaN(categoryId)) {
+        return NextResponse.json(
+          { errors: "Invalid collection" },
+          { status: 400 },
+        );
+      }
+
+      query = supabase
+        .from("ambiances")
+        .select(`${AMBIANCE_SELECT_FIELDS}, users(username)`, {
+          count: "exact",
+        })
+        .eq("category_id", categoryId)
+        .eq("status", "published");
     }
 
-    // Fake database call - will need to replace this
-    const filePath = path.join(
-      process.cwd(),
-      "src/app/test_pages/pagination/ambiances.json",
-    );
-    const fileContent = await fs.readFile(filePath, "utf-8");
-    let items = JSON.parse(fileContent);
-
-    //Sorting our items by the "sort" type
+    // Apply sort
     switch (sort) {
-      case `popular`:
-        items.sort(function (a: { views: number }, b: { views: number }) {
-          return b.views - a.views;
-        });
+      case "popular":
+        query = query.order("views", { ascending: false });
         break;
-      case `oldest`:
-        items.sort(function (
-          a: { datePublished: Date },
-          b: { datePublished: Date },
-        ) {
-          return (
-            new Date(a.datePublished).getTime() -
-            new Date(b.datePublished).getTime()
-          );
-        });
+      case "oldest":
+        query = query.order("published_at", { ascending: true });
         break;
-      case `best`:
-        items = items.filter((item: any) => {
-          return item.views > 9999;
-        });
-        items.sort(function (
-          a: { ratingTotal: number; ratingCount: number },
-          b: { ratingTotal: number; ratingCount: number },
-        ) {
-          return b.ratingTotal / b.ratingCount - a.ratingTotal / a.ratingCount;
-        });
+      case "best":
+        // Bayesian score (rating_score), minimum 50 ratings required
+        query = query
+          .gte("rating_count", 50)
+          .order("rating_score", { ascending: false });
         break;
-      default: // Sorts by newest by default
-        items.sort(function (
-          a: { datePublished: Date },
-          b: { datePublished: Date },
-        ) {
-          sort = "newest"; // Redefines to "newest" in case of bad param
-          return (
-            new Date(b.datePublished).getTime() -
-            new Date(a.datePublished).getTime()
-          );
-        });
-    }
-    const numPages = Math.ceil(items.length / pageSize);
-    //Setting page to be a valid number between 1 and numPages
-    if (page > numPages) {
-      page = numPages;
-    } else if (page < 1) {
-      page = 1;
+      default: // newest
+        query = query.order("published_at", { ascending: false });
     }
 
-    const returnedItems = items.slice(
-      (page - 1) * pageSize,
-      (page - 1) * pageSize + pageSize,
+    // Get total count first (HEAD request — no rows transferred) so we can
+    // clamp the page before fetching, mirroring the original single-pass logic.
+    const { count: totalCount, error: countError } = await query.select(
+      undefined,
+      { count: "exact", head: true },
     );
-    const response = {
-      items: returnedItems,
-      page: page,
-      numPages: numPages,
-      pageSize: pageSize,
-      sort: sort,
-    };
 
-    return NextResponse.json(response);
+    if (countError) {
+      console.error("Pagination count error:", countError);
+      return NextResponse.json(
+        { errors: "Couldn't complete the request" },
+        { status: 500 },
+      );
+    }
+
+    const count = totalCount ?? 0;
+    const numPages = Math.max(Math.ceil(count / pageSize), 1);
+
+    // Clamp page exactly as the original did, before fetching
+    if (page > numPages) page = numPages;
+
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+    const { data, error } = await query.range(from, to);
+
+    if (error) {
+      console.error("Pagination query error:", error);
+      return NextResponse.json(
+        { errors: "Couldn't complete the request" },
+        { status: 500 },
+      );
+    }
+
+    // Remap DB field names to the shape AmbianceCard expects
+    const items = (data ?? []).map((item: any) => {
+      const { published_at, rating_score, users, ...rest } = item;
+      return {
+        ...rest,
+        datePublished: published_at,
+        ratingTotal: rating_score,
+        ...(users ? { author: users.username } : {}),
+      };
+    });
+
+    return NextResponse.json({
+      items,
+      page,
+      numPages,
+      pageSize,
+      sort,
+      total: count,
+    });
   } catch (err) {
-    return NextResponse.json({ errors: "Couldn't complete the request" });
+    console.error("Pagination route error:", err);
+    return NextResponse.json(
+      { errors: "Couldn't complete the request" },
+      { status: 500 },
+    );
   }
 }

@@ -19,13 +19,13 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- Index for username lookups (profile pages, uniqueness checks)
-CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 
 -- Index for Google ID lookups (login)
-CREATE INDEX idx_users_google_id ON users(google_id);
+CREATE INDEX IF NOT EXISTS idx_users_google_id ON users(google_id);
 
 -- Index for moderation queries
-CREATE INDEX idx_users_account_status ON users(account_status);
+CREATE INDEX IF NOT EXISTS idx_users_account_status ON users(account_status);
 
 -- ============================================
 -- Sessions table (supports multiple devices)
@@ -39,10 +39,10 @@ CREATE TABLE IF NOT EXISTS sessions (
 );
 
 -- Index for fast session lookups (auth on every request)
-CREATE INDEX idx_sessions_session_id ON sessions(session_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_session_id ON sessions(session_id);
 
 -- Index for finding all sessions for a user (cleanup, logout-all)
-CREATE INDEX idx_sessions_user_id ON sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
 
 -- ============================================
 -- Random username generator
@@ -78,7 +78,7 @@ DECLARE
 BEGIN
   adj := adjectives[1 + floor(random() * array_length(adjectives, 1))];
   noun := nouns[1 + floor(random() * array_length(nouns, 1))];
-  num := floor(random() * 1000)::TEXT;
+  num := lpad((floor(random() * 400) + 1)::TEXT, 3, '0');
   RETURN adj || noun || num;
 END;
 $$ LANGUAGE plpgsql;
@@ -92,6 +92,7 @@ $$ LANGUAGE plpgsql;
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 
 -- Anyone can view user profiles (public)
+DROP POLICY IF EXISTS "Anyone can view user profiles" ON users;
 CREATE POLICY "Anyone can view user profiles"
   ON users FOR SELECT
   USING (true);

@@ -186,8 +186,9 @@ export default function AmbianceMaker({
         method: "POST",
         body: JSON.stringify({
           id: ambianceData?.id,
-          title: inputData.title,
-          description: inputData.description,
+          published: mode === "published",
+          title: mode === "published" ? "" : inputData.title,
+          description: mode === "published" ? "" : inputData.description,
           ...videoData.reduce((acc, video, index) => {
             return { ...acc, [`v${index + 1}`]: video };
           }, {}),
@@ -207,8 +208,10 @@ export default function AmbianceMaker({
       } else {
         setSaveButtonText("Saved!");
       }
-      if (data.ambiance?.id && !ambianceData?.id) {
-        router.replace(`/drafts/${data.ambiance.id}`);
+      if (data.ambiance?.id && (!ambianceData?.id || mode === "published")) {
+        mode === "published"
+          ? router.push(`/drafts/${data.ambiance.id}`)
+          : router.replace(`/drafts/${data.ambiance.id}`);
       } else {
         busy.current = false;
       }
@@ -216,7 +219,6 @@ export default function AmbianceMaker({
       saveTimeoutRef.current = setTimeout(() => {
         setSaveButtonText(mode === "draft" ? `Save Draft` : `Save as Draft`);
       }, 1200);
-      console.log(data);
     } catch {}
   }
 
@@ -351,46 +353,49 @@ export default function AmbianceMaker({
                 </Link>
               </div>
             )}
-            <div className={styles.metadata}>
-              {ambianceData.datePublished && (
-                <span className={styles.date_published}>
-                  {new Date(ambianceData.datePublished).toLocaleDateString(
-                    "en-US",
-                    { year: "numeric", month: "short", day: "numeric" },
-                  )}
-                </span>
-              )}
-              {ambianceData.datePublished &&
-                ambianceData.views !== undefined && (
-                  <span className={styles.separator}>{`●`}</span>
-                )}
-              {ambianceData.views !== undefined && (
-                <span className={styles.views}>
-                  {ambianceData.views.toLocaleString()} views
-                </span>
-              )}
-              {ambianceData.ratingCount !== undefined && (
-                <span className={styles.separator}>{`●`}</span>
-              )}
-              {ambianceData.ratingCount !== undefined &&
-                ambianceData.ratingCount > 0 &&
-                ambianceData.ratingTotal !== undefined && (
-                  <span className={styles.rating}>
-                    {(
-                      ambianceData.ratingTotal / ambianceData.ratingCount
-                    ).toFixed(1)}{" "}
-                    / 5
+            <div className={styles.metadata_wrapper}>
+              <div className={styles.metadata}>
+                {ambianceData.datePublished && (
+                  <span className={styles.date_published}>
+                    {new Date(ambianceData.datePublished).toLocaleDateString(
+                      "en-US",
+                      { year: "numeric", month: "short", day: "numeric" },
+                    )}
                   </span>
                 )}
-              {user && (
-                <button
-                  className={styles.report_button}
-                  aria-label="Report ambiance"
-                  onClick={() => setShowReportModal(true)}
-                >
-                  Report
-                </button>
-              )}
+                {ambianceData.datePublished &&
+                  ambianceData.views !== undefined && (
+                    <span className={styles.separator}>{`●`}</span>
+                  )}
+                {ambianceData.views !== undefined && (
+                  <span className={styles.views}>
+                    {ambianceData.views.toLocaleString()} views
+                  </span>
+                )}
+                {ambianceData.ratingCount !== undefined && (
+                  <span className={styles.separator}>{`●`}</span>
+                )}
+                {ambianceData.ratingCount !== undefined &&
+                  ambianceData.ratingCount > 0 &&
+                  ambianceData.ratingTotal !== undefined && (
+                    <span className={styles.rating}>
+                      {(
+                        ambianceData.ratingTotal / ambianceData.ratingCount
+                      ).toFixed(1)}{" "}
+                      / 5
+                    </span>
+                  )}
+
+                {user && (
+                  <button
+                    className={styles.report_button}
+                    aria-label="Report ambiance"
+                    onClick={() => setShowReportModal(true)}
+                  >
+                    Report
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -406,7 +411,7 @@ export default function AmbianceMaker({
                 value={inputData.title}
                 onChange={handleInputChange}
                 className={styles.title}
-                maxLength={64}
+                maxLength={32}
                 onBlur={handleTitleBlur}
                 spellCheck={false}
                 aria-label="Edit title"
@@ -481,38 +486,37 @@ export default function AmbianceMaker({
         )
       )}
       <div className={styles.share}>
-        {mode !== "published" && (
-          <div className={styles.buttons_wrapper}>
+        <div className={styles.buttons_wrapper}>
+          <Button
+            variant="primary"
+            onClick={shareLink}
+            disabled={!showButtons}
+            style={{ minWidth: "20rem", maxWidth: "60%", flex: "1" }}
+          >
+            {shareButtonText}
+          </Button>
+          {user && (
             <Button
               variant="primary"
-              onClick={shareLink}
+              onClick={saveAmbiance}
               disabled={!showButtons}
               style={{ minWidth: "20rem", maxWidth: "60%", flex: "1" }}
             >
-              {shareButtonText}
+              {saveButtonText}
             </Button>
-            {user && (
-              <Button
-                variant="primary"
-                onClick={saveAmbiance}
-                disabled={!showButtons}
-                style={{ minWidth: "20rem", maxWidth: "60%", flex: "1" }}
-              >
-                {saveButtonText}
-              </Button>
-            )}
-            {user && (mode === "create" || mode === "draft") && (
-              <Button
-                variant="primary"
-                onClick={handlePublishClick}
-                disabled={!showButtons}
-                style={{ minWidth: "20rem", maxWidth: "60%", flex: "1" }}
-              >
-                {publishButtonText}
-              </Button>
-            )}
-          </div>
-        )}
+          )}
+          {user && (mode === "create" || mode === "draft") && (
+            <Button
+              variant="primary"
+              onClick={handlePublishClick}
+              disabled={!showButtons}
+              style={{ minWidth: "20rem", maxWidth: "60%", flex: "1" }}
+            >
+              {publishButtonText}
+            </Button>
+          )}
+        </div>
+
         {user && mode === "draft" && status === "submitted" && (
           <div className={styles.buttons_wrapper}>
             <Button

@@ -5,7 +5,8 @@
   width: 100vw;
   height: max-content;
   min-height: 100vh;
-  background: linear-gradient(
+  background:
+    linear-gradient(
       210deg,
       rgba(255, 255, 255, 0) 30%,
       rgba(255, 255, 255, 0.05) 50%,
@@ -33,7 +34,6 @@
       rgba(73, 70, 83, 0.5) 100%
     ),
     linear-gradient(185deg, rgb(116, 107, 121) 0%, rgb(38, 33, 51) 100%);
-
 }
 
 .wrapper {
@@ -42,4 +42,5 @@
   align-items: center;
   padding: 1.2rem 0 4rem;
   row-gap: 2.4rem;
+  width: 100%;
 }

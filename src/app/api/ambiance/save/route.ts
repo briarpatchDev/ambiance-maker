@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
 
     // Transform the v1-v6 format to videoData array if needed
     let transformedBody = body as Record<string, unknown>;
+    const published = transformedBody.published === true;
     if (!transformedBody.videoData && transformedBody.v1 !== undefined) {
       const videoData: VideoDataInput[] = [];
       for (let i = 1; i <= 6; i++) {
@@ -72,7 +73,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid data." }, { status: 400 });
     }
 
-    const { id, title, description, videoData } = parseResult.data;
+    const { id: rawId, title, description, videoData } = parseResult.data;
+    // When forking from a published ambiance, ignore the source id so a new draft is created
+    const id = published ? undefined : rawId;
 
     // Transform video data to extract just the video IDs for storage
     const videoDataForStorage = transformVideoDataForStorage(videoData);

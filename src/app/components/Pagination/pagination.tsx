@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 import Button from "@/app/components/Buttons/Button Set/button";
 import AmbianceCard from "@/app/components/Ambiance Card/ambianceCard";
 import { AmbianceCardProps } from "@/app/components/Ambiance Card/ambianceCard";
+import ExpectedError from "@/app/components/Errors/Expected Error/errorExpected";
 
 export default function Pagination({
   title,
@@ -27,6 +28,7 @@ export default function Pagination({
   const [sort, setSort] = useState();
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const searchParams = useSearchParams();
+  const hasFetched = useRef(false);
 
   useEffect(() => {
     getItems();
@@ -35,9 +37,12 @@ export default function Pagination({
   //Fetches items from the backend
   async function getItems() {
     try {
-      const res = await fetch(
-        `/api/pagination?collection=${collection}&${searchParams}`,
-      );
+      const storedSize = localStorage.getItem("preferredPageSize");
+      const url =
+        searchParams.has("page_size") || !storedSize
+          ? `/api/pagination?collection=${collection}&${searchParams}`
+          : `/api/pagination?collection=${collection}&${searchParams}&page_size=${storedSize}`;
+      const res = await fetch(url);
       const data = await res.json();
       if (data.errors) throw new Error();
       //if (0 == Math.floor(Math.random() * 3)) throw new Error();
@@ -47,10 +52,17 @@ export default function Pagination({
       setPageSize(data.pageSize);
       setItems(data.items);
       if (isError) setIsError(false);
+      hasFetched.current = true;
     } catch (error) {
       setIsError(true);
     }
   }
+
+  // Persists the user's preferred page size to localStorage after the first fetch
+  useEffect(() => {
+    if (!hasFetched.current) return;
+    localStorage.setItem("preferredPageSize", String(pageSize));
+  }, [pageSize]);
 
   // Initalizes the component with correct width value for the entries container, updates it on resize
   const entryContainersRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -260,15 +272,10 @@ export default function Pagination({
       </div>
 
       <div className={styles.error_container}>
-        <div
-          className={styles.error_message}
-          aria-live="assertive"
-        >{`Something went wrong loading!`}</div>
-        <Button
-          text="Try Again"
-          variant="secondary"
-          onClick={getItems}
-          style={{ minHeight: "5.4rem", fontSize: "1.8rem", minWidth: "90%" }}
+        <ExpectedError
+          reset={getItems}
+          errorMessage="Something went wrong loading!"
+          buttonText="Try Again"
         />
       </div>
     </div>

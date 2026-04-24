@@ -72,7 +72,7 @@ export const submitAmbianceSchema = z.object({
     .string()
     .trim()
     .min(1, "Title is required")
-    .max(64, "Title must be 64 characters or less"),
+    .max(32, "Title must be 32 characters or less"),
   description: z
     .string()
     .trim()
@@ -92,7 +92,7 @@ export const saveAmbianceSchema = z.object({
   title: z
     .string()
     .trim()
-    .max(64, "Title must be 64 characters or less")
+    .max(32, "Title must be 32 characters or less")
     .optional()
     .or(z.literal("")),
   description: z
@@ -113,7 +113,7 @@ export const updateAmbianceSchema = z.object({
     .string()
     .trim()
     .min(1, "Title is required")
-    .max(64, "Title must be 64 characters or less")
+    .max(32, "Title must be 32 characters or less")
     .optional(),
   description: z
     .string()
