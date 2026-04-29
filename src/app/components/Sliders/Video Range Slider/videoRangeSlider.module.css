@@ -75,3 +75,8 @@
 .hidden {
   display: none;
 }
+
+
+.indicator.fast_transition {
+  transition: left .1s linear;
+}

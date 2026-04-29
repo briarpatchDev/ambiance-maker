@@ -1,0 +1,43 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(50, 50, 50, 0.85);
+  border: 0.05rem solid var(--grey-text);
+  border-radius: 2.4rem;
+  padding: 2.4rem 4rem;
+  width: 100%;
+  max-width: 42rem;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0.8rem 4rem rgba(0, 0, 0, 0.4);
+}
+
+.logo {
+  border-radius: 1.2rem;
+  width: 8rem;
+  height: 8rem;
+  margin-bottom: 1.6rem;
+}
+
+.title {
+  font-size: 2.6rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 1.6rem;
+  color: var(--grey-text);
+  text-align: center;
+  margin: 0.2rem 0 1.6rem;
+}
+
+.google_logo {
+  border: 0.05rem solid black;
+  border-radius: 0.6rem;
+  padding: 0.2rem;
+  background-color: white;
+  height: 5.8rem !important;
+  width: 5.8rem !important;
+}

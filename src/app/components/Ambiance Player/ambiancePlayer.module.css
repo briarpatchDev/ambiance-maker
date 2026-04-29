@@ -23,6 +23,18 @@
   border-bottom-left-radius: 1.2rem;
   border-bottom-right-radius: 1.2rem;
   overflow-x: hidden;
+  transition:
+    opacity 0.5s ease,
+    background-color 0.5s ease;
+}
+
+.controls_hidden {
+  pointer-events: none;
+  background-color: rgba(20, 20, 20);
+}
+
+.controls_hidden .controls_wrapper button {
+  opacity: 0;
 }
 
 .controls_wrapper {
@@ -35,6 +47,7 @@
   box-sizing: border-box;
   height: 100%;
   padding: 0.2rem 1rem 0;
+  transition: opacity 0.5s ease;
 }
 
 .controls_wrapper button:focus-visible {
@@ -78,6 +91,13 @@
   border-top-left-radius: 1.2rem;
   border-top-right-radius: 1.2rem;
   padding: 0.6rem 0.6rem;
+}
+
+.idle_overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  cursor: none;
 }
 
 .play_button {

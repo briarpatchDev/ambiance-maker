@@ -20,6 +20,10 @@ export default function PublishedContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  // Re-fetch server data on mount to clear stale Router Cache
+  useEffect(() => {
+    router.refresh();
+  }, [router]);
 
   const fetchPage = useCallback(
     async (targetPage: number, targetSort: SortOption) => {
@@ -197,13 +201,15 @@ export default function PublishedContent() {
 
   if (isError) {
     return (
-      <div className={styles.not_found}>
+      <div className={styles.published}>
         <AmbianceManagerNav />
-        <ExpectedError
-          errorMessage="Something went wrong getting your ambiances."
-          buttonText="Try Again"
-          reset={() => fetchPage(page, sort)}
-        />
+        <div className={styles.error_wrapper}>
+          <ExpectedError
+            errorMessage="Something went wrong getting your ambiances."
+            buttonText="Try Again"
+            reset={() => fetchPage(page, sort)}
+          />
+        </div>
       </div>
     );
   }

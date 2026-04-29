@@ -33,13 +33,15 @@ export default function DraftsContent({
       </div>
     </div>
   ) : (
-    <div className={styles.not_found}>
+    <div className={styles.drafts}>
       <AmbianceManagerNav />
-      <ExpectedError
-        errorMessage="Something went wrong getting your drafts."
-        buttonText="Try Again"
-        reset={() => router.refresh()}
-      />
+      <div className={styles.error_wrapper}>
+        <ExpectedError
+          errorMessage="Something went wrong getting your drafts."
+          buttonText="Try Again"
+          reset={() => router.refresh()}
+        />
+      </div>
     </div>
   );
 }

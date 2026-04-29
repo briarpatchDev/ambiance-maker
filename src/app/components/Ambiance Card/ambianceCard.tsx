@@ -96,7 +96,7 @@ export default function AmbianceCard({
         }
         tooltipId={description ? "description" : ""}
         aria-label={`Go to /${linkTo === "ambiance" ? `ambiance` : `draft`} "${title}"`}
-        offset={0.4}
+        offset={0.0}
         containerRef={containerRef}
       >
         <div style={{ ...style }} className={styles.card}>

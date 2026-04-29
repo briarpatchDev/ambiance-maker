@@ -1,12 +1,12 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./sideMenu.module.css";
 import classNames from "classnames";
 import Profile from "@/app/components/Icons/profile";
-import Button from "@/app/components/Buttons/Button Set/button";
 import Modal from "@/app/components/Modals/Modal Versatile Portal/modal";
+import LoginCard from "@/app/components/Login Card/loginCard";
 import Hamburger from "@/app/components/Icons/hamburger";
 import CloseMenuIcon from "@/app/components/Icons/close_menu";
 import DraftIcon from "@/app/components/Icons/draft";
@@ -80,14 +80,6 @@ export default function SideMenu({ style }: SideMenuProps) {
     window.localStorage.setItem("menuExpanded", "false");
   }
 
-  //Sends user to google login
-  function login() {
-    const path = window.location.pathname;
-    window.location.href = `/api/auth/google/login?path=${encodeURIComponent(
-      path,
-    )}`;
-  }
-
   async function logout() {
     try {
       const options = {
@@ -119,32 +111,9 @@ export default function SideMenu({ style }: SideMenuProps) {
           animate={true}
           closeOnEscape={true}
           closeOnBackdropClick={true}
+          unstyled={true}
         >
-          <div className={styles.login_modal}>
-            <Button
-              variant={"primary"}
-              onClick={login}
-              width="default"
-              icon={
-                <Image
-                  height="160"
-                  width="160"
-                  alt="Google icon"
-                  src="/images/google-icon.svg"
-                  className={styles.google_logo}
-                />
-              }
-              text={"Sign in with Google"}
-              style={{
-                color: "rgb(20,20,20)",
-                backgroundColor: "rgb(240,240,240)",
-                padding: "1.6rem 2.4rem",
-                borderRadius: "2.4rem",
-                minWidth: "30rem",
-                height: "8.0rem",
-              }}
-            />
-          </div>
+          <LoginCard path={window.location.pathname} />
         </Modal>
       )}
       <header className={styles.header}>

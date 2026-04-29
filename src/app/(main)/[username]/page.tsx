@@ -19,8 +19,6 @@ async function getUsername(username: string): Promise<string | undefined> {
     .select("username, id")
     .ilike("username", username)
     .single();
-  console.log("user data:");
-  console.log(data);
   if (error || !data?.id) {
     return undefined;
   }
@@ -30,8 +28,6 @@ async function getUsername(username: string): Promise<string | undefined> {
     .eq("user_id", data.id)
     .eq("status", "published")
     .limit(1);
-  console.log("ambiance data:");
-  console.log(ambData);
   if (ambError || !ambData?.length) {
     return undefined;
   }
@@ -40,9 +36,7 @@ async function getUsername(username: string): Promise<string | undefined> {
 
 export default async function Page({ params }: PageProps) {
   const { username } = await params;
-  console.log("welcome to the username page");
-  console.log(username.slice(0,3));
-  if (username.slice(0,3) === "%40") {
+  if (username.slice(0, 3) === "%40") {
     // Checks if username exists and creates the page if it does
     const correctUsername = await getUsername(username.slice(3));
     if (correctUsername) {
@@ -51,7 +45,13 @@ export default async function Page({ params }: PageProps) {
   }
   return (
     <div className={styles.not_found}>
-      <NotFound errorMessage="Page not found" buttonText="Go Back" href="/" />
+      <NotFound
+        errorMessage={
+          username.slice(0, 3) === "%40" ? "User not found" : "Page not found"
+        }
+        buttonText="Return Home"
+        href="/"
+      />
     </div>
   );
 }

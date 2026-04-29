@@ -61,6 +61,7 @@
   display: flex;
   flex-direction: column;
   row-gap: 0.8rem;
+  row-gap: 0rem;
   width: 85%;
 }
 
@@ -68,5 +69,53 @@
   display: flex;
   column-gap: 2.4rem;
   width: 100%;
-  padding-top: 4.2rem;
+  padding-top: 4rem;
+}
+
+.video_controls:first-child {
+  padding-bottom: 0.8rem;
+}
+
+.control_button {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 2.4rem;
+  padding: 0.1rem;
+  width: auto;
+  cursor: pointer;
+  fill: var(--grey-text);
+}
+
+.control_button:hover {
+  fill: white;
+}
+
+.control_button:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-outline-offset);
+}
+
+.control_button svg {
+  height: 2.4rem;
+  width: auto;
+  fill: var(--grey-text);
+}
+
+.mini_controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.1rem 0 0.4rem;
+  transform: scaleX(1.08);
+}
+
+.mini_controls_right {
+  display: flex;
+  align-items: center;
+  column-gap: 0.8rem;
 }

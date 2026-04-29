@@ -193,22 +193,3 @@ button.menu_item:hover .item_content {
     outline 0.1s ease-in-out,
     outline-offset 0.1s ease-in-out;
 }
-
-.login_modal {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  max-width: 100%;
-  width: 48rem;
-  max-width: 98vw;
-  height: 16rem;
-}
-
-.google_logo {
-  border: 0.05rem solid black;
-  border-radius: 0.6rem;
-  padding: 0.2rem;
-  background-color: white;
-  height: 5.8rem !important;
-  width: 5.8rem !important;
-}

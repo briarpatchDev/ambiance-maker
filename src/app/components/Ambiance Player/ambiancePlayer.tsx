@@ -49,6 +49,9 @@ export interface VideoData {
   volume?: number;
   playbackSpeed?: number;
   ready?: boolean;
+  isPlaying?: boolean;
+  seekTo?: number;
+  pauseVideo?: boolean;
 }
 
 // Creates an embed URL using VideoData
@@ -102,6 +105,10 @@ export default function AmbiancePlayer({
 
   // Handles fullscreen mode on the ambiance player
   const fullscreenHandle = useFullScreenHandle();
+
+  // Hides the control bar after a period of mouse inactivity in fullscreen
+  const [controlsVisible, setControlsVisible] = useState(true);
+  const idleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Handles the play button that appears on a published video
   const [showPlayOverlay, setShowPlayOverlay] = useState(showInitialPlayButton);
@@ -180,8 +187,24 @@ export default function AmbiancePlayer({
               player.playVideo();
             }
           }
+          if (prevStartTimesRef.current[index] !== undefined) {
+            prevStartTimesRef.current[index] = video.startTime;
+          }
 
-          prevStartTimesRef.current[index] = video.startTime;
+          // Handle seekTo: seek to the requested position then immediately clear the instruction
+          if (video.seekTo !== undefined) {
+            player.seekTo(video.seekTo);
+            player.playVideo();
+            if (showPlayOverlay) setShowPlayOverlay(false);
+            setVideoData &&
+              updateObjectArr(setVideoData, index, { seekTo: undefined });
+          }
+          // Handle pauseVideo: pause this individual video then immediately clear the instruction
+          if (video.pauseVideo) {
+            player.pauseVideo();
+            setVideoData &&
+              updateObjectArr(setVideoData, index, { pauseVideo: undefined });
+          }
         }
       });
 
@@ -201,6 +224,8 @@ export default function AmbiancePlayer({
           if (video.src !== prevLinksRef.current[index]) {
             prevLinksRef.current[index] = video.src;
             prevStartTimesRef.current[index] = undefined;
+            setVideoData &&
+              updateObjectArr(setVideoData, index, { currentTime: 0 });
             if (timeoutRefs.current[index]) {
               clearTimeout(timeoutRefs.current[index]!);
               timeoutRefs.current[index] = null;
@@ -271,6 +296,8 @@ export default function AmbiancePlayer({
                       setAllPlayersReady(true);
                     }
                     console.log(`${playerId} is ready now`);
+                    prevStartTimesRef.current[index] =
+                      initialVideoData?.[index]?.startTime ?? 0;
                     setVideoData &&
                       updateObjectArr(setVideoData, index, {
                         title: player.getVideoData().title,
@@ -282,12 +309,15 @@ export default function AmbiancePlayer({
                         volume: initialVideoData?.[index]?.volume || 100,
                         playbackSpeed:
                           initialVideoData?.[index]?.playbackSpeed || 1.0,
+                        currentTime: initialVideoData?.[index]?.startTime ?? 0,
                         linkError: undefined,
                       });
-                    // Starts playing the video if other videos are playing already
-                    const isOtherVideoPlaying = playerRefs.current.some(
-                      (p, i) => p && i !== index && p.getPlayerState() === 1,
-                    );
+                    // Starts playing the video if other videos are playing already,
+                    // or if this video itself was playing before the link was replaced
+                    const isOtherVideoPlaying =
+                      playerRefs.current.some(
+                        (p, i) => p && i !== index && p.getPlayerState() === 1,
+                      ) || videoDataRef.current[index]?.isPlaying === true;
                     if (isOtherVideoPlaying) {
                       e.target.playVideo();
                     }
@@ -302,16 +332,21 @@ export default function AmbiancePlayer({
                           ? videoDataRef.current[index].startTime
                           : rawTime;
                       const vd = videoDataRef.current[index];
+                      const state = player.getPlayerState();
+                      const playing = state === 1;
+                      const isDefinitiveState = state === 1 || state === 2;
                       if (
                         vol !== vd.volume ||
                         speed !== vd.playbackSpeed ||
-                        time !== vd.currentTime
+                        time !== vd.currentTime ||
+                        (isDefinitiveState && playing !== vd.isPlaying)
                       ) {
                         setVideoData &&
                           updateObjectArr(setVideoData, index, {
                             volume: vol,
                             playbackSpeed: speed,
                             currentTime: time,
+                            ...(isDefinitiveState && { isPlaying: playing }),
                           });
                       }
                     }, 600);
@@ -354,6 +389,7 @@ export default function AmbiancePlayer({
                           currentTitle &&
                           currentTitle !== videoDataRef.current[index].title
                         ) {
+                          prevStartTimesRef.current[index] = 0;
                           // We need to set up all the data / timers again here
                           setVideoData &&
                             updateObjectArr(setVideoData, index, {
@@ -365,11 +401,14 @@ export default function AmbiancePlayer({
                               playbackSpeed: 1.0,
                               linkError: undefined,
                             });
-                          // Starts playing the video if other videos are playing already
-                          const isOtherVideoPlaying = playerRefs.current.some(
-                            (p, i) =>
-                              p && i !== index && p.getPlayerState() === 1,
-                          );
+                          // Starts playing the video if other videos are playing already,
+                          // or if this video itself was playing before the link was replaced
+                          const isOtherVideoPlaying =
+                            playerRefs.current.some(
+                              (p, i) =>
+                                p && i !== index && p.getPlayerState() === 1,
+                            ) ||
+                            videoDataRef.current[index]?.isPlaying === true;
                           if (isOtherVideoPlaying) {
                             e.target.playVideo();
                           }
@@ -384,16 +423,24 @@ export default function AmbiancePlayer({
                                 ? videoDataRef.current[index].startTime
                                 : rawTime;
                             const vd = videoDataRef.current[index];
+                            const state = player.getPlayerState();
+                            const playing = state === 1;
+                            const isDefinitiveState =
+                              state === 1 || state === 2;
                             if (
                               vol !== vd.volume ||
                               speed !== vd.playbackSpeed ||
-                              time !== vd.currentTime
+                              time !== vd.currentTime ||
+                              (isDefinitiveState && playing !== vd.isPlaying)
                             ) {
                               setVideoData &&
                                 updateObjectArr(setVideoData, index, {
                                   volume: vol,
                                   playbackSpeed: speed,
                                   currentTime: time,
+                                  ...(isDefinitiveState && {
+                                    isPlaying: playing,
+                                  }),
                                 });
                             }
                           }, 600);
@@ -597,6 +644,32 @@ export default function AmbiancePlayer({
     setMuted(false);
   }, []);
 
+  const handleMouseMove = useCallback(() => {
+    setControlsVisible(true);
+    if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
+    idleTimeoutRef.current = setTimeout(() => setControlsVisible(false), 3000);
+  }, []);
+
+  // Start or clear the idle timer when entering/exiting fullscreen
+  useEffect(() => {
+    if (fullscreenHandle.active) {
+      if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
+      idleTimeoutRef.current = setTimeout(
+        () => setControlsVisible(false),
+        3000,
+      );
+    } else {
+      setControlsVisible(true);
+      if (idleTimeoutRef.current) {
+        clearTimeout(idleTimeoutRef.current);
+        idleTimeoutRef.current = null;
+      }
+    }
+    return () => {
+      if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current);
+    };
+  }, [fullscreenHandle.active]);
+
   const jumpForward = useCallback(() => {
     playerRefs.current.forEach((player, index) => {
       if (!player) return;
@@ -628,101 +701,117 @@ export default function AmbiancePlayer({
       })}
     >
       <FullScreen handle={fullscreenHandle}>
-        <div className={styles.videos} id={`videos`}>
-          {showPlayOverlay && (
-            <button
-              className={styles.play_button}
-              aria-label="Play Videos"
-              onClick={play}
-            >
-              {allPlayersReady && (
-                <div className={styles.circle}>
-                  <PlayIcon />
-                </div>
-              )}
-            </button>
+        <div
+          onMouseMove={fullscreenHandle.active ? handleMouseMove : undefined}
+        >
+          {fullscreenHandle.active && !controlsVisible && (
+            <div className={styles.idle_overlay} />
           )}
-          {videoData.map((video, i) => {
-            return (
-              <div
-                className={classNames(styles.video_wrapper, {
-                  [styles.visible]: video.title,
-                })}
-                id={`video-wrapper-${i}`}
-                key={`video-wrapper-${i}`}
-              >
-                <div id={`player-${i}`} />
-              </div>
-            );
-          })}
-        </div>
-        <div className={styles.control_bar}>
-          <div className={styles.controls_wrapper}>
-            <button onClick={play} title="Play Videos" aria-label="Play Videos">
-              <PlayIcon />
-            </button>
-            <button
-              onClick={pause}
-              title="Pause Videos"
-              aria-label="Pause Videos"
-            >
-              <PauseIcon />
-            </button>
-            <button
-              onClick={muted ? unmute : mute}
-              title={muted ? "Unmute Videos" : "Mute Videos"}
-              aria-label={muted ? "Unmute Videos" : "Mute Videos"}
-              aria-pressed={muted}
-            >
-              {muted ? <VolumeMutedIcon /> : <VolumeHighIcon />}
-            </button>
-          </div>
-          <div className={styles.controls_wrapper}>
-            <button
-              onClick={rewind}
-              title="Rewind Videos"
-              aria-label="Rewind Videos"
-            >
-              <Rewind className={styles.rewind} />
-            </button>
-            <button
-              className={styles.desktop_button}
-              onClick={jumpBack}
-              title="Rewind 10s"
-              aria-label="Rewind 10s"
-              style={{ paddingRight: "0.2rem" }}
-            >
-              <Backwards style={{ padding: "0.2rem 0" }} />
-            </button>
-            <button
-              className={styles.desktop_button}
-              onClick={jumpForward}
-              title="Jump 10s"
-              aria-label="Jump 10s"
-            >
-              <Backwards
-                style={{ transform: "rotateZ(180deg)", padding: "0.2rem 0" }}
-              />
-            </button>
-            {fullscreenHandle.active ? (
+          <div className={styles.videos} id={`videos`}>
+            {showPlayOverlay && (
               <button
-                className={styles.desktop_button}
-                onClick={fullscreenHandle.exit}
-                title="Exit full screen"
-                aria-label="Exit full screen"
+                className={styles.play_button}
+                aria-label="Play Videos"
+                onClick={play}
               >
-                <FullscreenClose />
-              </button>
-            ) : (
-              <button
-                className={styles.desktop_button}
-                onClick={fullscreenHandle.enter}
-                title="Full screen"
-                aria-label="Full screen"
-              >
-                <FullscreenOpen style={{ padding: "0.2rem 0" }} />
+                {allPlayersReady && (
+                  <div className={styles.circle}>
+                    <PlayIcon />
+                  </div>
+                )}
               </button>
             )}
+            {videoData.map((video, i) => {
+              return (
+                <div
+                  className={classNames(styles.video_wrapper, {
+                    [styles.visible]: video.title,
+                  })}
+                  id={`video-wrapper-${i}`}
+                  key={`video-wrapper-${i}`}
+                >
+                  <div id={`player-${i}`} />
+                </div>
+              );
+            })}
+          </div>
+          <div
+            className={classNames(styles.control_bar, {
+              [styles.controls_hidden]:
+                fullscreenHandle.active && !controlsVisible,
+            })}
+          >
+            <div className={styles.controls_wrapper}>
+              <button
+                onClick={play}
+                title="Play Videos"
+                aria-label="Play Videos"
+              >
+                <PlayIcon />
+              </button>
+              <button
+                onClick={pause}
+                title="Pause Videos"
+                aria-label="Pause Videos"
+              >
+                <PauseIcon />
+              </button>
+              <button
+                onClick={muted ? unmute : mute}
+                title={muted ? "Unmute Videos" : "Mute Videos"}
+                aria-label={muted ? "Unmute Videos" : "Mute Videos"}
+                aria-pressed={muted}
+              >
+                {muted ? <VolumeMutedIcon /> : <VolumeHighIcon />}
+              </button>
+            </div>
+            <div className={styles.controls_wrapper}>
+              <button
+                onClick={rewind}
+                title="Rewind Videos"
+                aria-label="Rewind Videos"
+              >
+                <Rewind className={styles.rewind} />
+              </button>
+              <button
+                className={styles.desktop_button}
+                onClick={jumpBack}
+                title="Rewind 10s"
+                aria-label="Rewind 10s"
+                style={{ paddingRight: "0.2rem" }}
+              >
+                <Backwards style={{ padding: "0.2rem 0" }} />
+              </button>
+              <button
+                className={styles.desktop_button}
+                onClick={jumpForward}
+                title="Jump 10s"
+                aria-label="Jump 10s"
+              >
+                <Backwards
+                  style={{ transform: "rotateZ(180deg)", padding: "0.2rem 0" }}
+                />
+              </button>
+              {fullscreenHandle.active ? (
+                <button
+                  className={styles.desktop_button}
+                  onClick={fullscreenHandle.exit}
+                  title="Exit full screen"
+                  aria-label="Exit full screen"
+                >
+                  <FullscreenClose />
+                </button>
+              ) : (
+                <button
+                  className={styles.desktop_button}
+                  onClick={fullscreenHandle.enter}
+                  title="Full screen"
+                  aria-label="Full screen"
+                >
+                  <FullscreenOpen style={{ padding: "0.2rem 0" }} />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </FullScreen>

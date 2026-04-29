@@ -83,10 +83,13 @@ export default function VideoRangeSlider({
       clearTimeout(indicatorTimeoutRef.current);
       if (showIndicator) {
         setShowIndicator(false);
-        indicatorTimeoutRef.current = setTimeout(() => {
-          setShowIndicator(true);
-          indicatorTimeoutRef.current = undefined;
-        }, 20);
+        indicatorTimeoutRef.current = setTimeout(
+          () => {
+            setShowIndicator(true);
+            indicatorTimeoutRef.current = undefined;
+          },
+          currentTime == 0 ? 400 : 20,
+        );
       }
     }
     prevCurrentTimeRef.current = currentTime;

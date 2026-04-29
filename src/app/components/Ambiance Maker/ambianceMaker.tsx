@@ -32,6 +32,9 @@ export interface VideoData {
   currentTime?: number;
   volume?: number;
   playbackSpeed?: number;
+  isPlaying?: boolean;
+  seekTo?: number;
+  pauseVideo?: boolean;
 }
 
 export interface AmbianceData {
@@ -60,6 +63,9 @@ export const createVideoEntry = (): VideoData => ({
   currentTime: undefined,
   volume: undefined,
   playbackSpeed: undefined,
+  isPlaying: undefined,
+  seekTo: undefined,
+  pauseVideo: undefined,
 });
 
 export default function AmbianceMaker({
@@ -95,6 +101,45 @@ export default function AmbianceMaker({
   function onSpeedChange(speed: string, index = 0) {
     updateObjectArr(setVideoData, index, {
       [`playbackSpeed`]: parseFloat(speed),
+    });
+  }
+
+  // Handles per-video play / pause
+  function onPlayPause(index = 0) {
+    if (videoData[index].isPlaying) {
+      updateObjectArr(setVideoData, index, { pauseVideo: true });
+    } else {
+      updateObjectArr(setVideoData, index, {
+        seekTo: videoData[index].currentTime ?? videoData[index].startTime ?? 0,
+      });
+    }
+  }
+
+  // Handles per-video rewind to start
+  function onRewind(index = 0) {
+    updateObjectArr(setVideoData, index, {
+      seekTo: videoData[index].startTime ?? 0,
+    });
+  }
+
+  // Handles per-video jump back 10s
+  function onJumpBack(index = 0) {
+    const current =
+      videoData[index].currentTime ?? videoData[index].startTime ?? 0;
+    const start = videoData[index].startTime ?? 0;
+    updateObjectArr(setVideoData, index, {
+      seekTo: Math.max(current - 10, start),
+    });
+  }
+
+  // Handles per-video jump forward 10s
+  function onJumpForward(index = 0) {
+    const current =
+      videoData[index].currentTime ?? videoData[index].startTime ?? 0;
+    const end =
+      videoData[index].endTime ?? videoData[index].duration ?? current;
+    updateObjectArr(setVideoData, index, {
+      seekTo: Math.min(current + 10, end),
     });
   }
 
@@ -450,6 +495,11 @@ export default function AmbianceMaker({
               onTimeframeChange={onTimeframeChange}
               onVolumeChange={onVolumeChange}
               onSpeedChange={onSpeedChange}
+              isPlaying={video.isPlaying}
+              onPlayPause={onPlayPause}
+              onRewind={onRewind}
+              onJumpBack={onJumpBack}
+              onJumpForward={onJumpForward}
               videoIndex={videoIndex}
               isIos={isIOS}
               initialLink={

@@ -8,6 +8,10 @@ import VideoSlider from "@/app/components/Sliders/Video Range Slider/videoRangeS
 import VolumeSlider from "@/app/components/Sliders/Volume Slider/volumeSlider";
 import SpeedSlider from "@/app/components/Sliders/Speed Slider/speedSlider";
 import { debounce } from "lodash";
+import Play from "@/app/components/Icons/play";
+import Pause from "@/app/components/Icons/pause";
+import Rewind from "@/app/components/Icons/reset";
+import Backwards from "@/app/components/Icons/backwards";
 
 interface AmbianceInputProps {
   videoTitle: string | undefined;
@@ -24,6 +28,11 @@ interface AmbianceInputProps {
   onTimeframeChange: (start: number, end: number, index?: number) => void;
   videoIndex?: number;
   isIos?: boolean;
+  isPlaying?: boolean;
+  onPlayPause?: (index?: number) => void;
+  onRewind?: (index?: number) => void;
+  onJumpBack?: (index?: number) => void;
+  onJumpForward?: (index?: number) => void;
   initialLink?: string;
   style?: React.CSSProperties;
 }
@@ -43,6 +52,11 @@ export default function AmbianceInput({
   onTimeframeChange,
   videoIndex,
   isIos,
+  isPlaying,
+  onPlayPause,
+  onRewind,
+  onJumpBack,
+  onJumpForward,
   initialLink,
   style,
 }: AmbianceInputProps) {
@@ -128,6 +142,42 @@ export default function AmbianceInput({
               onValueChange={onSpeedChange}
               videoIndex={videoIndex}
             />
+          </div>
+          <div className={styles.mini_controls}>
+            <button
+              className={styles.control_button}
+              onClick={() => onPlayPause?.(videoIndex)}
+              aria-label={isPlaying ? "Pause video" : "Play video"}
+              title={isPlaying ? "Pause video" : "Play video"}
+            >
+              {isPlaying ? <Pause /> : <Play />}
+            </button>
+            <div className={styles.mini_controls_right}>
+              <button
+                className={styles.control_button}
+                onClick={() => onRewind?.(videoIndex)}
+                aria-label="Rewind"
+                title="Rewind"
+              >
+                <Rewind />
+              </button>
+              <button
+                className={styles.control_button}
+                onClick={() => onJumpBack?.(videoIndex)}
+                aria-label="Rewind back 10 seconds"
+                title="Rewind 10s"
+              >
+                <Backwards />
+              </button>
+              <button
+                className={styles.control_button}
+                onClick={() => onJumpForward?.(videoIndex)}
+                aria-label="Jump forward 10 seconds"
+                title="Jump 10s"
+              >
+                <Backwards style={{ transform: "rotateZ(180deg)" }} />
+              </button>
+            </div>
           </div>
         </div>
       )}
