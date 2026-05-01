@@ -1,6 +1,7 @@
 .button {
   --height: 5.2rem;
-  --buttonColor: rgb(120, 90, 150);
+  /*--buttonColor: rgb(120, 90, 150);*/
+  --buttonColor: var(--primary-button-color);
   all: unset;
   box-sizing: border-box;
   cursor: pointer;
@@ -27,6 +28,7 @@
   will-change: transform;
   /* color: light-dark(var(--grey-text), var(--grey-text)); */
   color: var(--grey-text);
+  outline: 0.1rem solid transparent;
 }
 
 .default {

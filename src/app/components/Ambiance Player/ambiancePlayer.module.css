@@ -126,7 +126,7 @@
   height: 30cqh;
   width: 30cqh;
   border-radius: 30cqh;
-  background-color: rgb(90, 60, 120);
+  background-color: var(--primary-button-color);
   animation: appear 0.2s;
 }
 

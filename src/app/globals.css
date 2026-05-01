@@ -17,6 +17,7 @@
   --focus-outline-offset: 0.1rem;
   --grey-text: light-dark(rgb(240, 240, 240), rgb(230, 230, 230));
   --dark-grey-text: light-dark(rgb(120, 120, 120), rgb(160, 160, 160));
+  --primary-button-color: rgb(105, 75, 135);
 }
 
 /* Elements */

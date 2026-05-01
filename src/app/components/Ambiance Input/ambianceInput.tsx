@@ -94,8 +94,12 @@ export default function AmbianceInput({
   }, [inputData.link]);
 
   return (
-    <div style={{ ...style }} className={styles.ambiance_input}>
-      {!!videoTitle && <h1>{videoTitle}</h1>}
+    <div
+      style={{ ...style }}
+      className={classNames(styles.ambiance_input, {
+        [styles.video_found]: !!videoDuration,
+      })}
+    >
       <div className={styles.link_input_wrapper}>
         <input
           id={"link"}
@@ -116,9 +120,10 @@ export default function AmbianceInput({
           </div>
         )}
       </div>
+      {!!videoTitle && <h1 title={videoTitle}>{videoTitle}</h1>}
       {!!videoDuration && (
         <div className={styles.video_controls_wrapper}>
-          <div className={styles.video_controls}>
+          <div className={styles.timeframe_wrapper}>
             <VideoSlider
               startTime={startTime}
               endTime={endTime}
@@ -129,7 +134,7 @@ export default function AmbianceInput({
               videoIndex={videoIndex}
             />
           </div>
-          <div className={styles.video_controls}>
+          <div className={styles.sliders_wrapper}>
             {!isIos && (
               <VolumeSlider
                 currentVolume={volume}

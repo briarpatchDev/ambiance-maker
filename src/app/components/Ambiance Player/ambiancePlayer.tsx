@@ -4,12 +4,8 @@ import React, {
   useEffect,
   useRef,
   useCallback,
-  SyntheticEvent,
 } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import styles from "./ambiancePlayer.module.css";
-import Button from "@/app/components/Buttons/Button Set/button";
 import PlayIcon from "@/app/components/Icons/play";
 import PauseIcon from "@/app/components/Icons/pause";
 import VolumeHighIcon from "@/app/components/Icons/volume_high";
@@ -595,6 +591,15 @@ export default function AmbiancePlayer({
     });
   }, []);
 
+  // Unmutes a single player while respecting an ambianceInput set volume of 0.
+  // YouTube's unMute() bumps a silent video to 5% normally
+  function unmutePlayer(player: any, index: number) {
+    player.unMute();
+    if ((videoDataRef.current[index]?.volume ?? 100) === 0) {
+      player.setVolume(0);
+    }
+  }
+
   const mute = useCallback(() => {
     // if (!isPlayerReady.current) return;
     playerRefs.current.forEach((player) => {
@@ -605,8 +610,9 @@ export default function AmbiancePlayer({
 
   const unmute = useCallback(() => {
     //if (!isPlayerReady.current) return;
-    playerRefs.current.forEach((player) => {
-      player && player.unMute();
+    playerRefs.current.forEach((player, index) => {
+      if (!player) return;
+      unmutePlayer(player, index);
     });
     setMuted(false);
   }, []);
@@ -616,7 +622,7 @@ export default function AmbiancePlayer({
       if (!player) return;
       player.seekTo(videoDataRef.current[index].startTime);
       player.playVideo();
-      player.unMute();
+      unmutePlayer(player, index);
     });
     if (showPlayOverlay) {
       setShowPlayOverlay(false);
@@ -636,7 +642,7 @@ export default function AmbiancePlayer({
       }
       player.seekTo(newTime);
       player.playVideo();
-      player.unMute();
+      unmutePlayer(player, index);
     });
     if (showPlayOverlay) {
       setShowPlayOverlay(false);
@@ -685,7 +691,7 @@ export default function AmbiancePlayer({
       }
       player.seekTo(newTime);
       player.playVideo();
-      player.unMute();
+      unmutePlayer(player, index);
     });
     if (showPlayOverlay) {
       setShowPlayOverlay(false);

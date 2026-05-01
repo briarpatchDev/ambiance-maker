@@ -33,24 +33,44 @@ export default function VolumeSlider({
   style,
 }: VolumeSliderProps) {
   const [volume, setVolume] = useState(100);
+  const prevVolume = useRef(0);
 
   function onVolumeChange(value: string) {
     onValueChange(value, videoIndex);
     setVolume(parseInt(value));
   }
 
-  useEffect(()=>{
-    if (currentVolume !== undefined && volume != currentVolume){
+  function handleClick() {
+    if (volume > 0) {
+      prevVolume.current = volume;
+      onValueChange("0", videoIndex);
+    } else {
+      onValueChange(
+        `${prevVolume.current > 0 ? prevVolume.current : "100"}`,
+        videoIndex,
+      );
+    }
+  }
+
+  useEffect(() => {
+    if (currentVolume !== undefined && volume != currentVolume) {
       setVolume(currentVolume);
     }
-  },[currentVolume]);
+  }, [currentVolume]);
 
   return (
     <div style={{ ...style }} className={styles.volume_slider}>
-      {volume === 0 && <VolumeMuted />}
-      {volume > 0 && volume <= 33 && <VolumeLow />}
-      {volume > 33 && volume <= 66 && <VolumeMedium />}
-      {volume > 66 && <VolumeHigh />}
+      <button
+        className={styles.toggle_volume}
+        onClick={handleClick}
+        aria-label={volume > 0 ? "Mute video" : "Unmute video"}
+        title={volume > 0 ? "Mute video" : "Unmute video"}
+      >
+        {volume === 0 && <VolumeMuted />}
+        {volume > 0 && volume <= 33 && <VolumeLow />}
+        {volume > 33 && volume <= 66 && <VolumeMedium />}
+        {volume > 66 && <VolumeHigh />}
+      </button>
       <DiscreteSlider
         values={values}
         defaultValue="100%"
