@@ -18,6 +18,7 @@
   --grey-text: light-dark(rgb(240, 240, 240), rgb(230, 230, 230));
   --dark-grey-text: light-dark(rgb(120, 120, 120), rgb(160, 160, 160));
   --primary-button-color: rgb(105, 75, 135);
+  --background-color: rgb(77 73 84);
 }
 
 /* Elements */
@@ -30,9 +31,6 @@
 *:focus-visible {
   outline: var(--focus-outline);
   outline-offset: var(--focus-outline-offset);
-  transition:
-    outline 0.1s ease-in-out,
-    outline-offset 0.1s ease-in-out;
 }
 
 input {
@@ -54,6 +52,7 @@ svg {
 
 html {
   font-size: 62.5%;
+  background-color: var(--background-color);
 }
 
 html,
@@ -64,7 +63,6 @@ body {
 body {
   color: light-dark(black, var(--grey-text));
   font-family: "Manrope", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
-  background: var(--background);
   font-size: 1.6rem;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

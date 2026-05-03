@@ -1,25 +1,39 @@
 .side_menu {
-  display: flex;
-  flex-direction: column;
   width: 19.2rem;
   min-width: 19.2rem;
-  border-right: 0.1rem solid rgba(57, 50, 57);
-  background-color: rgb(50, 50, 50);
-  padding-top: 1.2rem;
-  padding-left: 0.1rem;
   transition:
     width 0.2s,
     min-width 0.2s;
-  height: 100vh;
-  max-height: 100vh;
-  overflow-y: scroll;
+  border-right: 0.1rem solid rgba(57, 50, 57);
 }
 
-.side_menu > * {
+.fixed_wrapper {
+  position: fixed;
+  width: 19.2rem;
+  min-width: 19.2rem;
+  transition:
+    width 0.2s,
+    min-width 0.2s;
+  display: flex;
+  flex-direction: column;
+  padding: 1.2rem 0.15rem 0 0.2rem;
+  overflow-y: scroll;
+  height: 100vh;
+  max-height: 100vh;
+  background-color: rgb(50, 50, 50);
+}
+
+.fixed_wrapper::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+.fixed_wrapper > * {
   flex-shrink: 0;
 }
 
-.side_menu:not(.expanded) {
+.side_menu:not(.expanded),
+.fixed_wrapper:not(.expanded) {
   width: 6rem;
   min-width: 6rem;
   transition:
@@ -68,8 +82,11 @@ button.menu_item,
 }
 
 .side_menu:not(.expanded) .menu_controls button {
-  margin-right: 0.5rem;
-  margin-left: 0.7rem;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 0.5rem;
+  width: 100%;
+  margin: 0;
 }
 
 .menu_controls svg {
@@ -114,8 +131,8 @@ button.menu_item:hover .item_content {
 }
 
 .menu_item svg {
-  height: 3rem;
-  width: auto;
+  width: 3rem;
+  height: auto;
   fill: var(--grey-text);
   transition: all 0.1s;
 }
@@ -178,18 +195,7 @@ button.menu_item:hover .item_content {
   display: none;
 }
 
-.side_menu.hidden > * {
-  opacity: 0;
-}
-
-.side_menu.no_transition {
-  transition: none;
-}
-
 .side_menu button:focus-visible {
   outline: var(--focus-outline);
   outline-offset: var(--focus-outline-offset);
-  transition:
-    outline 0.1s ease-in-out,
-    outline-offset 0.1s ease-in-out;
 }

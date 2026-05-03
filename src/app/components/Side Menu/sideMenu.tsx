@@ -12,41 +12,28 @@ import CloseMenuIcon from "@/app/components/Icons/close_menu";
 import DraftIcon from "@/app/components/Icons/draft";
 import LogoutIcon from "@/app/components/Icons/logout";
 import PencilIcon from "@/app/components/Icons/pencil";
-import MagnifyingGlass from "@/app/components/Icons/magnifying_glass";
+import SettingsIcon from "@/app/components/Icons/settings";
+import BooksIcon from "@/app/components/Icons/books";
 import { useUser } from "@/app/contexts/userContext";
 
 interface SideMenuProps {
   style?: React.CSSProperties;
+  defaultExpanded?: boolean;
 }
 
-export default function SideMenu({ style }: SideMenuProps) {
+export default function SideMenu({
+  style,
+  defaultExpanded = true,
+}: SideMenuProps) {
   const user = useUser();
   const menuRef = useRef<HTMLDivElement | null>(null);
   const breakpoint = useRef(580);
   const [showModal, setShowModal] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isExpanding, setIsExpanding] = useState(false);
-  const [isInitalized, setInitalized] = useState(false);
-  const [transitionsReady, setTransitionsReady] = useState(false);
   const expandTimeout = useRef<NodeJS.Timeout>(undefined);
 
-  // Collapses the menu on mobile on mount
   useEffect(() => {
-    if (window.innerWidth < breakpoint.current) {
-      setIsExpanded(false);
-    } else {
-      const wantsExpanded = window.localStorage.getItem("menuExpanded");
-      if (wantsExpanded === "false") {
-        setIsExpanded(false);
-      }
-    }
-    setInitalized(true);
-
-    // Enable transitions after the browser paints the correct initial width
-    requestAnimationFrame(() => {
-      setTransitionsReady(true);
-    });
-
     return () => {
       if (expandTimeout.current) {
         clearTimeout(expandTimeout.current);
@@ -99,150 +86,159 @@ export default function SideMenu({ style }: SideMenuProps) {
       className={classNames(styles.side_menu, {
         [styles.expanded]: isExpanded,
         [styles.expanding]: isExpanding,
-        [styles.hidden]: !isInitalized,
-        [styles.no_transition]: !transitionsReady,
       })}
       ref={menuRef}
     >
-      {showModal && (
-        <Modal
-          closeFunction={() => setShowModal(false)}
-          closeButton={true}
-          animate={true}
-          closeOnEscape={true}
-          closeOnBackdropClick={true}
-          unstyled={true}
-        >
-          <LoginCard path={window.location.pathname} />
-        </Modal>
-      )}
-      <header className={styles.header}>
-        <Link href="/" onClick={linkClicked}>
-          <Image
-            height="80"
-            width="80"
-            alt="Ambiance Maker Logo"
-            src="/images/logo.jpg"
-          />
-        </Link>
-      </header>
-      <div className={styles.menu_controls}>
-        {isExpanded ? (
-          <button
-            className={styles.menu_controls}
-            title="Collapse Menu"
-            onClick={collapse}
+      <div
+        className={classNames(styles.fixed_wrapper, {
+          [styles.expanded]: isExpanded,
+          [styles.expanding]: isExpanding,
+        })}
+      >
+        {showModal && (
+          <Modal
+            closeFunction={() => setShowModal(false)}
+            closeButton={true}
+            animate={true}
+            closeOnEscape={true}
+            closeOnBackdropClick={true}
+            unstyled={true}
           >
-            <CloseMenuIcon />
-          </button>
-        ) : (
-          <button
-            className={styles.menu_control}
-            title="Expand Menu"
-            onClick={expand}
-          >
-            <Hamburger style={{ padding: "0.4rem 0" }} />
-          </button>
+            <LoginCard path={window.location.pathname} />
+          </Modal>
         )}
-      </div>
-      <div className={styles.menu_items}>
-        <Link
-          href="/create"
-          title="Create"
-          className={styles.menu_item}
-          onClick={linkClicked}
-        >
-          <div className={styles.item_content}>
-            <PencilIcon />
-            <span>Create</span>
-          </div>
-        </Link>
-        <Link
-          href="/categories"
-          title="Browse"
-          className={styles.menu_item}
-          onClick={linkClicked}
-        >
-          <div className={styles.item_content}>
-            <MagnifyingGlass />
-            <span>Browse</span>
-          </div>
-        </Link>
-        {!user && (
-          <button
-            className={classNames(styles.menu_item, styles.profile_button)}
-            onClick={() => setShowModal(true)}
-            aria-label={"Open login options"}
-            title="Login"
-          >
-            <div className={styles.item_content}>
-              <Profile style={{ transform: "scale(1.1) translateX(0.2rem)" }} />
-              <span>Login</span>
-            </div>
-          </button>
-        )}
-        {user && (
+        <header className={styles.header}>
+          <Link href="/" onClick={linkClicked}>
+            <Image
+              height="80"
+              width="80"
+              alt="Ambiance Maker Logo"
+              src="/images/logo.jpg"
+            />
+          </Link>
+        </header>
+        <div className={styles.menu_controls}>
+          {isExpanded ? (
+            <button title="Collapse Menu" onClick={collapse}>
+              <CloseMenuIcon />
+            </button>
+          ) : (
+            <button title="Expand Menu" onClick={expand}>
+              <Hamburger style={{ padding: "0.4rem" }} />
+            </button>
+          )}
+        </div>
+        <div className={styles.menu_items}>
           <Link
-            href="/drafts"
-            title="Drafts"
+            href="/categories"
+            title="Browse"
             className={styles.menu_item}
             onClick={linkClicked}
           >
             <div className={styles.item_content}>
-              <DraftIcon />
-              <span>Drafts</span>
+              <BooksIcon />
+              <span>Browse</span>
             </div>
           </Link>
-        )}
-        {user && (
           <Link
-            href="/profile"
-            title="Profile"
-            className={classNames(styles.menu_item, styles.profile_button)}
+            href="/create"
+            title="Create"
+            className={styles.menu_item}
             onClick={linkClicked}
           >
             <div className={styles.item_content}>
-              {user && user.avatar ? (
-                <Image
-                  src={user.avatar}
-                  alt="Profile picture"
-                  width={256}
-                  height={256}
-                  style={{
-                    height: "auto",
-                    width: "3.4rem",
-                    borderRadius: "4.2rem",
-                    transform: "translateX(-0.2rem)",
-                  }}
-                />
-              ) : (
-                <Profile />
-              )}
-              <span>Profile</span>
+              <PencilIcon />
+              <span>Create</span>
             </div>
           </Link>
-        )}
-      </div>
+          {!user && (
+            <button
+              className={classNames(styles.menu_item, styles.profile_button)}
+              onClick={() => setShowModal(true)}
+              aria-label={"Open login options"}
+              title="Login"
+            >
+              <div className={styles.item_content}>
+                <Profile />
+                <span>Login</span>
+              </div>
+            </button>
+          )}
+          {user && (
+            <Link
+              href="/drafts"
+              title="Drafts"
+              className={styles.menu_item}
+              onClick={linkClicked}
+            >
+              <div className={styles.item_content}>
+                <DraftIcon />
+                <span>Drafts</span>
+              </div>
+            </Link>
+          )}
+          {user && (
+            <Link
+              href={`/@${user.username}`}
+              title="Profile"
+              className={classNames(styles.menu_item, styles.profile_button)}
+              onClick={linkClicked}
+            >
+              <div className={styles.item_content}>
+                {user && user.avatar ? (
+                  <Image
+                    src={user.avatar}
+                    alt="Profile picture"
+                    width={256}
+                    height={256}
+                    style={{
+                      height: "auto",
+                      width: "3.0rem",
+                      borderRadius: "3.0rem",
+                    }}
+                  />
+                ) : (
+                  <Profile />
+                )}
+                <span>Profile</span>
+              </div>
+            </Link>
+          )}
+          {user && (
+            <Link
+              href="/settings"
+              title="Settings"
+              className={styles.menu_item}
+              onClick={linkClicked}
+            >
+              <div className={styles.item_content}>
+                <SettingsIcon />
+                <span>Settings</span>
+              </div>
+            </Link>
+          )}
+        </div>
 
-      <div className={styles.footer_wrapper}>
-        {user && (
-          <button
-            onClick={logout}
-            className={classNames(styles.menu_item, styles.logout)}
-            title="Logout"
-            aria-label="Logout"
-          >
-            <div className={styles.item_content}>
-              <LogoutIcon />
-              <span>Logout</span>
-            </div>
-          </button>
-        )}
-        <footer className={styles.footer}>
-          <Link href="/policy/tos">Terms</Link>
-          <Link href="/policy/pp">Privacy</Link>
-          <Link href="/contact-us">Contact</Link>
-        </footer>
+        <div className={styles.footer_wrapper}>
+          {user && (
+            <button
+              onClick={logout}
+              className={classNames(styles.menu_item, styles.logout)}
+              title="Logout"
+              aria-label="Logout"
+            >
+              <div className={styles.item_content}>
+                <LogoutIcon />
+                <span>Logout</span>
+              </div>
+            </button>
+          )}
+          <footer className={styles.footer}>
+            <Link href="/policy/tos">Terms</Link>
+            <Link href="/policy/pp">Privacy</Link>
+            <Link href="/contact-us">Contact</Link>
+          </footer>
+        </div>
       </div>
     </nav>
   );

@@ -53,9 +53,6 @@
 .controls_wrapper button:focus-visible {
   outline: var(--focus-outline);
   outline-offset: var(--focus-outline-offset);
-  transition:
-    outline 0.1s ease-in-out,
-    outline-offset 0.1s ease-in-out;
 }
 
 .controls_wrapper button:hover {

@@ -75,9 +75,10 @@ export default function Pagination({
       setEntriesWidth(calcEntriesWidth());
     });
     observer.observe(componentRef.current);
-    setEntriesWidth(calcEntriesWidth());
-
-    setIsInitialized(true);
+    document.fonts.ready.then(() => {
+      setEntriesWidth(calcEntriesWidth());
+      setIsInitialized(true);
+    });
     return () => observer.disconnect();
   }, [items]);
 
