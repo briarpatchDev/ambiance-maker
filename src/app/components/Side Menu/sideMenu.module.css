@@ -4,7 +4,6 @@
   transition:
     width 0.2s,
     min-width 0.2s;
-  border-right: 0.1rem solid rgba(57, 50, 57);
 }
 
 .fixed_wrapper {
@@ -16,11 +15,13 @@
     min-width 0.2s;
   display: flex;
   flex-direction: column;
-  padding: 1.2rem 0.15rem 0 0.2rem;
+  padding: 1.2rem 0.1rem 0 0.2rem;
   overflow-y: scroll;
   height: 100vh;
   max-height: 100vh;
   background-color: rgb(50, 50, 50);
+  z-index: 100;
+  border-right: 0.1rem solid rgba(57, 50, 57);
 }
 
 .fixed_wrapper::-webkit-scrollbar {

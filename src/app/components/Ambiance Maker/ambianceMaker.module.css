@@ -15,10 +15,11 @@
 }
 
 .header {
+  z-index: 15;
+  position: relative;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  padding-left: 1.8rem;
   color: var(--grey-text);
   -webkit-text-fill-color: var(--grey-text);
   background: linear-gradient(
@@ -27,9 +28,10 @@
     rgb(60, 60, 60)
   );
   width: min(100%, 80rem);
-  overflow-x: hidden;
+  margin-right: 10rem;
   padding: 0.6rem 0 0.6rem 1.8rem;
-  margin: 0 0.8rem;
+  margin-left: 0.8rem;
+  max-width: calc(100% - 0.8rem);
   border-radius: 1.2rem;
   border: 0.05rem solid rgba(0, 0, 0, 0.1);
   box-shadow: 1px 3px 2px 0px rgba(0, 0, 0, 0.2);
@@ -46,6 +48,7 @@
   text-wrap: none;
   overflow-x: scroll;
   margin-right: 1.8rem;
+  max-width: 100%;
 }
 
 .title {
@@ -116,6 +119,7 @@
 
 .report_button {
   all: unset;
+  display: none;
   cursor: pointer;
   margin: 0 1.6rem 0 auto;
   font-size: 1.4rem;
@@ -212,11 +216,24 @@ textarea.description::placeholder {
   color: var(--grey-text);
 }
 
+.extra_options {
+  position: absolute;
+  right: 1.8rem;
+  bottom: 0.4rem;
+  z-index: 10;
+}
+
 @media screen and (max-width: 540px) {
   .report_button {
     display: none;
   }
 
+  .extra_options {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 830px) {
   .header.with_input {
     width: 96%;
   }

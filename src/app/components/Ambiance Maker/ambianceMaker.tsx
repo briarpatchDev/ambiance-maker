@@ -9,8 +9,9 @@ import AmbiancePlayer from "@/app/components/Ambiance Player/ambiancePlayer";
 import Button from "@/app/components/Buttons/Button Set/button";
 import Modal from "@/app/components/Modals/Modal Versatile Portal/modal";
 import SubmitAmbiance from "@/app/components/Submit Ambiance/submitAmbiance";
-import ReportAmbiance from "@/app/components/Report Ambiance/reportAmbiance";
 import ConfirmationBox from "@/app/components/Confirmation Box/confirmationBox";
+import ExtraOptions from "@/app/components/Dropdown Menu/Extra Options/extraOptions";
+import ReportAmbiance from "@/app/components/Report Ambiance/reportAmbiance";
 import { updateObjectArr } from "@/app/lib/setStateFunctions";
 import { useRouter } from "next/navigation";
 
@@ -355,6 +356,7 @@ export default function AmbianceMaker({
 
   // Used to show / hide the report modal
   const [showReportModal, setShowReportModal] = useState(false);
+  const extraOptionsRef = useRef<HTMLButtonElement>(null);
 
   // Handles the title and description inputs
   const [inputData, setInputData] = useState({
@@ -430,15 +432,21 @@ export default function AmbianceMaker({
                       / 5
                     </span>
                   )}
-
-                {user && (
-                  <button
-                    className={styles.report_button}
-                    aria-label="Report ambiance"
-                    onClick={() => setShowReportModal(true)}
-                  >
-                    Report
-                  </button>
+                {user && ambianceData?.id && (
+                  <div className={styles.extra_options}>
+                    <ExtraOptions
+                      ref={extraOptionsRef}
+                      label={"..."}
+                      menu={[
+                        {
+                          type: "action",
+                          label: "Report",
+                          onClick: () => setShowReportModal(true),
+                        },
+                      ]}
+                      title="More Options"
+                    />
+                  </div>
                 )}
               </div>
             </div>
@@ -622,7 +630,10 @@ export default function AmbianceMaker({
       )}
       {showReportModal && ambianceData?.id && (
         <Modal
-          closeFunction={() => setShowReportModal(false)}
+          closeFunction={() => {
+            setShowReportModal(false);
+            requestAnimationFrame(() => extraOptionsRef.current?.focus());
+          }}
           closeOnEscape={true}
           unstyled={true}
           animate={true}
@@ -630,7 +641,10 @@ export default function AmbianceMaker({
         >
           <ReportAmbiance
             ambianceId={ambianceData.id}
-            closeFunction={() => setShowReportModal(false)}
+            closeFunction={() => {
+              setShowReportModal(false);
+              requestAnimationFrame(() => extraOptionsRef.current?.focus());
+            }}
           />
         </Modal>
       )}

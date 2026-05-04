@@ -69,7 +69,9 @@ export default function SubmitAmbiance({
     setPanel("submitting");
     try {
       const selectedName = formData.categories.filter(Boolean).at(-1);
-      const category_id = selectedName ? categoryMeta[selectedName]?.id : undefined;
+      const category_id = selectedName
+        ? categoryMeta[selectedName]?.id
+        : undefined;
       const options = {
         method: "POST",
         body: JSON.stringify({

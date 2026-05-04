@@ -47,7 +47,7 @@ export default function SelectionManager({
   }, [itemsArr]);
 
   // Initalizes the component with correct width value for the entries container, updates it on resize
-  const [entriesWidth, setEntriesWidth] = useState(0); // in rem
+  const [entriesWidth, setEntriesWidth] = useState(100); // in rem, should start wide
   const [isInitialized, setIsInitialized] = useState(false);
   useEffect(() => {
     if (!componentRef.current) return;
@@ -60,6 +60,8 @@ export default function SelectionManager({
     return () => observer.disconnect();
   }, [items]);
 
+  // We are assuming the entry has fixed width which is smaller at large vw than it is at small vw.
+  const initialEntryWidth = useRef(0);
   // Calculates the new entries width in rem
   function calcEntriesWidth() {
     if (
@@ -69,8 +71,20 @@ export default function SelectionManager({
     ) {
       const entryWidth =
         entryContainersRef.current[0].getBoundingClientRect().width;
-      const componentWidth = componentRef.current.getBoundingClientRect().width;
+      if (!initialEntryWidth.current) {
+        initialEntryWidth.current = entryWidth;
+      }
+      const componentWidth =
+        componentRef.current.getBoundingClientRect().width - 32;
+      // The -32 essentially places 16 padding on the sides of the entriesContainer
       let numEntries = Math.floor(componentWidth / entryWidth);
+      if (
+        numEntries === 1 &&
+        initialEntryWidth.current &&
+        Math.floor(componentWidth / initialEntryWidth.current) > 1
+      ) {
+        return (initialEntryWidth.current * 2) / 10;
+      }
       if (items.length < numEntries) numEntries = items.length;
       return (entryWidth * numEntries) / 10;
     }
