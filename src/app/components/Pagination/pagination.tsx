@@ -211,6 +211,7 @@ export default function Pagination({
 
     let startPage = Math.max(page - range, 1);
     let endPage = Math.min(page + range, numPages);
+    if (endPage <= 1) return undefined;
     if (startPage == 1) {
       endPage = Math.min(1 + 2 * range, numPages);
     }
@@ -311,6 +312,7 @@ export default function Pagination({
       <div
         className={classNames(styles.entries_wrapper, {
           [styles.mobile]: entriesWidth <= 40,
+          [styles.one_item]: items.length === 1,
         })}
         style={{ width: entriesWidth > 40 ? `${entriesWidth}rem` : `` }}
       >

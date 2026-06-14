@@ -43,18 +43,27 @@ export default function LinkButton(
     linkStyle,
     buttonStyle,
   }: LinkButtonProps,
-  ref?: React.Ref<HTMLAnchorElement>
+  ref?: React.Ref<HTMLAnchorElement>,
 ) {
   // Checks if href starts with http or https (meannig it would be an external link)
   function isExternalLink(href: string) {
     return /^https?:\/\//.test(href);
   }
 
+  const linkWidth: React.CSSProperties =
+    typeof width === "number"
+      ? { width: `${width}%` }
+      : width === "smallest"
+        ? { width: "max-content" }
+        : width === "full"
+          ? { width: "100%" }
+          : {};
+
   const button = (
     <Button
       variant={variant}
       tabIndex={-1}
-      width={width}
+      width="full"
       style={{ ...buttonStyle }}
       onClick={() => {}}
       text={text}
@@ -71,7 +80,7 @@ export default function LinkButton(
       href={href}
       target={target || "_blank"}
       ref={ref}
-      style={{ ...linkStyle }}
+      style={{ ...linkWidth, ...linkStyle }}
     >
       {button}
     </a>
@@ -81,7 +90,7 @@ export default function LinkButton(
       aria-label={ariaLabel}
       href={href}
       ref={ref}
-      style={{ ...linkStyle }}
+      style={{ ...linkWidth, ...linkStyle }}
     >
       {button}
     </Link>

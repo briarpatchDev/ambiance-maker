@@ -73,7 +73,7 @@ export async function GET(req: NextRequest) {
       const username = usernameResult || `User${randomString(8)}`;
 
       // Create new user
-      const { data: newUser } = await supabase
+      const { data: newUser, error: insertUserError } = await supabase
         .from("users")
         .insert({
           google_id: profile.id,
@@ -84,17 +84,22 @@ export async function GET(req: NextRequest) {
         .select("id")
         .single();
 
-      if (!newUser) {
+      if (insertUserError || !newUser) {
+        console.error("[auth/callback] Failed to create user:", insertUserError);
         return NextResponse.redirect(`${origin}/`);
       }
       userId = newUser.id;
     }
 
     // Create a session row for this device
-    await supabase.from("sessions").insert({
-      user_id: userId,
-      session_id: sessionId,
-    });
+    const { error: insertSessionError } = await supabase
+      .from("sessions")
+      .insert({ user_id: userId, session_id: sessionId });
+
+    if (insertSessionError) {
+      console.error("[auth/callback] Failed to create session:", insertSessionError);
+      return NextResponse.redirect(`${origin}/`);
+    }
 
     // Set session cookie
     const cookieStore = await cookies();
@@ -107,7 +112,8 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.redirect(`${origin}${returnPath}`);
-  } catch {
+  } catch (err) {
+    console.error("[auth/callback] Unexpected error:", err);
     return NextResponse.redirect(`${origin}/`);
   }
 }

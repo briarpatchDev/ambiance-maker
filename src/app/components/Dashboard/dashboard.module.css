@@ -1,0 +1,46 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0.8rem 0.8rem 4rem;
+  row-gap: 1.2rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+.section_header {
+  display: flex;
+  align-items: baseline;
+  padding: 0.4rem 0.8rem;
+  font-size: 2rem;
+  color: var(--grey-text);
+}
+
+.empty_state {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  padding: 1.6rem 0.4rem;
+  color: var(--dark-grey-text);
+  font-size: 1.6rem;
+}
+
+.empty_link {
+  color: var(--link-color);
+  font-size: 1.6rem;
+  text-decoration: none;
+}
+
+.empty_link:hover {
+  color: var(--link-color-hover);
+}
+
+.button_wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  margin-top: 1.2rem;
+}

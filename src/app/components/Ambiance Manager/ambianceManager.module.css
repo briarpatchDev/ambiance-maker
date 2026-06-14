@@ -33,16 +33,22 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   min-height: 6rem;
   width: 100%;
   padding: 0.4rem;
-  column-gap: 4.8rem;
+  column-gap: 3.6rem;
   padding-right: 5%;
+  row-gap: 0.6rem;
 }
 
 .selection_manager_header > * {
   display: flex;
   align-items: center;
+}
+
+.selection_manager_header > div {
+  margin-left: auto;
 }
 
 .selection_manager_header h1 {
@@ -57,6 +63,12 @@
   padding: 0.8rem 2rem 1.2rem;
   border-radius: 1.6rem;
   background-color: rgb(50, 50, 50);
+  max-width: calc(100vw - 6rem);
+  overflow-x: scroll;
+}
+
+.selection_manager_header h1::-webkit-scrollbar {
+  display: none;
 }
 
 .selection_manager_header h1 svg {
@@ -71,6 +83,7 @@
   display: flex;
   align-items: center;
   height: 3.6rem;
+  margin: 0.6rem 0;
 }
 
 .trash_btn_wrapper button {
@@ -108,6 +121,10 @@
   flex-wrap: unset;
   justify-content: unset;
   align-items: center;
+}
+
+.entries_wrapper.one_item {
+  width: 100%;
 }
 
 .mobile .entry_container {
@@ -247,6 +264,7 @@
 }
 
 @media screen and (max-width: 440px) {
+  /*
   .selection_manager_header {
     display: flex;
     flex-direction: column;
@@ -255,10 +273,10 @@
     padding-bottom: 0;
   }
 
-  .trash_btn_wrapper {
+  .selection_manager_header > div {
     align-self: flex-end;
-    margin-right: 0;
   }
+    */
 
   .delete_menu {
     flex-direction: column;

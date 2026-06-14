@@ -60,7 +60,8 @@ export default function AmbianceCard({
   ratingCount,
   datePublished,
   dateUpdated,
-  mode = "vertical",
+  //mode = "vertical",
+  mode,
   style,
   banner,
 }: AmbianceCardProps) {
@@ -84,6 +85,7 @@ export default function AmbianceCard({
   return (
     <div
       className={classNames(styles.card_wrapper, {
+        [styles.vertical]: mode === "vertical",
         [styles.horizontal]: mode === "horizontal",
       })}
     >
@@ -119,11 +121,13 @@ export default function AmbianceCard({
           </div>
 
           <div className={styles.meta_wrapper}>
-            <h1 className={styles.title}>{title}</h1>
+            <h1 className={styles.title} title={title}>
+              {title}
+            </h1>
             {linkTo === "ambiance" ? (
               <div className={styles.meta_section}>
                 <div className={styles.meta_row}>
-                  {views && (
+                  {views != undefined && (
                     <div className={styles.views}>{formatViews(views)}</div>
                   )}
                   {datePublished && (

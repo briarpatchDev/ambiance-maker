@@ -89,7 +89,7 @@ export default function SubmitAmbiance({
       const data = await res.json();
       if (data.success) {
         if (data.ambiance && data.ambiance.id) {
-          redirectLink.current = `/test_pages/drafts/${data.ambiance.id}`;
+          redirectLink.current = `/drafts/${data.ambiance.id}`;
         }
         onSuccess?.();
         setPanel("success");
@@ -326,6 +326,12 @@ export default function SubmitAmbiance({
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, checked: e.target.checked }))
             }
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                setFormData((prev) => ({ ...prev, checked: !prev.checked }));
+              }
+            }}
             aria-label={
               formData.checked === true
                 ? `Agreement has been signed. Click to undo`

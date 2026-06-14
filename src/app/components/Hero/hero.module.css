@@ -1,53 +1,89 @@
 .hero {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0.4rem 2.4rem 1.6rem;
-  color: var(--grey-text);
-  -webkit-text-fill-color: var(--grey-text);
-  width: max-content;
-  max-width: 90%;
-  padding: 0;
-  margin: 0rem 1.2rem 0.8rem;
-  padding: 1.2rem;
-  padding-right: 3.6rem;
-  color: var(--grey-text);
-  background: linear-gradient(
-    to bottom right,
-    rgb(40, 40, 40),
-    rgb(60, 60, 60)
-  );
-  border-radius: 1.2rem;
-  border: 0.05rem solid rgba(0, 0, 0, 0.1);
-  border-left: 0.3rem solid rgba(140, 120, 180, 0.45);
-  border-top: 0.3rem solid rgba(140, 120, 180, 0.45);
-  box-shadow: 1px 3px 2px 0px rgba(0, 0, 0, 0.2);
+  align-items: center;
+  width: 100%;
+  height: 18rem;
+  overflow: hidden;
+  transform: translateY(-0.6rem);
+  border-bottom: 0.2rem solid rgba(91, 73, 113, 0.5);
 }
 
-.heading {
+.bg {
+  position: absolute;
+  inset: -2rem 0;
+  background-image: url("/images/hero.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  filter: brightness(0.5);
+  z-index: 0;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 2rem 2.4rem;
+  padding: 2rem 2.8rem 2.4rem;
+  max-width: 56rem;
+  background: rgba(20, 16, 28, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 1.2rem;
+  border: 0.05rem solid rgba(180, 150, 220, 0.2);
+  border-left: 0.3rem solid rgba(160, 120, 210, 0.5);
+  border-top: 0.3rem solid rgba(160, 120, 210, 0.5);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.app_name {
   margin: 0;
-  padding: 0;
-  font-size: 3.2rem;
-  font-weight: 600;
+  font-size: 3.6rem;
+  font-weight: 700;
+  color: var(--grey-text);
+  letter-spacing: -0.02rem;
+  line-height: 1.1;
+}
+
+.tagline {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 500;
+  color: rgba(210, 190, 240, 0.9);
+  font-style: italic;
 }
 
 .subtitle {
-  margin: 0.6rem 0 0 0.8rem;
-  font-size: 1.8rem;
+  margin: 0.2rem 0 0;
+  font-size: 1.6rem;
   font-weight: 400;
+  color: rgba(240, 240, 240, 0.9);
 }
 
-@media (max-width: 700px) {
+@media (max-width: 720px) {
   .hero {
+    min-height: 18rem;
   }
 
-  .heading {
-    font-size: 2.4rem;
+  .card {
+    margin: 1.2rem;
+    padding: 1.6rem 1.8rem 2rem;
+  }
+
+  .app_name {
+    font-size: 2.8rem;
+  }
+
+  .tagline {
+    font-size: 1.8rem;
   }
 
   .subtitle {
-    font-size: 1.6rem;
-    margin: 0.6rem 0 0 0.4rem;
-    text-wrap: pretty;
+    font-size: 1.4rem;
   }
 }

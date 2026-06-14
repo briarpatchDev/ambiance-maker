@@ -89,28 +89,32 @@ export default function ReportAmbiance({
         Let us know if this ambiance has a broken link or any other issue.
       </p>
       <div className={styles.form}>
-        <div className={styles.radio_group}>
+        <div
+          className={styles.radio_group}
+          role="radiogroup"
+          aria-label="Reason"
+        >
           <h5>Reason:</h5>
-          <label className={styles.radio_label}>
-            <input
-              type="radio"
-              name="reportType"
-              value="broken"
-              checked={reportType === "broken"}
-              onChange={() => setReportType("broken")}
-            />
+          <button
+            type="button"
+            role="radio"
+            aria-checked={reportType === "broken"}
+            className={`${styles.radio_label} ${reportType === "broken" ? styles.radio_selected : ""}`}
+            onClick={() => setReportType("broken")}
+          >
+            <span className={styles.radio_indicator} />
             Broken Link
-          </label>
-          <label className={styles.radio_label}>
-            <input
-              type="radio"
-              name="reportType"
-              value="other"
-              checked={reportType === "other"}
-              onChange={() => setReportType("other")}
-            />
+          </button>
+          <button
+            type="button"
+            role="radio"
+            aria-checked={reportType === "other"}
+            className={`${styles.radio_label} ${reportType === "other" ? styles.radio_selected : ""}`}
+            onClick={() => setReportType("other")}
+          >
+            <span className={styles.radio_indicator} />
             Other
-          </label>
+          </button>
         </div>
         {reportType === "other" && (
           <div>

@@ -78,6 +78,7 @@ export default function SelectionManager({
         componentRef.current.getBoundingClientRect().width - 32;
       // The -32 essentially places 16 padding on the sides of the entriesContainer
       let numEntries = Math.floor(componentWidth / entryWidth);
+      console.log(`numEntries: ${numEntries}`);
       if (
         numEntries === 1 &&
         initialEntryWidth.current &&
@@ -402,6 +403,7 @@ export default function SelectionManager({
           <div
             className={classNames(styles.entries_wrapper, {
               [styles.mobile]: entriesWidth <= 40,
+              [styles.one_item]: items.length === 1,
             })}
             style={{ width: entriesWidth > 40 ? `${entriesWidth}rem` : `` }}
           >

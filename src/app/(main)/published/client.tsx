@@ -76,6 +76,7 @@ export default function PublishedContent() {
     const range = 2;
     let startPage = Math.max(page - range, 1);
     let endPage = Math.min(page + range, numPages);
+    if (endPage <= 1) return undefined;
     if (startPage === 1) endPage = Math.min(1 + 2 * range, numPages);
     if (endPage === numPages) startPage = Math.max(numPages - 2 * range, 1);
 

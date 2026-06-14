@@ -1,0 +1,12 @@
+.settings_page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding-bottom: 24rem;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 3.2rem 0.8rem 0;
+}

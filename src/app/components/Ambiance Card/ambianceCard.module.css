@@ -208,26 +208,26 @@
 
 /* Goes to horizontal automatically at this size */
 @media screen and (max-width: 440px) {
-  .card_wrapper {
+  .card_wrapper:not(.vertical) {
     height: 12rem;
     width: 100%;
     max-width: 36rem;
   }
 
-  .card {
+  .card_wrapper:not(.vertical) .card {
     width: 100%;
     align-items: unset;
     flex-direction: row;
     column-gap: 1.2rem;
   }
 
-  .image_wrapper {
+  .card_wrapper:not(.vertical) .image_wrapper {
     height: 100%;
     min-width: 16rem;
     width: 16rem;
   }
 
-  .ribbon {
+  .card_wrapper:not(.vertical) .ribbon {
     top: calc(35% - 1.2rem);
     left: calc(-35% - 1.2rem);
     transform: rotate(-45deg);

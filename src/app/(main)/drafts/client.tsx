@@ -22,7 +22,6 @@ export default function DraftsContent({
 
   return drafts ? (
     <div className={styles.drafts} ref={containerRef}>
-      <AmbianceManagerNav />
       <div className={styles.manager_wrapper}>
         <AmbianceManager
           itemsArr={drafts}
@@ -34,7 +33,6 @@ export default function DraftsContent({
     </div>
   ) : (
     <div className={styles.drafts}>
-      <AmbianceManagerNav />
       <div className={styles.error_wrapper}>
         <ExpectedError
           errorMessage="Something went wrong getting your drafts."

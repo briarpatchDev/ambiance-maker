@@ -11,12 +11,12 @@
   --link-color: light-dark(blue, rgb(170, 170, 255));
   --link-color-hover: light-dark(rgb(0, 0, 150), rgb(140, 140, 210));
   --icon-color: light-dark(black, rgb(230, 230, 230));
-  --error-color: light-dark(brown, rgb(249, 105, 105));
-  --focus-color: light-dark(rgba(47, 96, 149, 1), rgb(140, 150, 190));
+  --error-color: rgb(249, 105, 105);
+  --focus-color: rgba(47, 96, 149, 1);
   --focus-outline: 0.3rem solid var(--focus-color);
   --focus-outline-offset: 0.1rem;
-  --grey-text: light-dark(rgb(240, 240, 240), rgb(230, 230, 230));
-  --dark-grey-text: light-dark(rgb(120, 120, 120), rgb(160, 160, 160));
+  --grey-text: rgb(240, 240, 240);
+  --dark-grey-text: rgb(160, 160, 160);
   --primary-button-color: rgb(105, 75, 135);
   --background-color: rgb(77 73 84);
 }

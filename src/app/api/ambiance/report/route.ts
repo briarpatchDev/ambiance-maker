@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createAdminClient } from "@/app/lib/supabase/admin";
+import { createClient } from "@/app/lib/supabase/server";
 import { getUserId } from "@/app/lib/auth/getCurrentUser";
+import { cookies } from "next/headers";
 
 // Maximum pending reports a single user can have
 const MAX_REPORTS_PER_USER = 5;
@@ -51,7 +53,9 @@ export async function POST(req: NextRequest) {
         : "";
 
     // Use admin client for checks that need to bypass RLS
-    const admin = createAdminClient();
+    const isDev = process.env.NODE_ENV === "development";
+    const cookieStore = cookies();
+    const admin = isDev ? createAdminClient() : createClient(cookieStore);
 
     // Check if user is shadowbanned — give false positive if so
     const { data: userProfile } = await admin
@@ -102,12 +106,9 @@ export async function POST(req: NextRequest) {
       });
 
     if (insertError) {
-      // Duplicate report (unique constraint violation)
+      // Duplicate report (unique constraint violation) — false positive
       if (insertError.code === "23505") {
-        return NextResponse.json({
-          success: false,
-          error: "You've already reported this ambiance.",
-        });
+        return NextResponse.json({ success: true });
       }
       console.error("Report insert error:", insertError);
       return NextResponse.json(

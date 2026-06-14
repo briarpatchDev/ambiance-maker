@@ -32,12 +32,6 @@ ALTER TABLE ambiances
     (rating_sum + 70.0 * 50) / (rating_count + 50)
   ) STORED;
 
--- Patch for existing DBs: expand rating scale from 1-5 to 1-99
-ALTER TABLE ambiance_ratings
-  DROP CONSTRAINT IF EXISTS ambiance_ratings_rating_check;
-ALTER TABLE ambiance_ratings
-  ADD CONSTRAINT ambiance_ratings_rating_check CHECK (rating >= 1 AND rating <= 99);
-
 -- Create index for faster user lookups
 CREATE INDEX IF NOT EXISTS idx_ambiances_user_id ON ambiances(user_id);
 
@@ -63,6 +57,12 @@ CREATE TABLE IF NOT EXISTS ambiance_ratings (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE(ambiance_id, user_id)  -- One vote per user per ambiance
 );
+
+-- Patch for existing DBs: expand rating scale from 1-5 to 1-99
+ALTER TABLE ambiance_ratings
+  DROP CONSTRAINT IF EXISTS ambiance_ratings_rating_check;
+ALTER TABLE ambiance_ratings
+  ADD CONSTRAINT ambiance_ratings_rating_check CHECK (rating >= 1 AND rating <= 99);
 
 -- Create index for faster ambiance rating lookups
 CREATE INDEX IF NOT EXISTS idx_ambiance_ratings_ambiance_id ON ambiance_ratings(ambiance_id);

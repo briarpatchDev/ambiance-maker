@@ -193,6 +193,10 @@
   align-items: center;
 }
 
+.entries_wrapper.one_item {
+  width: 100%;
+}
+
 .mobile .entry_container {
   width: 100%;
   justify-content: center;

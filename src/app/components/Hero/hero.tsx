@@ -1,19 +1,16 @@
-"use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
 import styles from "./hero.module.css";
-import classNames from "classnames";
 
-interface HeroProps {
-  style?: React.CSSProperties;
-}
-
-export default function Hero({ style }: HeroProps) {
+export default function Hero() {
   return (
-    <header className={styles.hero} style={{ ...style }} role="banner">
-      <h1 className={styles.heading}>Create Your Perfect Ambiance</h1>
-      <p className={styles.subtitle}>
-        Mix YouTube videos into relaxing background soundscapes
-      </p>
+    <header className={styles.hero} role="banner">
+      <div className={styles.bg} />
+      <div className={styles.card}>
+        <h1 className={styles.app_name}>Ambiance Maker</h1>
+        <p className={styles.tagline}>Set the mood. Stay in flow.</p>
+        <p className={styles.subtitle}>
+          Mix YouTube videos into relaxing background soundscapes
+        </p>
+      </div>
     </header>
   );
 }
