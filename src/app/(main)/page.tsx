@@ -9,6 +9,9 @@ import { cookies } from "next/headers";
 const DASHBOARD_LIMIT = 8;
 
 export default async function Page() {
+  const today = new Date().toISOString().slice(0, 10);
+  createAdminClient().rpc("increment_page_view", { p_page: "home", p_date: today });
+
   const cookieStore = await cookies();
   const sessionId = cookieStore.get("sessionId")?.value;
 

@@ -4,11 +4,20 @@ import AmbianceMaker, {
   createVideoEntry,
 } from "@/app/components/Ambiance Maker/ambianceMaker";
 import { useUser } from "@/app/contexts/userContext";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 
 export default function Page() {
+  // Updates the page view counter
+  useEffect(() => {
+    fetch("/api/analytics/page-view", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ page: "share" }),
+    }).catch(() => {});
+  }, []);
+
   const user = useUser();
   const searchParams = useSearchParams();
   const decodeLink = useCallback(

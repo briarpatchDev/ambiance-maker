@@ -37,6 +37,12 @@ export async function verifyAdmin(): Promise<
     };
   }
 
+  supabase
+    .from("sessions")
+    .update({ last_active: new Date().toISOString() })
+    .eq("session_id", sessionId)
+    .then(() => {});
+
   const { data: user, error: authError } = await supabase
     .from("users")
     .select("id, role")

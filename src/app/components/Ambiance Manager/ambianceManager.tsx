@@ -271,7 +271,7 @@ export default function SelectionManager({
       .filter((result) => result !== -1);
     let plural = toBeDeleted.length > 1;
     let message = `Are you sure you want to delete `;
-    if (toBeDeleted.length === items.length) {
+    if (toBeDeleted.length === items.length && plural) {
       message += `all of your `;
     } else {
       message += `${plural ? `these ${toBeDeleted.length} ` : "this "}`;

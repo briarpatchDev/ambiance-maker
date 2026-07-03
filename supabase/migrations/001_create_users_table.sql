@@ -35,7 +35,8 @@ CREATE TABLE IF NOT EXISTS sessions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   session_id TEXT UNIQUE NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  last_active TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- Index for fast session lookups (auth on every request)
@@ -43,6 +44,9 @@ CREATE INDEX IF NOT EXISTS idx_sessions_session_id ON sessions(session_id);
 
 -- Index for finding all sessions for a user (cleanup, logout-all)
 CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
+
+-- Index for efficient cleanup queries (cron job scans by last_active)
+CREATE INDEX IF NOT EXISTS idx_sessions_last_active ON sessions(last_active);
 
 -- ============================================
 -- Random username generator

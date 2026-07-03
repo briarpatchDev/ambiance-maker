@@ -59,7 +59,9 @@ function convertDates(items: InitialOwnerData["items"]): AmbianceData[] {
   return items.map((item) => ({
     ...item,
     status: item.status as AmbianceData["status"],
-    datePublished: item.datePublished ? new Date(item.datePublished) : undefined,
+    datePublished: item.datePublished
+      ? new Date(item.datePublished)
+      : undefined,
   }));
 }
 
@@ -72,8 +74,9 @@ function OwnerView({
 }) {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
-  const [ambiances, setAmbiances] = useState<AmbianceData[]>(
-    () => convertDates(initialData?.items ?? []),
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const [ambiances, setAmbiances] = useState<AmbianceData[]>(() =>
+    convertDates(initialData?.items ?? []),
   );
   const [page, setPage] = useState(initialData?.page ?? 1);
   const [numPages, setNumPages] = useState(initialData?.numPages ?? 1);
@@ -87,9 +90,14 @@ function OwnerView({
 
   const fetchPage = useCallback(
     async (targetPage: number, targetSort: SortOption) => {
+      abortControllerRef.current?.abort();
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
       try {
         const res = await fetch(
           `/api/pagination/published?page=${targetPage}&sort=${targetSort}`,
+          { signal: controller.signal },
         );
         const data = await res.json();
         if (data.errors) throw new Error(data.errors);
@@ -105,9 +113,10 @@ function OwnerView({
         setNumPages(data.numPages);
         setSort(data.sort);
         setIsError(false);
-      } catch {
+        setIsInitialized(true);
+      } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") return;
         setIsError(true);
-      } finally {
         setIsInitialized(true);
       }
     },
@@ -119,7 +128,7 @@ function OwnerView({
     if (!isInitialized) {
       fetchPage(1, "newest");
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handlePageChange(newPage: number) {

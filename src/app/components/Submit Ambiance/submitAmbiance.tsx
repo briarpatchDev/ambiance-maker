@@ -181,12 +181,11 @@ export default function SubmitAmbiance({
         <div className={styles.instruction}>
           <h2>
             <div>2.</div>
-            <div>Make sure your ambiance is family-friendly</div>
+            <div>Make sure your ambiance is suitable for all ages</div>
           </h2>
           <p>
-            Your ambiance should be appropriate for all audiences. No graphic,
-            explicit, or controversial material. If you're questioning whether
-            something crosses the line, it probably does.
+            No graphic, explicit, or controversial material. If you're
+            questioning whether something crosses the line, it probably does.
           </p>
         </div>
 
