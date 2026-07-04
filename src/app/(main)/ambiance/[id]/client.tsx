@@ -15,15 +15,6 @@ export default function AmbianceClient({
   const router = useRouter();
   const user = useUser();
 
-  useEffect(() => {
-    if (!ambianceData?.id) return;
-    fetch("/api/analytics/ambiance-view", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ambianceId: ambianceData.id }),
-    }).catch(() => {});
-  }, [ambianceData?.id]);
-
   return ambianceData ? (
     <div className={styles.ambiance}>
       <div className={styles.ambiance_maker_wrapper}>

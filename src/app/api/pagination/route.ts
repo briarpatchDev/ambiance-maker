@@ -77,10 +77,8 @@ export async function GET(req: NextRequest) {
         query = query.order("published_at", { ascending: true });
         break;
       case "best":
-        // Bayesian score (rating_score), minimum 50 ratings required
-        query = query
-          .gte("rating_count", 50)
-          .order("rating_score", { ascending: false });
+        // Bayesian score DESC; rating_score is NULL for count < 8 → sorts to end automatically
+        query = query.order("rating_score", { ascending: false, nullsFirst: false });
         break;
       default: // newest
         query = query.order("published_at", { ascending: false });
@@ -121,11 +119,12 @@ export async function GET(req: NextRequest) {
 
     // Remap DB field names to the shape AmbianceCard expects
     const items = (data ?? []).map((item: any) => {
-      const { published_at, rating_score, users, ...rest } = item;
+      const { published_at, rating_score, rating_count, users, ...rest } = item;
       return {
         ...rest,
         datePublished: published_at,
-        ratingTotal: rating_score,
+        ratingTotal: rating_score ?? undefined,
+        ratingCount: rating_count,
         ...(users ? { author: users.username } : {}),
       };
     });

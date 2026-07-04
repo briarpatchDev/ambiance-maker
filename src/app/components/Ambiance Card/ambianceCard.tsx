@@ -127,9 +127,18 @@ export default function AmbianceCard({
             {linkTo === "ambiance" ? (
               <div className={styles.meta_section}>
                 <div className={styles.meta_row}>
-                  {views != undefined && (
-                    <div className={styles.views}>{formatViews(views)}</div>
-                  )}
+                  <div className={styles.meta_row_left}>
+                    {views != undefined && (
+                      <div className={styles.views}>{formatViews(views)}</div>
+                    )}
+                    {ratingCount !== undefined &&
+                      ratingCount >= 8 &&
+                      ratingTotal !== undefined && (
+                        <div className={styles.rating}>
+                          {`★ ${ratingTotal.toFixed(1)}`}
+                        </div>
+                      )}
+                  </div>
                   {datePublished && (
                     <div>{datePublished.toLocaleDateString()}</div>
                   )}

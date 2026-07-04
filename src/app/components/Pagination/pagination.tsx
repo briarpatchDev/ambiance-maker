@@ -136,7 +136,7 @@ export default function Pagination({
       sortLink("Newest", "newest", "newest"),
       sortLink("Oldest", "oldest", "oldest"),
       sortLink("Popular", "popular", "popular"),
-      //  sortLink("Best", "best", "best"),
+      sortLink("Best", "best", "best"),
     ];
     return (
       <div className={styles.sort_options} aria-label="Sort options">

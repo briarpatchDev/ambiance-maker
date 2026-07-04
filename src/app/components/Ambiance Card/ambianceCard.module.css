@@ -149,12 +149,22 @@
   font-weight: 300;
 }
 
+.meta_row_left {
+  display: flex;
+  column-gap: 0.8rem;
+}
+
 .byline {
   display: flex;
   justify-content: flex-end;
   font-family: sans-serif;
   font-size: 1.6rem;
   font-weight: 300;
+}
+
+.rating {
+  opacity: 0.85;
+  font-size: 1.4rem;
 }
 
 .description_wrapper {

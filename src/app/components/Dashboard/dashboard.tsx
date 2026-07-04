@@ -21,6 +21,8 @@ export interface RecentAmbianceItem {
   views: number;
   published_at: string;
   author?: string;
+  ratingTotal?: number;
+  ratingCount?: number;
 }
 
 interface DashboardProps {
@@ -56,6 +58,8 @@ export default function Dashboard({
                   containerRef={containerRef}
                   author={ambiance.author}
                   views={ambiance.views}
+                  ratingTotal={ambiance.ratingTotal}
+                  ratingCount={ambiance.ratingCount}
                   datePublished={new Date(ambiance.published_at)}
                   mode="vertical"
                 />

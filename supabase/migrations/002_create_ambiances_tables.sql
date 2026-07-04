@@ -19,18 +19,14 @@ CREATE TABLE IF NOT EXISTS ambiances (
   views INTEGER NOT NULL DEFAULT 0,
   rating_sum INTEGER NOT NULL DEFAULT 0,
   rating_count INTEGER NOT NULL DEFAULT 0,
-  -- Bayesian average: prior of 50 ratings at assumed mean of 70 (scale 1-99)
-  -- Pulls low-volume ambiances toward the mean; converges to true average at scale
+  -- Bayesian average: prior of 10 ratings at assumed mean of 3.5 (scale 1-5)
+  -- Returns NULL when rating_count < 8 so below-threshold ambiances sort after rated ones (NULLS LAST)
   rating_score FLOAT GENERATED ALWAYS AS (
-    (rating_sum + 70.0 * 50) / (rating_count + 50)
+    CASE WHEN rating_count < 8 THEN NULL
+    ELSE (rating_sum + 3.5 * 10) / (rating_count + 10)
+    END
   ) STORED
 );
-
--- Patch for existing DBs: add rating_score if the table already existed without it
-ALTER TABLE ambiances
-  ADD COLUMN IF NOT EXISTS rating_score FLOAT GENERATED ALWAYS AS (
-    (rating_sum + 70.0 * 50) / (rating_count + 50)
-  ) STORED;
 
 -- Create index for faster user lookups
 CREATE INDEX IF NOT EXISTS idx_ambiances_user_id ON ambiances(user_id);
@@ -44,25 +40,19 @@ CREATE INDEX IF NOT EXISTS idx_ambiances_created_at ON ambiances(created_at DESC
 -- Create index for category lookups
 CREATE INDEX IF NOT EXISTS idx_ambiances_category_id ON ambiances(category_id);
 
--- Create index for best sort (rating_score DESC, filtered by rating_count >= 50)
-CREATE INDEX IF NOT EXISTS idx_ambiances_rating_score ON ambiances(rating_score DESC) WHERE rating_count >= 50;
+-- Create index for best sort (rating_score DESC, filtered by rating_count >= 8)
+CREATE INDEX IF NOT EXISTS idx_ambiances_rating_score ON ambiances(rating_score DESC) WHERE rating_count >= 8;
 
--- Create ambiance_ratings table (prevents duplicate votes)
+-- Create ambiance_ratings table (one vote per user per ambiance)
 CREATE TABLE IF NOT EXISTS ambiance_ratings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   ambiance_id VARCHAR(12) REFERENCES ambiances(id) ON DELETE CASCADE NOT NULL,
   user_id UUID NOT NULL
     REFERENCES public.users(id) ON DELETE CASCADE,
-  rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 99),
+  rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  UNIQUE(ambiance_id, user_id)  -- One vote per user per ambiance
+  UNIQUE(ambiance_id, user_id)
 );
-
--- Patch for existing DBs: expand rating scale from 1-5 to 1-99
-ALTER TABLE ambiance_ratings
-  DROP CONSTRAINT IF EXISTS ambiance_ratings_rating_check;
-ALTER TABLE ambiance_ratings
-  ADD CONSTRAINT ambiance_ratings_rating_check CHECK (rating >= 1 AND rating <= 99);
 
 -- Create index for faster ambiance rating lookups
 CREATE INDEX IF NOT EXISTS idx_ambiance_ratings_ambiance_id ON ambiance_ratings(ambiance_id);

@@ -102,8 +102,7 @@
   border-right: 0.1rem solid rgb(50, 50, 50);
 }
 
-.sort_option:first-of-type,
-.size_option:first-child {
+.sort_option:first-child {
   border-top-left-radius: 0.8rem;
 }
 

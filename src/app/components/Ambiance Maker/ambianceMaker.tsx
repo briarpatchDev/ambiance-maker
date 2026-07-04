@@ -14,6 +14,7 @@ import ExtraOptions from "@/app/components/Dropdown Menu/Extra Options/extraOpti
 import ReportAmbiance from "@/app/components/Report Ambiance/reportAmbiance";
 import { updateObjectArr } from "@/app/lib/setStateFunctions";
 import { useRouter } from "next/navigation";
+import StarRatingInput from "@/app/components/Star Rating/starRatingInput";
 
 interface AmbianceMakerProps {
   mode: "create" | "draft" | "shared" | "published";
@@ -80,6 +81,8 @@ export default function AmbianceMaker({
   const [status, setStatus] = useState<"draft" | "submitted">(
     initialStatus || "draft",
   );
+  const [showRatingInput, setShowRatingInput] = useState(false);
+  const [userRating, setUserRating] = useState<number | null>(null);
   // Handles when an inputs link / src changes
   function onLinkChange(link: string, index = 0) {
     updateObjectArr(setVideoData, index, { [`src`]: link });
@@ -172,6 +175,32 @@ export default function AmbianceMaker({
         : false;
     setIsIOS(isIPhone || isIPad || isIPod || isIPadOS);
   }, []);
+
+  // Fetches the current user's existing rating for this ambiance on mount
+  useEffect(() => {
+    if (mode !== "published" || !user || !ambianceData?.id) return;
+    fetch(`/api/ambiance/rate?id=${ambianceData.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.rating) setUserRating(data.rating);
+      })
+      .catch(() => {});
+  }, []);
+
+  // Submits the user's star rating
+  async function handleRate(stars: number) {
+    if (!ambianceData?.id) return;
+    try {
+      await fetch("/api/ambiance/rate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: ambianceData.id, rating: stars }),
+      });
+      setUserRating(stars);
+      router.refresh();
+    } catch {}
+    setShowRatingInput(false);
+  }
 
   // Takes video data and creates a sharable link out of it
   const shareTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -383,6 +412,13 @@ export default function AmbianceMaker({
     }
   }
 
+  const canRate =
+    mode === "published" && !!user && user.username !== ambianceData?.author;
+  const hasDisplayRating =
+    ambianceData?.ratingCount !== undefined &&
+    ambianceData.ratingCount >= 8 &&
+    ambianceData?.ratingTotal !== undefined;
+
   return (
     <div style={{ ...style }} className={styles.ambiance_maker}>
       {mode === "published" && ambianceData?.title ? (
@@ -419,19 +455,46 @@ export default function AmbianceMaker({
                     {ambianceData.views.toLocaleString()} views
                   </span>
                 )}
-                {ambianceData.ratingCount !== undefined && (
+                {(hasDisplayRating || canRate) && (
                   <span className={styles.separator}>{`●`}</span>
                 )}
-                {ambianceData.ratingCount !== undefined &&
-                  ambianceData.ratingCount > 0 &&
-                  ambianceData.ratingTotal !== undefined && (
+                {hasDisplayRating ? (
+                  canRate ? (
+                    <div className={styles.rating_button_wrapper}>
+                      <button
+                        className={styles.rating_button}
+                        onClick={() => setShowRatingInput((v) => !v)}
+                        aria-expanded={showRatingInput}
+                        aria-label={`Rate this ambiance. Current rating: ${ambianceData!.ratingTotal!.toFixed(1)} out of 5`}
+                      >
+                        {`★ ${ambianceData!.ratingTotal!.toFixed(1)} (${ambianceData!.ratingCount!.toLocaleString()})`}
+                      </button>
+                    </div>
+                  ) : (
                     <span className={styles.rating}>
-                      {(
-                        ambianceData.ratingTotal / ambianceData.ratingCount
-                      ).toFixed(1)}{" "}
-                      / 5
+                      {`★ ${ambianceData!.ratingTotal!.toFixed(1)} (${ambianceData!.ratingCount!.toLocaleString()})`}
                     </span>
-                  )}
+                  )
+                ) : canRate && userRating !== null ? (
+                  // Confirm rating received for sub-threshold ambiances
+                  <button
+                    className={styles.rating_button}
+                    onClick={() => setShowRatingInput((v) => !v)}
+                    aria-expanded={showRatingInput}
+                    aria-label="Change your rating"
+                  >
+                    {`★ Rated`}
+                  </button>
+                ) : canRate ? (
+                  <button
+                    className={styles.rating_button}
+                    onClick={() => setShowRatingInput((v) => !v)}
+                    aria-expanded={showRatingInput}
+                    aria-label="Rate this ambiance"
+                  >
+                    {`☆ Rate`}
+                  </button>
+                ) : null}
                 {user && ambianceData?.id && (
                   <div className={styles.extra_options}>
                     <ExtraOptions
@@ -450,6 +513,17 @@ export default function AmbianceMaker({
                 )}
               </div>
             </div>
+            {canRate && showRatingInput && (
+              <div className={styles.rating_section}>
+                <span className={styles.your_rating}>
+                  {userRating ? `Your rating:` : `Rate this ambiance:`}
+                </span>
+                <StarRatingInput
+                  initialRating={userRating}
+                  onRate={handleRate}
+                />
+              </div>
+            )}
           </div>
         </div>
       ) : (

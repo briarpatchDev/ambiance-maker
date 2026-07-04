@@ -43,6 +43,10 @@ export async function GET(req: NextRequest) {
         sortColumn = "views";
         ascending = false;
         break;
+      case "best":
+        sortColumn = "rating_score";
+        ascending = false;
+        break;
       default:
         sort = "newest";
         sortColumn = "published_at";
@@ -64,12 +68,22 @@ export async function GET(req: NextRequest) {
 
     const offset = (page - 1) * pageSize;
 
-    const { data: items, error: itemsError } = await supabase
+    let query = supabase
       .from("ambiances")
-      .select("id, title, thumbnail, views, status, published_at")
+      .select("id, title, thumbnail, views, status, published_at, rating_score, rating_count")
       .eq("user_id", session.user_id)
-      .eq("status", "published")
-      .order(sortColumn, { ascending })
+      .eq("status", "published");
+
+    // "best" uses Bayesian score DESC (NULL for count < 8 → NULLS LAST), then count as tiebreaker
+    if (sort === "best") {
+      query = query
+        .order("rating_score", { ascending: false, nullsFirst: false })
+        .order("rating_count", { ascending: false });
+    } else {
+      query = query.order(sortColumn, { ascending });
+    }
+
+    const { data: items, error: itemsError } = await query
       .range(offset, offset + pageSize - 1);
 
     if (itemsError) {
@@ -82,6 +96,8 @@ export async function GET(req: NextRequest) {
       status: entry.status,
       thumbnail: entry.thumbnail,
       views: entry.views,
+      ratingTotal: entry.rating_score ?? undefined,
+      ratingCount: entry.rating_count ?? undefined,
       datePublished: entry.published_at,
       videoData: [],
     }));

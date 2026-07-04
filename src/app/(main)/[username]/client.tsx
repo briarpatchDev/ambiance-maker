@@ -8,7 +8,7 @@ import ExpectedError from "@/app/components/Errors/Expected Error/errorExpected"
 import { AmbianceData } from "@/app/components/Ambiance Maker/ambianceMaker";
 import classNames from "classnames";
 
-type SortOption = "newest" | "oldest" | "popular";
+type SortOption = "newest" | "oldest" | "popular" | "best";
 
 export interface InitialOwnerData {
   items: Array<{
@@ -17,6 +17,8 @@ export interface InitialOwnerData {
     status: string;
     thumbnail: string;
     views: number;
+    ratingTotal?: number;
+    ratingCount?: number;
     datePublished: string | undefined;
     videoData: never[];
   }>;
@@ -250,6 +252,7 @@ function OwnerView({
       { label: "Newest", value: "newest" },
       { label: "Oldest", value: "oldest" },
       { label: "Popular", value: "popular" },
+      { label: "Best", value: "best" },
     ];
     return (
       <div className={styles.sort_menu} aria-label="Sort options">

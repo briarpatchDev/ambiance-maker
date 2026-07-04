@@ -62,7 +62,7 @@ export default async function Page() {
       .limit(DASHBOARD_LIMIT),
     adminSupabase
       .from("ambiances")
-      .select("id, title, thumbnail, views, published_at, users(username)")
+      .select("id, title, thumbnail, views, published_at, rating_score, rating_count, users(username)")
       .eq("status", "published")
       .order("published_at", { ascending: false })
       .limit(DASHBOARD_LIMIT),
@@ -97,6 +97,8 @@ export default async function Page() {
     views: item.views as number,
     published_at: item.published_at as string,
     author: (item.users as any)?.username as string | undefined,
+    ratingTotal: item.rating_score as number | undefined,
+    ratingCount: item.rating_count as number | undefined,
   }));
 
   return (

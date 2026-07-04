@@ -45,7 +45,7 @@ export async function GET(_req: NextRequest) {
     const adminSupabase = createAdminClient();
     const { data: recentData } = await adminSupabase
       .from("ambiances")
-      .select("id, title, thumbnail, views, published_at, users(username)")
+      .select("id, title, thumbnail, views, published_at, rating_score, rating_count, users(username)")
       .eq("status", "published")
       .order("published_at", { ascending: false })
       .limit(DASHBOARD_LIMIT);
@@ -57,6 +57,8 @@ export async function GET(_req: NextRequest) {
       views: item.views,
       published_at: item.published_at,
       author: item.users?.username ?? undefined,
+      ratingTotal: item.rating_score ?? undefined,
+      ratingCount: item.rating_count ?? undefined,
     }));
 
     return NextResponse.json({ drafts, recentAmbiances });

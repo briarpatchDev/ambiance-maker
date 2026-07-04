@@ -35,7 +35,7 @@ async function getOwnerInitialData(username: string): Promise<InitialOwnerData |
 
     const { data: items } = await supabase
       .from("ambiances")
-      .select("id, title, thumbnail, views, status, published_at")
+      .select("id, title, thumbnail, views, status, published_at, rating_score, rating_count")
       .eq("user_id", user.id)
       .eq("status", "published")
       .order("published_at", { ascending: false })
@@ -48,6 +48,8 @@ async function getOwnerInitialData(username: string): Promise<InitialOwnerData |
         status: entry.status,
         thumbnail: entry.thumbnail,
         views: entry.views,
+        ratingTotal: entry.rating_score ?? undefined,
+        ratingCount: entry.rating_count ?? undefined,
         datePublished: entry.published_at ?? undefined,
         videoData: [],
       })),
