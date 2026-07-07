@@ -3,13 +3,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./ambianceManagerNav.module.css";
 import Draft from "@/app/components/Icons/draft";
-import Published from "@/app/components/Icons/published";
+import BookmarkIcon from "@/app/components/Icons/bookmark";
 import classNames from "classnames";
 
 export default function AmbianceManagerNav() {
   const pathname = usePathname();
   const isDrafts = pathname.startsWith("/drafts");
-  const isPublished = pathname.startsWith("/published");
+  const isFavorites = pathname.startsWith("/favorites");
 
   return (
     <nav className={styles.nav} aria-label="Drafts and Published navigation">
@@ -22,11 +22,11 @@ export default function AmbianceManagerNav() {
       </Link>
       <span className={styles.separator}>/</span>
       <Link
-        href="/published"
-        className={classNames(styles.link, { [styles.active]: isPublished })}
+        href="/favorites"
+        className={classNames(styles.link, { [styles.active]: isFavorites })}
       >
-        <Published className={styles.icon} />
-        Published
+        <BookmarkIcon className={styles.icon} />
+        Favorites
       </Link>
     </nav>
   );

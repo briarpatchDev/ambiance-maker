@@ -6,7 +6,7 @@ import { createAdminClient } from "@/app/lib/supabase/admin";
 import { createClient } from "@/app/lib/supabase/server";
 import { cookies } from "next/headers";
 
-const DASHBOARD_LIMIT = 8;
+const DASHBOARD_LIMIT = 12;
 
 export default async function Page() {
   const today = new Date().toISOString().slice(0, 10);
@@ -62,7 +62,7 @@ export default async function Page() {
       .limit(DASHBOARD_LIMIT),
     adminSupabase
       .from("ambiances")
-      .select("id, title, thumbnail, views, published_at, rating_score, rating_count, users(username)")
+      .select("id, title, thumbnail, views, published_at, rating_score, rating_count, users!user_id(username)")
       .eq("status", "published")
       .order("published_at", { ascending: false })
       .limit(DASHBOARD_LIMIT),

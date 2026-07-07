@@ -258,6 +258,31 @@ textarea.description::placeholder {
   z-index: 10;
 }
 
+.bookmark_button {
+  all: unset;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0.5rem;
+  right: 1.6rem;
+  z-index: 10;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  opacity: 0.55;
+  transition: opacity 0.15s;
+}
+
+.bookmark_button svg {
+  height: 2.4rem;
+  width: auto;
+  fill: var(--grey-text);
+}
+
+.bookmark_button:hover,
+.bookmark_button.bookmarked {
+  opacity: 1;
+}
+
 @media screen and (max-width: 720px) {
   .report_button {
     display: none;
@@ -265,6 +290,13 @@ textarea.description::placeholder {
 
   .extra_options {
     display: none;
+  }
+
+  /* On mobile, swap bookmark to bottom-right (where extra_options lives on desktop)
+     so it doesn't sit over the title text */
+  .bookmark_button {
+    top: auto;
+    bottom: 0.4rem;
   }
 }
 

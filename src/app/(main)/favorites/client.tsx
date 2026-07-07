@@ -2,14 +2,14 @@
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
-import AmbianceManager from "@/app/components/Ambiance Manager/ambianceManager";
+import FavoritesManager from "@/app/components/Favorites Manager/favoritesManager";
 import ExpectedError from "@/app/components/Errors/Expected Error/errorExpected";
 import { AmbianceData } from "@/app/components/Ambiance Maker/ambianceMaker";
 
-export default function DraftsContent({
-  drafts,
+export default function FavoritesContent({
+  favorites,
 }: {
-  drafts: AmbianceData[] | null;
+  favorites: AmbianceData[] | null;
 }) {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -19,22 +19,17 @@ export default function DraftsContent({
     router.refresh();
   }, [router]);
 
-  return drafts ? (
-    <div className={styles.drafts} ref={containerRef}>
+  return favorites ? (
+    <div className={styles.favorites} ref={containerRef}>
       <div className={styles.manager_wrapper}>
-        <AmbianceManager
-          itemsArr={drafts}
-          containerRef={containerRef}
-          headlineText="Drafts"
-          itemType="draft"
-        />
+        <FavoritesManager itemsArr={favorites} containerRef={containerRef} />
       </div>
     </div>
   ) : (
-    <div className={styles.drafts}>
+    <div className={styles.favorites}>
       <div className={styles.error_wrapper}>
         <ExpectedError
-          errorMessage="Something went wrong getting your drafts."
+          errorMessage="Something went wrong getting your favorites."
           buttonText="Try Again"
           reset={() => router.refresh()}
         />

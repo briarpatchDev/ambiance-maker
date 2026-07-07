@@ -1,7 +1,7 @@
 .card_wrapper {
   display: flex;
   max-height: 28rem;
-  width: 28rem;
+  width: 25rem;
 }
 
 .card_wrapper > a {
@@ -160,6 +160,7 @@
   font-family: sans-serif;
   font-size: 1.6rem;
   font-weight: 300;
+  margin: 0.18rem 0 0.09rem;
 }
 
 .rating {
@@ -216,6 +217,14 @@
   width: 16rem;
 }
 
+.horizontal .meta_row_left {
+  flex-direction: column;
+}
+
+.horizontal .meta_row_left .rating {
+  margin-left: 0.2rem;
+}
+
 /* Goes to horizontal automatically at this size */
 @media screen and (max-width: 440px) {
   .card_wrapper:not(.vertical) {
@@ -241,5 +250,13 @@
     top: calc(35% - 1.2rem);
     left: calc(-35% - 1.2rem);
     transform: rotate(-45deg);
+  }
+
+  .card_wrapper:not(.vertical) .horizontal .meta_row_left {
+    flex-direction: column;
+  }
+
+  .card_wrapper:not(.vertical) .horizontal .meta_row_left .rating {
+    margin-left: 0.2rem;
   }
 }

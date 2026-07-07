@@ -15,6 +15,7 @@ import ReportAmbiance from "@/app/components/Report Ambiance/reportAmbiance";
 import { updateObjectArr } from "@/app/lib/setStateFunctions";
 import { useRouter } from "next/navigation";
 import StarRatingInput from "@/app/components/Star Rating/starRatingInput";
+import BookmarkIcon from "@/app/components/Icons/bookmark";
 
 interface AmbianceMakerProps {
   mode: "create" | "draft" | "shared" | "published";
@@ -83,6 +84,7 @@ export default function AmbianceMaker({
   );
   const [showRatingInput, setShowRatingInput] = useState(false);
   const [userRating, setUserRating] = useState<number | null>(null);
+  const [isFavorited, setIsFavorited] = useState(false);
   // Handles when an inputs link / src changes
   function onLinkChange(link: string, index = 0) {
     updateObjectArr(setVideoData, index, { [`src`]: link });
@@ -176,7 +178,7 @@ export default function AmbianceMaker({
     setIsIOS(isIPhone || isIPad || isIPod || isIPadOS);
   }, []);
 
-  // Fetches the current user's existing rating for this ambiance on mount
+  // Fetches the current user's existing rating and favorite status for this ambiance on mount
   useEffect(() => {
     if (mode !== "published" || !user || !ambianceData?.id) return;
     fetch(`/api/ambiance/rate?id=${ambianceData.id}`)
@@ -185,7 +187,41 @@ export default function AmbianceMaker({
         if (data.rating) setUserRating(data.rating);
       })
       .catch(() => {});
+    if (user.username !== ambianceData?.author) {
+      fetch(`/api/ambiance/favorite?id=${ambianceData.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.favorited) setIsFavorited(true);
+        })
+        .catch(() => {});
+    }
   }, []);
+
+  // Toggles the favorite status for this ambiance
+  const favoriteInFlight = useRef(false);
+  async function handleFavorite() {
+    if (!ambianceData?.id || favoriteInFlight.current) return;
+    favoriteInFlight.current = true;
+    const newFavorited = !isFavorited;
+    setIsFavorited(newFavorited);
+    try {
+      const res = await fetch("/api/ambiance/favorite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: ambianceData.id }),
+      });
+      const data = await res.json();
+      if (typeof data.favorited === "boolean") {
+        setIsFavorited(data.favorited);
+      } else {
+        setIsFavorited(!newFavorited);
+      }
+    } catch {
+      setIsFavorited(!newFavorited);
+    } finally {
+      favoriteInFlight.current = false;
+    }
+  }
 
   // Submits the user's star rating
   async function handleRate(stars: number) {
@@ -414,6 +450,11 @@ export default function AmbianceMaker({
 
   const canRate =
     mode === "published" && !!user && user.username !== ambianceData?.author;
+  const canFavorite =
+    mode === "published" &&
+    !!user &&
+    !!ambianceData?.id &&
+    user.username !== ambianceData?.author;
   const hasDisplayRating =
     ambianceData?.ratingCount !== undefined &&
     ambianceData.ratingCount >= 8 &&
@@ -523,6 +564,23 @@ export default function AmbianceMaker({
                   onRate={handleRate}
                 />
               </div>
+            )}
+            {canFavorite && (
+              <button
+                className={classNames(styles.bookmark_button, {
+                  [styles.bookmarked]: isFavorited,
+                })}
+                onClick={handleFavorite}
+                aria-label={
+                  isFavorited ? "Remove from favorites" : "Add to favorites"
+                }
+                aria-pressed={isFavorited}
+                title={
+                  isFavorited ? "Remove from favorites" : "Add to favorites"
+                }
+              >
+                <BookmarkIcon filled={isFavorited} />
+              </button>
             )}
           </div>
         </div>

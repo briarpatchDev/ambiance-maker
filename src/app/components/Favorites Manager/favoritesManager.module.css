@@ -1,0 +1,248 @@
+.selection_manager {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  position: relative;
+  width: 100%;
+  max-width: 180rem;
+  color: var(--grey-text);
+}
+
+.content_wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  row-gap: 0.4rem;
+}
+
+.content_wrapper > * {
+  display: flex;
+}
+
+.selection_manager_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  min-height: 6rem;
+  width: 100%;
+  padding: 0.4rem;
+  column-gap: 3.6rem;
+  padding-right: 5%;
+  row-gap: 0.6rem;
+}
+
+.selection_manager_header > * {
+  display: flex;
+  align-items: center;
+}
+
+.selection_manager_header > div {
+  margin-left: auto;
+}
+
+.selection_manager_header h1 {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  column-gap: 2rem;
+  font-size: 3rem;
+  font-weight: 1000;
+  font-family: "Manrope", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+  padding: 0.8rem 2rem 1.2rem;
+  border-radius: 1.6rem;
+  background-color: rgb(50, 50, 50);
+  max-width: calc(100vw - 6rem);
+  overflow-x: scroll;
+}
+
+.selection_manager_header h1::-webkit-scrollbar {
+  display: none;
+}
+
+.selection_manager_header h1 svg {
+  transform: translateY(0.2rem);
+  height: 3rem;
+  width: auto;
+  flex-shrink: 0;
+  fill: var(--grey-text);
+}
+
+.trash_btn_wrapper {
+  display: flex;
+  align-items: center;
+  height: 3.6rem;
+  margin: 0.6rem 0;
+}
+
+.trash_btn_wrapper button {
+  height: 80%;
+}
+
+.trash_btn_wrapper svg {
+  height: 80%;
+  fill: var(--grey-text);
+}
+
+.delete_menu {
+  display: flex;
+  justify-content: flex-end;
+  column-gap: 0.8rem;
+  margin: 0 5% 0.4rem;
+}
+
+.entries_and_select_all_wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 0.6rem;
+  width: 100%;
+}
+
+.entries_wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: start;
+}
+
+.entries_wrapper.mobile {
+  flex-direction: column;
+  flex-wrap: unset;
+  justify-content: unset;
+  align-items: center;
+}
+
+.entries_wrapper.one_item {
+  width: 100%;
+}
+
+.mobile .entry_container {
+  width: 100%;
+  justify-content: center;
+}
+
+.entry_container {
+  display: flex;
+  position: relative;
+  padding: 0.4rem;
+}
+
+.select_all_wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: center;
+  column-gap: 0.4rem;
+  height: 1.8rem;
+  font-size: 1.6rem;
+  margin-bottom: 1.2rem;
+}
+
+.select_all_wrapper input {
+  margin: 0 0.6rem;
+}
+
+.checkbox_wrapper {
+  position: absolute;
+  top: 0.4rem;
+  left: 0.4rem;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+
+.checkbox {
+  cursor: pointer;
+  height: 2.4rem;
+  width: 2.4rem;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0.15rem solid rgba(200, 200, 200, 0.6);
+  border-radius: 0.3rem;
+  background: rgba(0, 0, 0, 0.9);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.checkbox:hover {
+  border-color: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.checkbox:checked {
+  background: rgba(20, 0, 0, 0.9);
+  border-color: rgb(200, 50, 50);
+}
+
+.checkbox:checked::after {
+  content: "✕";
+  color: rgb(210, 40, 40);
+  font-size: 4.2rem;
+  font-weight: bold;
+  line-height: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateZ(-4deg);
+}
+
+.checkbox_wrapper .checkbox {
+  height: 12rem;
+  width: 12rem;
+}
+
+.checkbox_wrapper .checkbox::after {
+  transform: translate(-50%, -50%);
+  font-size: 12rem;
+}
+
+.hidden {
+  opacity: 0;
+}
+
+.message_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.8rem;
+  width: 100%;
+  padding: 0.4rem;
+  height: 50vh;
+  text-align: center;
+}
+
+.message {
+  background: rgb(50, 50, 50);
+  padding: 3.6rem 4.8rem;
+  font-size: 2rem;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+  text-wrap: pretty;
+}
+
+@media screen and (max-width: 440px) {
+  .delete_menu {
+    flex-direction: column;
+    align-items: center;
+    flex-direction: column-reverse;
+    row-gap: 0.2rem;
+    margin: 0 0 0.4rem;
+  }
+}

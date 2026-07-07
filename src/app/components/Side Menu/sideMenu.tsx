@@ -14,6 +14,7 @@ import LogoutIcon from "@/app/components/Icons/logout";
 import PencilIcon from "@/app/components/Icons/pencil";
 import SettingsIcon from "@/app/components/Icons/settings";
 import BooksIcon from "@/app/components/Icons/books";
+import BookmarkIcon from "@/app/components/Icons/bookmark";
 import { useUser } from "@/app/contexts/userContext";
 
 interface SideMenuProps {
@@ -174,6 +175,19 @@ export default function SideMenu({
               <div className={styles.item_content}>
                 <DraftIcon />
                 <span>Drafts</span>
+              </div>
+            </Link>
+          )}
+          {user && (
+            <Link
+              href="/favorites"
+              title="Favorites"
+              className={styles.menu_item}
+              onClick={linkClicked}
+            >
+              <div className={styles.item_content}>
+                <BookmarkIcon />
+                <span>Favorites</span>
               </div>
             </Link>
           )}

@@ -5,7 +5,6 @@ import styles from "./page.module.css";
 import AmbianceManager from "@/app/components/Ambiance Manager/ambianceManager";
 import ExpectedError from "@/app/components/Errors/Expected Error/errorExpected";
 import { AmbianceData } from "@/app/components/Ambiance Maker/ambianceMaker";
-import AmbianceManagerNav from "@/app/components/Ambiance Manager Nav/ambianceManagerNav";
 import classNames from "classnames";
 
 type SortOption = "newest" | "oldest" | "popular";
@@ -203,7 +202,6 @@ export default function PublishedContent() {
   if (isError) {
     return (
       <div className={styles.published}>
-        <AmbianceManagerNav />
         <div className={styles.error_wrapper}>
           <ExpectedError
             errorMessage="Something went wrong getting your ambiances."
@@ -216,7 +214,6 @@ export default function PublishedContent() {
   }
   return (
     <div className={styles.published} ref={containerRef}>
-      <AmbianceManagerNav />
       {isInitialized && (
         <div className={styles.manager_wrapper}>
           <div className={styles.sort_menu_wrapper}>{sortMenu()}</div>

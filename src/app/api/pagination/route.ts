@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
 
       query = supabase
         .from("ambiances")
-        .select(`${AMBIANCE_SELECT_FIELDS}, users(username)`, {
+        .select(`${AMBIANCE_SELECT_FIELDS}, users!user_id(username)`, {
           count: "exact",
         })
         .eq("category_id", categoryId)
