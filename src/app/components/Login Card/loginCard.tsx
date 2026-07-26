@@ -23,30 +23,33 @@ export default function LoginCard({ path = "/" }: LoginCardProps) {
       />
       <h1 className={styles.title}>Ambiance Maker</h1>
       <p className={styles.subtitle}>
-        Sign in to save and share your ambiances.
+        Create an account to save your mixes, publish them for others to
+        discover, and keep a collection of your favorites.
       </p>
-      <Button
-        variant="primary"
-        onClick={login}
-        width="full"
-        icon={
-          <Image
-            height={58}
-            width={58}
-            alt="Google icon"
-            src="/images/google-icon.svg"
-            className={styles.google_logo}
-          />
-        }
-        text="Sign in with Google"
-        style={{
-          color: "rgb(20,20,20)",
-          backgroundColor: "rgb(240,240,240)",
-          padding: "1.6rem 2.4rem",
-          borderRadius: "2.4rem",
-          height: "8.0rem",
-        }}
-      />
+      <div className={styles.button_wrapper}>
+        <Button
+          variant="primary"
+          onClick={login}
+          width="full"
+          icon={
+            <Image
+              height={48}
+              width={48}
+              alt="Google icon"
+              src="/images/google-icon.svg"
+              className={styles.google_logo}
+            />
+          }
+          text="Sign in with Google"
+          style={{
+            color: "rgb(20,20,20)",
+            backgroundColor: "rgb(240,240,240)",
+            padding: "0.6rem 2.4rem",
+            borderRadius: "1.2em",
+            margin: "0 1.2rem",
+          }}
+        />
+      </div>
     </div>
   );
 }

@@ -280,7 +280,9 @@ export default function FavoritesManager({
           })}
         >
           <h1>
-            <BookmarkIcon />
+            <BookmarkIcon
+              style={{ transform: "scale(1.4) translateY(0.1rem)" }}
+            />
             Favorites
           </h1>
           <div>
@@ -400,12 +402,16 @@ export default function FavoritesManager({
       <div className={styles.content_wrapper}>
         <div className={classNames(styles.selection_manager_header)}>
           <h1>
-            <BookmarkIcon />
+            <BookmarkIcon
+              style={{ transform: "scale(1.4) translateY(0.1rem)" }}
+            />
             Favorites
           </h1>
         </div>
         <div className={styles.message_wrapper}>
-          <div className={styles.message}>{`You haven't favorited any ambiances yet. Browse and bookmark ones you love!`}</div>
+          <div
+            className={styles.message}
+          >{`You haven't favorited any ambiances yet. Browse and bookmark ones you love!`}</div>
         </div>
       </div>
     </div>

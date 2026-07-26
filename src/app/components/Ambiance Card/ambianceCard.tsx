@@ -65,6 +65,17 @@ export default function AmbianceCard({
   style,
   banner,
 }: AmbianceCardProps) {
+  const mouseMoved = useRef(false);
+  const [tooltipEnabled, setTooltipEnabled] = useState(false);
+
+  useEffect(() => {
+    const onMove = () => {
+      mouseMoved.current = true;
+    };
+    window.addEventListener("pointermove", onMove);
+    return () => window.removeEventListener("pointermove", onMove);
+  }, []);
+
   // Takes the number of views and abbreviates it
   function formatViews(views: number): string {
     if (views < 2) {
@@ -88,77 +99,99 @@ export default function AmbianceCard({
         [styles.vertical]: mode === "vertical",
         [styles.horizontal]: mode === "horizontal",
       })}
+      onPointerEnter={() => {
+        if (mouseMoved.current) setTooltipEnabled(true);
+      }}
     >
       <TooltipLink
         href={`/${linkTo === "ambiance" ? `ambiance` : `drafts`}/${id}`}
         target={linkTarget}
         direction="bottom"
         tooltip={
-          description ? <Description description={description} /> : undefined
+          tooltipEnabled && description ? (
+            <Description description={description} />
+          ) : undefined
         }
-        tooltipId={description ? "description" : ""}
-        aria-label={`Go to /${linkTo === "ambiance" ? `ambiance` : `draft`} "${title}"`}
+        tooltipId={tooltipEnabled && description ? "description" : ""}
         offset={0.0}
         containerRef={containerRef}
+        delay={800}
+        closingTime={400}
       >
-        <div style={{ ...style }} className={styles.card}>
-          {banner && (
-            <div
-              className={classNames(styles.ribbon, {
-                [styles.ribbon_submitted]: banner === "submitted",
-                [styles.ribbon_featured]: banner === "featured",
-              })}
-            >
-              {banner}
-            </div>
-          )}
-          <div className={styles.image_wrapper}>
-            <img
-              className={styles.thumbnail}
-              src={thumbnail}
-              alt="Ambiance Thumbnail"
-            />
+        <span className={styles.sr_only}>
+          {`Go to ${linkTo === "ambiance" ? "ambiance" : "draft"} "${title}"`}
+        </span>
+      </TooltipLink>
+      <div style={{ ...style }} className={styles.card}>
+        {banner && (
+          <div
+            className={classNames(styles.ribbon, {
+              [styles.ribbon_submitted]: banner === "submitted",
+              [styles.ribbon_featured]: banner === "featured",
+            })}
+          >
+            {banner}
           </div>
+        )}
+        <div className={styles.image_wrapper}>
+          <img
+            className={styles.thumbnail}
+            src={thumbnail}
+            alt="Ambiance Thumbnail"
+          />
+        </div>
 
-          <div className={styles.meta_wrapper}>
-            <h1 className={styles.title} title={title}>
-              {title}
-            </h1>
-            {linkTo === "ambiance" ? (
-              <div className={styles.meta_section}>
-                <div className={styles.meta_row}>
-                  <div className={styles.meta_row_left}>
-                    {views != undefined && (
-                      <div className={styles.views}>{formatViews(views)}</div>
-                    )}
-                    {ratingCount !== undefined &&
-                      ratingCount >= 8 &&
-                      ratingTotal !== undefined && (
-                        <div className={styles.rating}>
-                          {`★ ${ratingTotal.toFixed(1)}`}
-                        </div>
-                      )}
-                  </div>
-                  {datePublished && (
-                    <div>{datePublished.toLocaleDateString()}</div>
+        <div className={styles.meta_wrapper}>
+          <h1 className={styles.title} title={title}>
+            {title}
+          </h1>
+          {linkTo === "ambiance" ? (
+            <div className={styles.meta_section}>
+              <div className={styles.meta_row}>
+                <div className={styles.meta_row_left}>
+                  {views != undefined && (
+                    <div className={styles.views}>{formatViews(views)}</div>
                   )}
+                  {ratingCount !== undefined &&
+                    ratingCount >= 8 &&
+                    ratingTotal !== undefined && (
+                      <div className={styles.rating}>
+                        <div>{`★`}</div>
+                        <div>{`${ratingTotal.toFixed(1)}`}</div>
+                      </div>
+                    )}
                 </div>
-                {author && (
-                  <div className={styles.byline}>
-                    <div className={styles.author}>{author}</div>
+                {datePublished && (
+                  <div className={styles.date}>
+                    {datePublished.toLocaleDateString()}
                   </div>
                 )}
               </div>
-            ) : (
-              <div className={styles.meta_wrapper}>
-                <div className={styles.meta_row}>
-                  {dateUpdated && <div>{dateUpdated.toLocaleDateString()}</div>}
+              {author && (
+                <div className={styles.byline}>
+                  <Link
+                    href={`/@${author}`}
+                    className={styles.author_link}
+                    aria-label={`Go to ${author}'s page`}
+                  >
+                    {author}
+                  </Link>
                 </div>
+              )}
+            </div>
+          ) : (
+            <div className={styles.meta_wrapper}>
+              <div className={styles.meta_row}>
+                {dateUpdated && (
+                  <div className={styles.date}>
+                    {dateUpdated.toLocaleDateString()}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
-      </TooltipLink>
+      </div>
     </div>
   );
 }

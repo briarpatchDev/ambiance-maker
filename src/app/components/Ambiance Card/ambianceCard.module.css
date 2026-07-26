@@ -2,14 +2,25 @@
   display: flex;
   max-height: 28rem;
   width: 25rem;
+  position: relative;
 }
 
 .card_wrapper > a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.sr_only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .card {
@@ -33,6 +44,7 @@
   border: 0.05rem solid rgb(30, 0, 30);
   user-select: none;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .ribbon {
@@ -72,7 +84,7 @@
   transition: color 0.3s;
 }
 
-.card:hover {
+.card_wrapper:hover .card {
   color: rgb(255, 255, 255);
   transition: color 0.3s;
 }
@@ -85,7 +97,7 @@
     transform 0.6s;
 }
 
-.card:hover img {
+.card_wrapper:hover .card img {
   filter: brightness(1.16);
   transform: scale(1.05);
   transition:
@@ -151,7 +163,7 @@
 
 .meta_row_left {
   display: flex;
-  column-gap: 0.8rem;
+  column-gap: 0.6rem;
 }
 
 .byline {
@@ -163,7 +175,27 @@
   margin: 0.18rem 0 0.09rem;
 }
 
+.author_link {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  text-underline-offset: 0.2rem;
+  transition:
+    text-decoration-color 0.2s,
+    color 0.2s;
+}
+
+.author_link:hover {
+  color: rgb(255, 255, 255);
+  text-decoration: underline;
+}
+
 .rating {
+  display: flex;
+  column-gap: 0.25rem;
   opacity: 0.85;
   font-size: 1.4rem;
 }
@@ -225,6 +257,20 @@
   margin-left: 0.2rem;
 }
 
+.horizontal .meta_row_left {
+  flex-direction: row;
+}
+
+.horizontal .date {
+  display: none;
+}
+
+.horizontal .byline {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 0.4rem;
+}
+
 /* Goes to horizontal automatically at this size */
 @media screen and (max-width: 440px) {
   .card_wrapper:not(.vertical) {
@@ -258,5 +304,19 @@
 
   .card_wrapper:not(.vertical) .horizontal .meta_row_left .rating {
     margin-left: 0.2rem;
+  }
+
+  .card_wrapper:not(.vertical) .horizontal .meta_row_left {
+    flex-direction: row;
+  }
+
+  .card_wrapper:not(.vertical) .horizontal .date {
+    display: none;
+  }
+
+  .card_wrapper:not(.vertical) .horizontal .byline {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 0.4rem;
   }
 }

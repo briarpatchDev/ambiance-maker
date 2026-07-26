@@ -112,3 +112,14 @@
 .ellipsis {
   user-select: none;
 }
+
+@media screen and (max-width: 480px) {
+  .sort_menu_wrapper {
+    overflow-x: scroll;
+    justify-content: flex-start;
+  }
+
+  .sort_menu_wrapper::-webkit-scrollbar {
+    display: none;
+  }
+}

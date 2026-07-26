@@ -465,7 +465,26 @@ export default function AmbianceMaker({
       {mode === "published" && ambianceData?.title ? (
         <div className={styles.header_wrapper}>
           <div className={styles.header}>
-            <h1 className={styles.title}>{ambianceData.title}</h1>
+            <div className={styles.title_row}>
+              <h1 className={styles.title}>{ambianceData.title}</h1>
+              {canFavorite && (
+                <button
+                  className={classNames(styles.bookmark_button, {
+                    [styles.bookmarked]: isFavorited,
+                  })}
+                  onClick={handleFavorite}
+                  aria-label={
+                    isFavorited ? "Remove from favorites" : "Add to favorites"
+                  }
+                  aria-pressed={isFavorited}
+                  title={
+                    isFavorited ? "Remove from favorites" : "Add to favorites"
+                  }
+                >
+                  <BookmarkIcon filled={isFavorited} />
+                </button>
+              )}
+            </div>
             {ambianceData.author && (
               <div className={styles.author_wrapper}>
                 <div className={styles.by}>{`by`}</div>
@@ -479,26 +498,14 @@ export default function AmbianceMaker({
             )}
             <div className={styles.metadata_wrapper}>
               <div className={styles.metadata}>
-                {ambianceData.datePublished && (
-                  <span className={styles.date_published}>
-                    {new Date(ambianceData.datePublished).toLocaleDateString(
-                      "en-US",
-                      { year: "numeric", month: "short", day: "numeric" },
-                    )}
-                  </span>
-                )}
-                {ambianceData.datePublished &&
-                  ambianceData.views !== undefined && (
-                    <span className={styles.separator}>{`●`}</span>
-                  )}
                 {ambianceData.views !== undefined && (
                   <span className={styles.views}>
                     {ambianceData.views.toLocaleString()} views
                   </span>
                 )}
-                {(hasDisplayRating || canRate) && (
+                {/*(hasDisplayRating || canRate) && (
                   <span className={styles.separator}>{`●`}</span>
-                )}
+                )*/}
                 {hasDisplayRating ? (
                   canRate ? (
                     <div className={styles.rating_button_wrapper}>
@@ -536,6 +543,18 @@ export default function AmbianceMaker({
                     {`☆ Rate`}
                   </button>
                 ) : null}
+                {ambianceData.datePublished &&
+                  ambianceData.views !== undefined && (
+                    <span className={styles.separator}>{`●`}</span>
+                  )}
+                {ambianceData.datePublished && (
+                  <span className={styles.date_published}>
+                    {new Date(ambianceData.datePublished).toLocaleDateString(
+                      "en-US",
+                      { year: "numeric", month: "short", day: "numeric" },
+                    )}
+                  </span>
+                )}
                 {user && ambianceData?.id && (
                   <div className={styles.extra_options}>
                     <ExtraOptions
@@ -564,23 +583,6 @@ export default function AmbianceMaker({
                   onRate={handleRate}
                 />
               </div>
-            )}
-            {canFavorite && (
-              <button
-                className={classNames(styles.bookmark_button, {
-                  [styles.bookmarked]: isFavorited,
-                })}
-                onClick={handleFavorite}
-                aria-label={
-                  isFavorited ? "Remove from favorites" : "Add to favorites"
-                }
-                aria-pressed={isFavorited}
-                title={
-                  isFavorited ? "Remove from favorites" : "Add to favorites"
-                }
-              >
-                <BookmarkIcon filled={isFavorited} />
-              </button>
             )}
           </div>
         </div>

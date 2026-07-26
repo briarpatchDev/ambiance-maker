@@ -211,7 +211,7 @@
   opacity: 0;
 }
 
-@media screen and (max-width: 720px) {
+@media screen and (max-width: 820px) {
   .pagination {
     padding-top: 0.4rem;
   }
@@ -224,5 +224,14 @@
 
   .pagination_header h1 {
     align-self: flex-start;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .pagination_header {
+    justify-content: space-between;
+  }
+  .options_container {
+    transform: scale(0.9) translateX(1.8rem);
   }
 }

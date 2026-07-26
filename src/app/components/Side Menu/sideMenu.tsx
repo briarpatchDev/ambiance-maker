@@ -186,7 +186,9 @@ export default function SideMenu({
               onClick={linkClicked}
             >
               <div className={styles.item_content}>
-                <BookmarkIcon />
+                <BookmarkIcon
+                  style={{ transform: "scale(1.333) translateX(-0.1rem)" }}
+                />
                 <span>Favorites</span>
               </div>
             </Link>

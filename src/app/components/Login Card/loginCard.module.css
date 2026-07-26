@@ -5,7 +5,7 @@
   background-color: rgba(50, 50, 50, 0.85);
   border: 0.05rem solid var(--grey-text);
   border-radius: 2.4rem;
-  padding: 2.4rem 4rem;
+  padding: 2.4rem 0;
   width: 100%;
   max-width: 42rem;
   backdrop-filter: blur(8px);
@@ -20,17 +20,25 @@
 }
 
 .title {
-  font-size: 2.6rem;
+  font-size: 2.8rem;
   font-weight: 600;
   color: white;
   margin: 0;
+  text-align: center;
 }
 
 .subtitle {
   font-size: 1.6rem;
   color: var(--grey-text);
   text-align: center;
-  margin: 0.2rem 0 1.6rem;
+  text-wrap: balance;
+  margin: 0.2rem 1rem 1.6rem;
+}
+
+.button_wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .google_logo {
@@ -38,6 +46,6 @@
   border-radius: 0.6rem;
   padding: 0.2rem;
   background-color: white;
-  height: 5.8rem !important;
-  width: 5.8rem !important;
+  height: 4.8rem !important;
+  width: 4.8rem !important;
 }

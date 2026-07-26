@@ -45,7 +45,7 @@ export default function Dashboard({
           <Carousel
             width="100%"
             columnGap="1.2rem"
-            scrollValue={320}
+            scrollValue={720}
             label="Latest Ambiances"
           >
             {recentAmbiances.map((ambiance) => (
@@ -74,7 +74,7 @@ export default function Dashboard({
           <Carousel
             width="100%"
             columnGap="1.2rem"
-            scrollValue={320}
+            scrollValue={720}
             label="Your Drafts"
           >
             {drafts.map((draft) => (
