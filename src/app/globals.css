@@ -8,8 +8,12 @@
   --border-color: light-dark(rgb(50, 50, 50), rgb(50, 50, 50));
   --border: 0.05rem solid var(--border-color);
   --backdrop-color: light-dark(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2));
+  /*
   --link-color: light-dark(blue, rgb(170, 170, 255));
   --link-color-hover: light-dark(rgb(0, 0, 150), rgb(140, 140, 210));
+  */
+  --link-color: rgb(170, 170, 255);
+  --link-color-hover: rgb(140, 140, 210);
   --icon-color: light-dark(black, rgb(230, 230, 230));
   --error-color: rgb(249, 105, 105);
   --focus-color: rgba(47, 96, 149, 1);

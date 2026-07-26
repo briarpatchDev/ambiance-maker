@@ -30,6 +30,7 @@ export default function SideMenu({
   const menuRef = useRef<HTMLDivElement | null>(null);
   const breakpoint = useRef(580);
   const [showModal, setShowModal] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isExpanding, setIsExpanding] = useState(false);
   const expandTimeout = useRef<NodeJS.Timeout>(undefined);
@@ -106,6 +107,30 @@ export default function SideMenu({
             unstyled={true}
           >
             <LoginCard path={window.location.pathname} />
+          </Modal>
+        )}
+        {showContactModal && (
+          <Modal
+            closeFunction={() => setShowContactModal(false)}
+            closeButton={true}
+            animate={true}
+            closeOnEscape={true}
+            closeOnBackdropClick={true}
+            unstyled={true}
+            centered={true}
+          >
+            <div className={styles.contact_card}>
+              <p className={styles.contact_card_title}>Contact Us</p>
+              <p className={styles.contact_card_text}>
+                For questions or support, reach us at:
+              </p>
+              <a
+                href="mailto:support@ambiancemaker.com"
+                className={styles.contact_card_email}
+              >
+                support@ambiancemaker.com
+              </a>
+            </div>
           </Modal>
         )}
         <header className={styles.header}>
@@ -250,9 +275,9 @@ export default function SideMenu({
             </button>
           )}
           <footer className={styles.footer}>
-            <Link href="/policy/tos">Terms</Link>
-            <Link href="/policy/pp">Privacy</Link>
-            <Link href="/contact-us">Contact</Link>
+            <Link href="/policy/terms-of-service">Terms</Link>
+            <Link href="/policy/privacy-policy">Privacy</Link>
+            <button onClick={() => setShowContactModal(true)}>Contact</button>
           </footer>
         </div>
       </div>

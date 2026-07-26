@@ -1,0 +1,96 @@
+.page {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  padding: 3.2rem 1.6rem 10rem;
+}
+
+.policy {
+  background-color: #f2f1ee;
+  color: #1c1c1c;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  padding: 4rem 5.6rem;
+  border-radius: 1.2rem;
+  line-height: 1.7;
+  width: 100%;
+  max-width: 80rem;
+  height: fit-content;
+}
+
+.policy h1 {
+  font-size: 2.6rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  text-align: center;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  color: #1c1c1c;
+}
+
+.last_updated {
+  text-align: center;
+  font-size: 1.3rem;
+  color: #777;
+  margin-bottom: 2.4rem;
+  padding-bottom: 2rem;
+  border-bottom: 0.1rem solid #d4d2cc;
+}
+
+.policy h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-top: 2.8rem;
+  margin-bottom: 0.8rem;
+  color: #1c1c1c;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+}
+
+.policy h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 1.6rem;
+  margin-bottom: 0.4rem;
+  color: #333;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+}
+
+.policy p {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: #1c1c1c;
+}
+
+.policy ul {
+  margin-bottom: 1rem;
+  padding-left: 2.2rem;
+}
+
+.policy li {
+  margin-bottom: 0.6rem;
+  font-size: 1.5rem;
+  color: #1c1c1c;
+}
+
+.policy section {
+  margin-bottom: 0.4rem;
+}
+
+.policy strong {
+  font-weight: 600;
+  color: #1c1c1c;
+}
+
+.email_link {
+  color: #4a7ab5;
+  font-weight: 500;
+}
+
+@media screen and (max-width: 700px) {
+  .page {
+    padding: 1.6rem 0.8rem 8rem;
+  }
+
+  .policy {
+    padding: 2.8rem 2.4rem;
+    border-radius: 0.8rem;
+  }
+}

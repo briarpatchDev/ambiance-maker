@@ -28,16 +28,6 @@
   font-size: 1.6rem;
 }
 
-.empty_link {
-  color: var(--link-color);
-  font-size: 1.6rem;
-  text-decoration: none;
-}
-
-.empty_link:hover {
-  color: var(--link-color-hover);
-}
-
 .button_wrapper {
   display: flex;
   width: 100%;
