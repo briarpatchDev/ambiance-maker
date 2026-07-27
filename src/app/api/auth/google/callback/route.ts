@@ -6,11 +6,33 @@ import { randomString } from "@/app/lib/randomString";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
-  const state = searchParams.get("state");
-  const returnPath = state ? decodeURIComponent(state) : "/";
+  const state = searchParams.get("state") ?? "";
   const origin = `${process.env.NEXT_PUBLIC_PROTOCOL}${process.env.NEXT_PUBLIC_DOMAIN}`;
 
   if (!code) {
+    return NextResponse.redirect(`${origin}/`);
+  }
+
+  // Verify the OAuth state nonce to prevent CSRF attacks.
+  // `state` from Google is just the nonce. The cookie holds the nonce AND
+  // the return path. If they match, the request is legitimate.
+  const cookieStore = await cookies();
+  let storedNonce = "";
+  let returnPath = "/";
+  try {
+    const raw = cookieStore.get("__oauth_state")?.value ?? "";
+    const parsed = JSON.parse(raw);
+    storedNonce = parsed.nonce ?? "";
+    const rawPath = parsed.returnPath ?? "/";
+    // Sanitize: must be a relative path starting with a single /
+    returnPath = /^\/(?!\/)/.test(rawPath) ? rawPath : "/";
+  } catch {
+    // Malformed cookie — treat as missing
+  }
+  // Clear the nonce cookie immediately regardless of outcome
+  cookieStore.delete("__oauth_state");
+
+  if (!state || !storedNonce || state !== storedNonce) {
     return NextResponse.redirect(`${origin}/`);
   }
 

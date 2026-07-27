@@ -25,6 +25,17 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
+    // Each item must be a non-empty string; cap at 50 (the max drafts limit)
+    if (
+      items.length > 50 ||
+      !items.every((item: unknown) => typeof item === "string" && item.length > 0)
+    ) {
+      return NextResponse.json(
+        { success: false, error: "Invalid items." },
+        { status: 400 },
+      );
+    }
+
     const isDev = process.env.NODE_ENV === "development";
     const cookieStore = cookies();
 

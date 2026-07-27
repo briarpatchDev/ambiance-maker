@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
 
     const trimmedMessage =
       reportType === "other" && typeof message === "string"
-        ? message.trim().slice(0, 300)
+        ? message.trim().slice(0, 200)
         : "";
 
     // Use admin client for checks that need to bypass RLS
