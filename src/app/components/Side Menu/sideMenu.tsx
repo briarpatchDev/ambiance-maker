@@ -105,6 +105,7 @@ export default function SideMenu({
             closeOnEscape={true}
             closeOnBackdropClick={true}
             unstyled={true}
+            modalStyle={{ paddingBottom: "4vh" }}
           >
             <LoginCard path={window.location.pathname} />
           </Modal>
@@ -124,12 +125,9 @@ export default function SideMenu({
               <p className={styles.contact_card_text}>
                 For questions or support, reach us at:
               </p>
-              <a
-                href="mailto:support@ambiancemaker.com"
-                className={styles.contact_card_email}
-              >
+              <div className={styles.contact_card_email}>
                 support@ambiancemaker.com
-              </a>
+              </div>
             </div>
           </Modal>
         )}
@@ -275,8 +273,8 @@ export default function SideMenu({
             </button>
           )}
           <footer className={styles.footer}>
-            <Link href="/policy/terms-of-service">Terms</Link>
-            <Link href="/policy/privacy-policy">Privacy</Link>
+            <Link href="/terms-of-service">Terms</Link>
+            <Link href="/privacy-policy">Privacy</Link>
             <button onClick={() => setShowContactModal(true)}>Contact</button>
           </footer>
         </div>

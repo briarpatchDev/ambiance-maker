@@ -10,7 +10,9 @@ interface PageProps {
   params: Promise<{ username: string }>;
 }
 
-async function getOwnerInitialData(username: string): Promise<InitialOwnerData | null> {
+async function getOwnerInitialData(
+  username: string,
+): Promise<InitialOwnerData | null> {
   try {
     const isDev = process.env.NODE_ENV === "development";
     const supabase = isDev ? createAdminClient() : createClient(cookies());
@@ -35,7 +37,9 @@ async function getOwnerInitialData(username: string): Promise<InitialOwnerData |
 
     const { data: items } = await supabase
       .from("ambiances")
-      .select("id, title, thumbnail, views, status, published_at, rating_score, rating_count")
+      .select(
+        "id, title, thumbnail, views, status, published_at, rating_score, rating_count",
+      )
       .eq("user_id", user.id)
       .eq("status", "published")
       .order("published_at", { ascending: false })
@@ -117,7 +121,9 @@ export default async function Page({ params }: PageProps) {
     <div className={styles.not_found}>
       <NotFound
         errorMessage={
-          username.slice(0, 3) === "%40" ? "User not found" : "Page not found"
+          username.slice(0, 3) === "%40"
+            ? "This creator hasn't made a sound yet..."
+            : "The sound doesn't reach this far..."
         }
         buttonText="Return Home"
         href="/"

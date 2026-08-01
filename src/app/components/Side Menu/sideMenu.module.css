@@ -236,6 +236,7 @@ button.menu_item:hover .item_content {
   font-size: 1.7rem;
   color: var(--link-color);
   font-weight: 500;
+  cursor: text;
 }
 
 .side_menu button:focus-visible {

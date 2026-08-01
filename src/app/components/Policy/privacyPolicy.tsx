@@ -180,12 +180,11 @@ export default function PrivacyPolicy() {
           <p>
             If you have questions about this Privacy Policy, please contact us
             at:{" "}
-            <a
-              className={styles.email_link}
-              href="mailto:support@ambiancemaker.com"
+            <div
+              className={styles.email}
             >
               support@ambiancemaker.com
-            </a>
+            </div>
           </p>
         </section>
       </div>

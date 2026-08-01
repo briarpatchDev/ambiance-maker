@@ -79,7 +79,7 @@ export default async function Page({ params }: PageProps) {
   ) : (
     <div className={styles.not_found}>
       <NotFound
-        errorMessage="Draft not found"
+        errorMessage="This draft seems to have gone quiet..."
         buttonText="Back to Drafts"
         href="/drafts"
       />

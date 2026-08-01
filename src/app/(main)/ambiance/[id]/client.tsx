@@ -2,17 +2,14 @@
 import AmbianceMaker from "@/app/components/Ambiance Maker/ambianceMaker";
 import styles from "./page.module.css";
 import { AmbianceData } from "@/app/components/Ambiance Maker/ambianceMaker";
-import MessageBox from "@/app/components/Message Box/messageBox";
+import NotFound from "@/app/components/Errors/Not Found/notFound";
 import { useUser } from "@/app/contexts/userContext";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function AmbianceClient({
   ambianceData,
 }: {
   ambianceData: AmbianceData | undefined;
 }) {
-  const router = useRouter();
   const user = useUser();
 
   return ambianceData ? (
@@ -27,14 +24,10 @@ export default function AmbianceClient({
     </div>
   ) : (
     <div className={styles.not_found}>
-      <MessageBox
-        message="Ambiance not found"
-        buttonText="Go Back"
-        ariaLive="assertive"
-        role="alert"
-        onClick={() => {
-          router.back();
-        }}
+      <NotFound
+        errorMessage="This ambiance has faded away..."
+        buttonText="Return Home"
+        href="/"
       />
     </div>
   );

@@ -11,7 +11,7 @@
   --focus-outline: 0.3rem solid var(--focus-color);
   --focus-outline-offset: 0.1rem;
   --grey-text: rgb(240, 240, 240);
-  --dark-grey-text: rgb(160, 160, 160);
+  --dark-grey-text: rgb(175, 175, 175);
   --primary-button-color: rgb(105, 75, 135);
   --background-color: rgb(77, 73, 84);
 }

@@ -1,13 +1,99 @@
 .page {
   display: flex;
-  flex-direction: column;
+  position: relative;
   width: 100vw;
-  height: 100vh;
-  min-height: max-content;
+  height: max-content;
+  background:
+    linear-gradient(
+      210deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0) 75%
+    ),
+    radial-gradient(
+      ellipse 150% 20vh at 50% 0%,
+      rgba(255, 255, 255, 0.04) 0%,
+      rgba(255, 255, 255, 0.06) 30%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0.03) 70%,
+      transparent 100%
+    ),
+    linear-gradient(
+      85deg,
+      rgba(116, 107, 121, 0.5) 0%,
+      rgba(73, 70, 83, 0.5) 100%
+    ),
+    linear-gradient(185deg, rgb(116, 107, 121) 0%, rgb(73, 70, 83) 100%);
+  background-attachment: fixed;
 }
 
-.page > * {
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("/images/background/cardboard.png");
+  opacity: 0.3;
+  backdrop-filter: brightness(0.04);
+  filter: brightness(0.9);
+  z-index: 0;
+}
+
+.page_content {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 0.8rem 0 0;
+  width: 100%;
+  height: max-content;
+  min-height: 100vh;
+  overflow-x: hidden;
   animation: appear 0.2s;
+}
+
+.not_found {
+  padding: 0 0.8rem;
+  margin-top: 20vh;
+}
+
+.gradient_bottom {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0) 0%,
+    var(--background-color) 95%
+  );
+  position: absolute;
+  height: 2.8rem;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+}
+
+.gradient_top {
+  background: linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0) 0%,
+    var(--background-color) 100%
+  );
+  position: absolute;
+  height: 0.8rem;
+  width: 100%;
+  top: 0;
+}
+
+.gradient_right {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    var(--background-color) 100%
+  );
+  position: absolute;
+  width: 0.6rem;
+  height: 100%;
+  right: 0;
+  top: 0;
 }
 
 @keyframes appear {

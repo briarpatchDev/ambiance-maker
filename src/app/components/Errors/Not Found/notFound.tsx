@@ -21,6 +21,7 @@ export default function NotFound({
         buttonText={buttonText}
         ariaLive="assertive"
         role="alert"
+        style={{ paddingTop: "2.8rem" }}
       />
     </div>
   );
