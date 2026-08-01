@@ -34,10 +34,10 @@
   align-items: center;
   margin-top: 0.4rem;
   padding: 0 1.2rem;
-  font-size: 2.4rem;
+  font-size: 3rem;
   font-weight: 600;
   color: var(--grey-text);
-  font-family: "Poppins", "Manrope", sans-serif;
+  font-family: var(--font-structural), sans-serif;
 }
 
 .carousel_buttons {
@@ -68,7 +68,6 @@
 }
 
 button.back {
-
 }
 
 button.back svg {

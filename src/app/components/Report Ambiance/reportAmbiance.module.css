@@ -1,10 +1,12 @@
 .report_ambiance {
   display: flex;
   flex-direction: column;
-  background-color: rgb(55, 55, 55);
+  background: linear-gradient(160deg, rgb(85, 80, 95), rgb(65, 62, 72));
   color: var(--grey-text);
-  border: 0.1rem solid var(--border-color);
-  outline: 0.2rem solid black;
+  border: 0.05rem solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 2px 8px rgba(0, 0, 0, 0.3);
   border-radius: 1.2rem;
   width: 56rem;
   max-width: 96vw;
@@ -14,7 +16,9 @@
 }
 
 .report_ambiance h1 {
+  font-family: var(--font-structural), sans-serif;
   font-size: 3rem;
+  font-weight: 600;
   margin: 2.4rem 0 1.6rem;
   padding: 0;
 }
@@ -68,7 +72,9 @@
 }
 
 .radio_group h5 {
+  font-family: var(--font-structural), sans-serif;
   font-size: 2.2rem;
+  font-weight: 600;
   margin: 0;
 }
 

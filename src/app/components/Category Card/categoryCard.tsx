@@ -37,10 +37,10 @@ export default function CategoryCard({
       <div className={styles.tags}>
         {tags.map((tag, index) => {
           return (
-            <div
-              className={styles.tag}
-              key={`${tag}-${index}`}
-            >{`● ${tag}`}</div>
+            <div className={styles.tag} key={`${tag}-${index}`}>
+              <div className={styles.tag_bullet}></div>
+              {tag}
+            </div>
           );
         })}
       </div>

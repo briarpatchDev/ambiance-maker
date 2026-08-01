@@ -39,6 +39,7 @@ export default async function Page() {
       status: entry.status,
       thumbnail: entry.thumbnail,
       videoData: [],
+      dateUpdated: new Date(entry.updated_at),
     };
   });
   return <DraftsContent drafts={drafts} />;

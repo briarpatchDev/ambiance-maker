@@ -342,7 +342,7 @@ export default function SelectionManager({
           })}
         >
           <h1>
-            {itemType === "draft" ? <DraftIcon /> : <PublishedIcon />}
+            {itemType === "draft" && <DraftIcon />}
             {headlineText}
           </h1>
 
@@ -471,7 +471,7 @@ export default function SelectionManager({
       <div className={styles.content_wrapper}>
         <div className={classNames(styles.selection_manager_header)}>
           <h1>
-            {itemType === "draft" ? <DraftIcon /> : <PublishedIcon />}
+            {itemType === "draft" && <DraftIcon />}
             {headlineText}
           </h1>
         </div>

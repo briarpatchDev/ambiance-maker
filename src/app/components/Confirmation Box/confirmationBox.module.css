@@ -1,7 +1,10 @@
 .confirmation_box {
-  border: 0.1rem solid black;
-  background-color: rgb(80, 80, 80);
-  color: white;
+  border: 0.05rem solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(160deg, rgb(85, 80, 95), rgb(65, 62, 72));
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+  color: var(--grey-text);
   width: 48rem;
   max-width: 98vw;
   display: flex;
@@ -18,9 +21,9 @@
   justify-content: center;
   align-content: center;
   text-align: center;
-  text-wrap: pretty;
-  max-width: 40rem;
+  text-wrap: balance;
   font-size: 1.7rem;
+  line-height: 1.25;
 }
 
 .buttons_wrapper {

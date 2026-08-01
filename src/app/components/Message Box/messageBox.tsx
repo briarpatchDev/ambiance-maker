@@ -49,7 +49,9 @@ export default function MessageBox({
 }: MessageBoxProps) {
   return (
     <div
-      className={styles.message_box}
+      className={classNames(styles.message_box, {
+        [styles.has_button]: buttonText,
+      })}
       style={{ ...style }}
       aria-label={ariaLabel}
       aria-live={ariaLive}

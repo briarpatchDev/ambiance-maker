@@ -2,14 +2,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: rgba(50, 50, 50, 0.85);
-  border: 0.05rem solid var(--grey-text);
+  background: linear-gradient(160deg, rgb(62, 61, 66), rgb(56, 54, 62));
   border-radius: 2.4rem;
   padding: 2.4rem 0;
   width: 100%;
   max-width: 42rem;
   backdrop-filter: blur(8px);
-  box-shadow: 0 0.8rem 4rem rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .logo {
@@ -20,19 +21,23 @@
 }
 
 .title {
+  font-family: var(--font-display), serif;
   font-size: 2.8rem;
-  font-weight: 600;
+  font-weight: 450;
   color: white;
   margin: 0;
   text-align: center;
 }
 
 .subtitle {
+  font-family: var(--font-interface), sans-serif;
   font-size: 1.6rem;
+  line-height: 1.2;
   color: var(--grey-text);
   text-align: center;
   text-wrap: balance;
-  margin: 0.2rem 1rem 1.6rem;
+  margin: 0.6rem 1rem 1.6rem;
+  opacity: 0.85;
 }
 
 .button_wrapper {

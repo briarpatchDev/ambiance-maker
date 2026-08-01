@@ -2,6 +2,7 @@
   display: flex;
   column-gap: 0.6rem;
   font-size: 2rem;
+  font-family: var(--font-structural), sans-serif;
   width: 100%;
   flex-wrap: wrap;
   color: var(--grey-text);
@@ -22,7 +23,6 @@
 .breadcrumb a {
   color: var(--grey-text);
   padding-bottom: 0.1rem;
-  font-family: sans-serif;
   transition: all 0.1;
 }
 

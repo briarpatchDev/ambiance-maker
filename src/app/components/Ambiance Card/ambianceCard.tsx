@@ -76,6 +76,24 @@ export default function AmbianceCard({
     return () => window.removeEventListener("pointermove", onMove);
   }, []);
 
+  function formatRelativeTime(date: Date): string {
+    const diffMs = Date.now() - date.getTime();
+    const diffSeconds = Math.floor(diffMs / 1000);
+    const diffMinutes = Math.floor(diffSeconds / 60);
+    const diffHours = Math.floor(diffMinutes / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    const diffWeeks = Math.floor(diffDays / 7);
+    const diffMonths = Math.floor(diffDays / 30);
+    const diffYears = Math.floor(diffDays / 365);
+    if (diffSeconds < 60) return `just now`;
+    if (diffMinutes < 60) return `${diffMinutes} minute${diffMinutes === 1 ? `` : `s`} ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? `` : `s`} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? `` : `s`} ago`;
+    if (diffWeeks < 5) return `${diffWeeks} week${diffWeeks === 1 ? `` : `s`} ago`;
+    if (diffMonths < 12) return `${diffMonths} month${diffMonths === 1 ? `` : `s`} ago`;
+    return `${diffYears} year${diffYears === 1 ? `` : `s`} ago`;
+  }
+
   // Takes the number of views and abbreviates it
   function formatViews(views: number): string {
     if (views < 2) {
@@ -163,7 +181,7 @@ export default function AmbianceCard({
                 </div>
                 {datePublished && (
                   <div className={styles.date}>
-                    {datePublished.toLocaleDateString()}
+                    {datePublished.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </div>
                 )}
               </div>
@@ -184,7 +202,7 @@ export default function AmbianceCard({
               <div className={styles.meta_row}>
                 {dateUpdated && (
                   <div className={styles.date}>
-                    {dateUpdated.toLocaleDateString()}
+                    {formatRelativeTime(dateUpdated)}
                   </div>
                 )}
               </div>

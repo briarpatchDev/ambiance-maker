@@ -85,7 +85,6 @@ export default function Dashboard({
                   thumbnail={draft.thumbnail}
                   linkTo="draft"
                   containerRef={containerRef}
-                  dateUpdated={new Date(draft.updated_at)}
                   mode="vertical"
                 />
               </div>
@@ -94,10 +93,7 @@ export default function Dashboard({
         )}
       </section>
 
-      <div
-        className={styles.button_wrapper}
-        style={{ marginTop: "1.2rem" }}
-      >
+      <div className={styles.button_wrapper} style={{ marginTop: "1.2rem" }}>
         <LinkButton
           href="/create"
           buttonStyle={{ minHeight: "7.2rem", fontSize: "2.2rem" }}

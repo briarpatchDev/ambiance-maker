@@ -171,10 +171,10 @@ export default function SubmitAmbiance({
             <div>Confirm your username</div>
           </h2>
           <p>
-            If you haven't published before, make sure your username —{" "}
-            {username} — is original, appropriate, and the one you want to stick
-            with going forward. Once you've published an ambiance, you won't be
-            able to change it later.
+            Your username{" "}
+            <span style={{ whiteSpace: "nowrap" }}>"{username}"</span> will be
+            locked in after your first publish. Make sure it's original and
+            appropriate.
           </p>
         </div>
 

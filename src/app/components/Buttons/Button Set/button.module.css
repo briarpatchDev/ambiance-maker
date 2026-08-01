@@ -18,6 +18,7 @@
   text-align: center;
   text-wrap: pretty;
   user-select: none;
+  font-family: var(--font-interface), "Segoe UI", sans-serif;
   font-size: 1.8rem;
   border-radius: 0.8rem;
   box-shadow: 0px 2px 1px 1px rgba(0, 0, 0, 0.3);

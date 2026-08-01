@@ -200,9 +200,9 @@ export default function Settings({ user: initialUser }: SettingsProps) {
               disabled={deleting}
               width="default"
               style={{
-                color: "rgb(249, 105, 105)",
-                borderColor: "rgb(249, 105, 105)",
-                marginTop: "0.8rem",
+                color: "var(--error-color)",
+                borderColor: "var(--error-color)",
+                marginTop: "0.4rem",
               }}
             >
               Delete Account

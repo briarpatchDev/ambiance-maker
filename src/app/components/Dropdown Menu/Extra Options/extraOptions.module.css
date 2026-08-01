@@ -7,7 +7,7 @@
 
 .dropdown_menu_wrapper > button {
   all: unset;
-  font-family: "Gabarito", "Manrope", "Roboto", sans-serif;
+  font-family: var(--font-interface), "Segoe UI", sans-serif;
   box-sizing: border-box;
   cursor: pointer;
   display: flex;

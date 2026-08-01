@@ -464,7 +464,11 @@ export default function AmbianceMaker({
     <div style={{ ...style }} className={styles.ambiance_maker}>
       {mode === "published" && ambianceData?.title ? (
         <div className={styles.header_wrapper}>
-          <div className={styles.header}>
+          <div
+            className={classNames(styles.header, {
+              [styles.published]: mode === "published",
+            })}
+          >
             <div className={styles.title_row}>
               <h1 className={styles.title}>{ambianceData.title}</h1>
               {canFavorite && (

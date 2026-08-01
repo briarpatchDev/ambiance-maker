@@ -1,19 +1,14 @@
-
-
-
-
-
 .settings_card {
   display: flex;
   flex-direction: column;
-  background-color: rgba(50, 50, 50, 0.85);
-  border: 0.05rem solid rgb(80, 80, 80);
+  background: linear-gradient(160deg, rgb(62, 61, 66), rgb(56, 54, 62));
   border-radius: 2.4rem;
-  padding: 2.8rem 3.2rem 3.6rem;
+  padding: 2.8rem 3.2rem 3.2rem;
   width: 100%;
   max-width: 56rem;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 0.8rem 4rem rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 2px 8px rgba(0, 0, 0, 0.3);
   color: var(--grey-text);
 }
 
@@ -60,8 +55,9 @@
 }
 
 .profile_username {
-  font-size: 2rem;
-  font-weight: 600;
+  font-family: var(--font-structural), "Segoe UI", sans-serif;
+  font-size: 2.4rem;
+  font-weight: 450;
   color: white;
   white-space: nowrap;
   overflow: hidden;
@@ -92,9 +88,9 @@
 }
 
 .section_title {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.15rem;
   text-transform: uppercase;
   color: var(--dark-grey-text);
   margin-bottom: -0.8rem;
@@ -119,7 +115,7 @@
 }
 
 .setting_locked_note {
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   color: var(--dark-grey-text);
 }
 
@@ -154,7 +150,7 @@
 
 .field_error {
   font-size: 1.4rem;
-  color: rgb(249, 105, 105);
+  color: var(--error-color);
 }
 
 .field_success {

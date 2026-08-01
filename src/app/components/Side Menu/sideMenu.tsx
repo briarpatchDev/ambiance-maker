@@ -212,7 +212,7 @@ export default function SideMenu({
             >
               <div className={styles.item_content}>
                 <BookmarkIcon
-                  style={{ transform: "scale(1.333) translateX(-0.1rem)" }}
+                  style={{ transform: "scale(1.3333) translateX(-0.1rem)" }}
                 />
                 <span>Favorites</span>
               </div>

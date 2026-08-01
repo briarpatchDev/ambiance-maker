@@ -47,10 +47,10 @@
   padding: 0;
   display: flex;
   align-items: center;
-  column-gap: 2rem;
+  column-gap: 1.6rem;
   font-size: 3rem;
-  font-weight: 1000;
-  font-family: "Manrope", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+  font-weight: 700;
+  font-family: var(--font-structural), sans-serif;
   padding: 0.8rem 2rem 1.2rem;
   border-radius: 1.6rem;
   background-color: rgb(50, 50, 50);
@@ -63,8 +63,7 @@
 }
 
 .selection_manager_header h1 svg {
-  transform: translateY(0.2rem);
-  height: 3rem;
+  height: 2.8rem;
   width: auto;
   flex-shrink: 0;
   fill: var(--grey-text);

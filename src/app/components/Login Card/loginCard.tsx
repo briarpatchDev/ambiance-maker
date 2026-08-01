@@ -42,10 +42,10 @@ export default function LoginCard({ path = "/" }: LoginCardProps) {
           }
           text="Sign in with Google"
           style={{
-            color: "rgb(20,20,20)",
+            color: "rgb(60,60,60)",
             backgroundColor: "rgb(240,240,240)",
             padding: "0.6rem 2.4rem",
-            borderRadius: "1.2em",
+            borderRadius: "0.8em",
             margin: "0 1.2rem",
           }}
         />
