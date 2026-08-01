@@ -234,7 +234,7 @@
     transparent 100%
   );
   text-wrap: balance;
-    max-width: 54rem;
+  max-width: 54rem;
 }
 
 @media screen and (max-width: 440px) {
