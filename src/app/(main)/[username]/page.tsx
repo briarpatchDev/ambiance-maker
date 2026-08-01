@@ -122,7 +122,7 @@ export default async function Page({ params }: PageProps) {
       <NotFound
         errorMessage={
           username.slice(0, 3) === "%40"
-            ? "This creator hasn't made a sound yet..."
+            ? "This creator hasn't made a sound..."
             : "The sound doesn't reach this far..."
         }
         buttonText="Return Home"

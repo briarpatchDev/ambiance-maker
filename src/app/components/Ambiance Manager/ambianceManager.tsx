@@ -476,9 +476,11 @@ export default function SelectionManager({
           </h1>
         </div>
         <div className={styles.message_wrapper}>
-          <div
-            className={styles.message}
-          >{`You don't have any ${itemType === "draft" ? "drafts" : "published ambiances"} at this time...`}</div>
+          <div className={styles.message}>
+            {itemType === "draft"
+              ? `You don't have any drafts yet. Ambiances you save will appear here.`
+              : `You haven't published any ambiances. Create a draft to get started.`}
+          </div>
         </div>
       </div>
     </div>

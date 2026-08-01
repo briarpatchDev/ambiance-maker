@@ -411,7 +411,7 @@ export default function FavoritesManager({
         <div className={styles.message_wrapper}>
           <div
             className={styles.message}
-          >{`You haven't favorited any ambiances yet. Browse and bookmark ones you love!`}</div>
+          >{`You don't have any favorite ambiances yet. Browse and bookmark the ones you enjoy.`}</div>
         </div>
       </div>
     </div>
