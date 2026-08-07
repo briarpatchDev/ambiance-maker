@@ -14,7 +14,7 @@ export default function Page() {
     fetch("/api/analytics/page-view", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ page: "share" }),
+      body: JSON.stringify({ page: "share", shareParams: searchParams.toString() }),
     }).catch(() => {});
   }, []);
 

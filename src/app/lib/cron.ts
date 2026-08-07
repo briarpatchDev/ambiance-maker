@@ -72,4 +72,28 @@ export default function startCronJobs() {
       console.error("[cron] View log cleanup unexpected error:", err);
     }
   });
+
+  // Weekly on Sunday at 04:00: prune share_hits entries with last_seen older than 30 days
+  cron.schedule("0 4 * * 0", async () => {
+    console.log("[cron] Running share_hits cleanup...");
+    try {
+      const supabase = createAdminClient();
+      const cutoff = new Date(
+        Date.now() - 30 * 24 * 60 * 60 * 1000,
+      ).toISOString();
+      const { error, count } = await supabase
+        .from("share_hits")
+        .delete({ count: "exact" })
+        .lt("last_seen", cutoff);
+      if (error) {
+        console.error("[cron] share_hits cleanup failed:", error);
+      } else {
+        console.log(
+          `[cron] share_hits cleanup complete. Removed ${count ?? 0} entries.`,
+        );
+      }
+    } catch (err) {
+      console.error("[cron] share_hits cleanup unexpected error:", err);
+    }
+  });
 }
