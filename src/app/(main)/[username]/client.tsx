@@ -133,15 +133,15 @@ function OwnerView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function handlePageChange(newPage: number) {
+  const handlePageChange = useCallback((newPage: number) => {
     fetchPage(newPage, sort);
     containerRef.current?.scrollIntoView({ behavior: "smooth" });
-  }
+  }, [fetchPage, sort]);
 
-  function handleSortChange(newSort: SortOption) {
+  const handleSortChange = useCallback((newSort: SortOption) => {
     setSort(newSort);
     fetchPage(1, newSort);
-  }
+  }, [fetchPage]);
 
   function paginationNav() {
     if (numPages <= 1) return null;

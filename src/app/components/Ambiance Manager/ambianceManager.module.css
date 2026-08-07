@@ -265,20 +265,6 @@
 }
 
 @media screen and (max-width: 440px) {
-  /*
-  .selection_manager_header {
-    display: flex;
-    flex-direction: column;
-    row-gap: 0.4rem;
-    margin: 0;
-    padding-bottom: 0;
-  }
-
-  .selection_manager_header > div {
-    align-self: flex-end;
-  }
-    */
-
   .delete_menu {
     flex-direction: column;
     align-items: center;

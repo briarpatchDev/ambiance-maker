@@ -1,6 +1,5 @@
 .button {
   --height: 5.2rem;
-  /*--buttonColor: rgb(120, 90, 150);*/
   --buttonColor: var(--primary-button-color);
   all: unset;
   box-sizing: border-box;
@@ -27,7 +26,6 @@
   -webkit-user-select: none;
   transform: translateZ(0); /* Helps Mobile */
   will-change: transform;
-  /* color: light-dark(var(--grey-text), var(--grey-text)); */
   color: var(--grey-text);
   outline: 0.1rem solid transparent;
 }
@@ -67,9 +65,7 @@
 }
 
 .secondary {
-  /* color: light-dark(var(--buttonColor), var(--grey-text)); */
   border: 0.1rem solid var(--buttonColor);
-  color: var(--buttonColor);
   color: var(--grey-text);
 
   font-weight: bolder;

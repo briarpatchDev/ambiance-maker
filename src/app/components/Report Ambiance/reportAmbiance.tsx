@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styles from "./reportAmbiance.module.css";
 import Button from "@/app/components/Buttons/Button Set/button";
 import MessageBox from "@/app/components/Message Box/messageBox";
@@ -22,7 +22,7 @@ export default function ReportAmbiance({
   >("default");
   const [reportType, setReportType] = useState<"broken" | "other" | "">("");
   const [message, setMessage] = useState("");
-  const failureMessage = React.useRef("");
+  const failureMessage = useRef("");
 
   const isDisabled = !reportType;
 

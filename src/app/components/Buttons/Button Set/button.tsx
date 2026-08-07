@@ -72,7 +72,6 @@ export function Button(
   useImperativeHandle(ref, () => buttonRef.current!);
 
   const timeoutRef = useRef<NodeJS.Timeout>(undefined);
-  //const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   const [active, setActive] = useState(false);
   const enabled = useRef(true);

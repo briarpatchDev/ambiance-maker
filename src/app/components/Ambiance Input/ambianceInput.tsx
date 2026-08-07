@@ -1,7 +1,5 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import styles from "./ambianceInput.module.css";
 import classNames from "classnames";
 import VideoSlider from "@/app/components/Sliders/Video Range Slider/videoRangeSlider";
@@ -74,13 +72,6 @@ export default function AmbianceInput({
     }));
   }
 
-  // Updates the link input field
-  const handleLinkChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    handleChange(e);
-  };
-
   // Uses onLinkChange to show a video once user stops typing
   const validateLink = useCallback(
     debounce((link: string) => {
@@ -107,7 +98,7 @@ export default function AmbianceInput({
           type={"text"}
           value={inputData.link}
           maxLength={64}
-          onChange={handleLinkChange}
+          onChange={handleChange}
           ref={linkInputRef}
           aria-describedby={"link_error"}
           placeholder="Enter a Youtube link..."

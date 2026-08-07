@@ -1,13 +1,10 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback, JSX } from "react";
 import Link from "next/link";
 import styles from "./pagination.module.css";
 import classNames from "classnames";
-import { JSX } from "react";
 import { useSearchParams } from "next/navigation";
-import Button from "@/app/components/Buttons/Button Set/button";
-import AmbianceCard from "@/app/components/Ambiance Card/ambianceCard";
-import { AmbianceCardProps } from "@/app/components/Ambiance Card/ambianceCard";
+import AmbianceCard, { AmbianceCardProps } from "@/app/components/Ambiance Card/ambianceCard";
 import ExpectedError from "@/app/components/Errors/Expected Error/errorExpected";
 
 export default function Pagination({
@@ -30,12 +27,8 @@ export default function Pagination({
   const searchParams = useSearchParams();
   const hasFetched = useRef(false);
 
-  useEffect(() => {
-    getItems();
-  }, [searchParams, collection]);
-
   //Fetches items from the backend
-  async function getItems() {
+  const getItems = useCallback(async () => {
     try {
       const storedSize = localStorage.getItem("preferredPageSize");
       const url =
@@ -45,18 +38,21 @@ export default function Pagination({
       const res = await fetch(url);
       const data = await res.json();
       if (data.errors) throw new Error();
-      //if (0 == Math.floor(Math.random() * 3)) throw new Error();
       setPage(data.page);
       setNumPages(data.numPages);
       setSort(data.sort);
       setPageSize(data.pageSize);
       setItems(data.items);
-      if (isError) setIsError(false);
+      setIsError(false);
       hasFetched.current = true;
     } catch (error) {
       setIsError(true);
     }
-  }
+  }, [searchParams, collection]);
+
+  useEffect(() => {
+    getItems();
+  }, [getItems]);
 
   // Persists the user's preferred page size to localStorage after the first fetch
   useEffect(() => {
@@ -64,27 +60,16 @@ export default function Pagination({
     localStorage.setItem("preferredPageSize", String(pageSize));
   }, [pageSize]);
 
-  // Initalizes the component with correct width value for the entries container, updates it on resize
+  // Initializes the component with correct width value for the entries container, updates it on resize
   const entryContainersRef = useRef<(HTMLDivElement | null)[]>([]);
   const componentRef = useRef<HTMLDivElement | null>(null);
   const [entriesWidth, setEntriesWidth] = useState(100); // in rem, needs to start wide
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
-    if (!componentRef.current) return;
-    const observer = new ResizeObserver(() => {
-      setEntriesWidth(calcEntriesWidth());
-      setIsInitialized(true);
-    });
-    observer.observe(componentRef.current);
-    setEntriesWidth(calcEntriesWidth());
-    return () => observer.disconnect();
-  }, [items]);
-
   // We are assuming the entry has fixed width which is smaller at large vw than it is at small vw.
   const initialEntryWidth = useRef(0);
   // Calculates the new entries width in rem
-  function calcEntriesWidth() {
+  const calcEntriesWidth = useCallback(() => {
     if (
       entryContainersRef.current &&
       entryContainersRef.current[0] &&
@@ -110,7 +95,18 @@ export default function Pagination({
       return (entryWidth * numEntries) / 10;
     }
     return 0;
-  }
+  }, [items]);
+
+  useEffect(() => {
+    if (!componentRef.current) return;
+    const observer = new ResizeObserver(() => {
+      setEntriesWidth(calcEntriesWidth());
+      setIsInitialized(true);
+    });
+    observer.observe(componentRef.current);
+    setEntriesWidth(calcEntriesWidth());
+    return () => observer.disconnect();
+  }, [calcEntriesWidth]);
 
   //Creates the sort menu at the top of component
   function sortOptions() {

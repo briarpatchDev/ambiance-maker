@@ -1,9 +1,7 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback, JSX } from "react";
-import Image from "next/image";
+import React, { JSX } from "react";
 import Link from "next/link";
 import styles from "./linkButton.module.css";
-import classNames from "classnames";
 import Button from "../Button Set/button";
 
 /*
@@ -30,6 +28,11 @@ interface LinkButtonProps {
   buttonStyle?: React.CSSProperties;
 }
 
+// Checks if href starts with http or https (meaning it would be an external link)
+function isExternalLink(href: string) {
+  return /^https?:\/\//.test(href);
+}
+
 export default function LinkButton(
   {
     href,
@@ -45,11 +48,6 @@ export default function LinkButton(
   }: LinkButtonProps,
   ref?: React.Ref<HTMLAnchorElement>,
 ) {
-  // Checks if href starts with http or https (meannig it would be an external link)
-  function isExternalLink(href: string) {
-    return /^https?:\/\//.test(href);
-  }
-
   const linkWidth: React.CSSProperties =
     typeof width === "number"
       ? { width: `${width}%` }

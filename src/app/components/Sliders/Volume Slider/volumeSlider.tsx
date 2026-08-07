@@ -1,14 +1,7 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./volumeSlider.module.css";
-import classNames from "classnames";
 import DiscreteSlider from "../Discrete Slider/discreteSlider";
-import LowVolume from "@/app/components/Icons/volume_low";
-import MediumVolume from "@/app/components/Icons/volume_medium";
-import HighVolume from "@/app/components/Icons/volume_high";
-import Muted from "@/app/components/Icons/volume_muted";
 import VolumeMuted from "@/app/components/Icons/volume_muted";
 import VolumeMedium from "@/app/components/Icons/volume_medium";
 import VolumeLow from "@/app/components/Icons/volume_low";

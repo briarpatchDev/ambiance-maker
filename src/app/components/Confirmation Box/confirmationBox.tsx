@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import Button from "@/app/components/Buttons/Button Set/button";
 import styles from "./confirmationBox.module.css";
-import classNames from "classnames";
 
 interface ConfirmationBoxProps {
   message: string;

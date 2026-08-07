@@ -1,9 +1,6 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import React from "react";
 import styles from "./speedSlider.module.css";
-import classNames from "classnames";
 import DiscreteSlider from "../Discrete Slider/discreteSlider";
 import SpeedIcon from "@/app/components/Icons/speed";
 

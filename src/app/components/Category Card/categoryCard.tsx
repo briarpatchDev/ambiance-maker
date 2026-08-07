@@ -1,9 +1,8 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./categoryCard.module.css";
-import classNames from "classnames";
 
 export interface CategoryCardProps {
   title: string;

@@ -19,6 +19,13 @@ interface SettingsProps {
   user: SettingsUser;
 }
 
+function formatMemberSince(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+  });
+}
+
 export default function Settings({ user: initialUser }: SettingsProps) {
   const router = useRouter();
   const [user, setUser] = useState<SettingsUser>(initialUser);
@@ -36,7 +43,7 @@ export default function Settings({ user: initialUser }: SettingsProps) {
 
   async function handleUsernameSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!user || usernameSaving) return;
+    if (usernameSaving) return;
 
     const trimmed = usernameInput.trim();
     if (trimmed === user.username) {
@@ -63,7 +70,7 @@ export default function Settings({ user: initialUser }: SettingsProps) {
         setUsernameError(data.error || "Failed to update username.");
         return;
       }
-      setUser((prev) => (prev ? { ...prev, username: data.username } : prev));
+      setUser((prev) => ({ ...prev, username: data.username }));
       setUsernameSuccess("Username updated successfully.");
     } catch {
       setUsernameError("An unexpected error occurred.");
@@ -93,14 +100,6 @@ export default function Settings({ user: initialUser }: SettingsProps) {
     }
   }
 
-  function formatMemberSince(dateStr: string) {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-    });
-  }
-
-  if (!user) return null;
   return (
     <>
       <div className={styles.settings_card}>

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./ambianceManager.module.css";
 import classNames from "classnames";
 import TrashIcon from "@/app/components/Icons/trash";
@@ -78,7 +78,6 @@ export default function SelectionManager({
         componentRef.current.getBoundingClientRect().width - 32;
       // The -32 essentially places 16 padding on the sides of the entriesContainer
       let numEntries = Math.floor(componentWidth / entryWidth);
-      console.log(`numEntries: ${numEntries}`);
       if (
         numEntries === 1 &&
         initialEntryWidth.current &&

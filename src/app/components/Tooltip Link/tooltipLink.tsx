@@ -141,8 +141,6 @@ export default function TooltipLink({
         !!childrenRef.current?.querySelector(":focus-visible")
       : false;
     const isHovered = childrenRef.current?.matches(":hover");
-    //const isNotHovered = !tooltipRef.current?.matches(":hover");
-    //if (isFocused || (isHovered && isNotHovered)) {
     if (isFocused || isHovered) {
       addTooltip();
     } else {
@@ -150,39 +148,8 @@ export default function TooltipLink({
     }
   }
 
-  //Moves the tooltip to one of the sides when it becomes active, adds events for positioning
-  useEffect(() => {
-    if (active) {
-      calculatePosition();
-      if (containerRef) {
-        window.addEventListener("scroll", throttledCalculatePosition);
-        return () => {
-          window.removeEventListener("scroll", throttledCalculatePosition);
-        };
-      }
-    }
-  }, [active]);
-
-  // Calculates the position of the tooltip when the window is resized
-  const throttledCalculatePosition = useCallback(
-    throttle(() => {
-      calculatePosition();
-    }, 100),
-    [],
-  );
-
-  // Watches the container for changes in size, and recalculates the position
-  useEffect(() => {
-    if (!containerRef?.current) return;
-    const observer = new ResizeObserver(() => {
-      calculatePosition();
-    });
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, [containerRef]);
-
   //Calculate the position for the tooltip to appear
-  function calculatePosition() {
+  const calculatePosition = useCallback(() => {
     const positionCopy = { ...positionObject };
     const { side, align } = parseDirection(direction);
     // Boolean to check if tooltip appears vertically or horizontally
@@ -316,7 +283,38 @@ export default function TooltipLink({
     } else {
       setPosition(positionCopy);
     }
-  }
+  }, [direction, offset, shiftChildPercent, shiftRem, shiftTooltipPercent, containerRef]);
+
+  // Calculates the position of the tooltip when the window is resized
+  const throttledCalculatePosition = useCallback(
+    throttle(() => {
+      calculatePosition();
+    }, 100),
+    [calculatePosition],
+  );
+
+  //Moves the tooltip to one of the sides when it becomes active, adds events for positioning
+  useEffect(() => {
+    if (active) {
+      calculatePosition();
+      if (containerRef) {
+        window.addEventListener("scroll", throttledCalculatePosition);
+        return () => {
+          window.removeEventListener("scroll", throttledCalculatePosition);
+        };
+      }
+    }
+  }, [active]);
+
+  // Watches the container for changes in size, and recalculates the position
+  useEffect(() => {
+    if (!containerRef?.current) return;
+    const observer = new ResizeObserver(() => {
+      calculatePosition();
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [containerRef]);
 
   // Tells the tooltip to play its closing animation by using the triggerCloseAnimation prop
   // This has to be set up in the tooltip component

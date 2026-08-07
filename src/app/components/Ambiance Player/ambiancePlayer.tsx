@@ -1,10 +1,5 @@
 "use client";
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-} from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import styles from "./ambiancePlayer.module.css";
 import PlayIcon from "@/app/components/Icons/play";
 import PauseIcon from "@/app/components/Icons/pause";
@@ -129,14 +124,12 @@ export default function AmbiancePlayer({
       tag.src = "https://www.youtube.com/iframe_api";
       const firstScriptTag = document.getElementsByTagName("script")[0];
       firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-      console.log("we run the script");
     }
 
     // Function to create players once API is ready
     const createPlayers = () => {
-      //console.log("lets start making the players...");
       if (!window.YT || !window.YT.Player) {
-        console.log("it failed");
+        // Failed to create players, trying again...
         setTimeout(createPlayers, 100);
         return;
       }
@@ -239,10 +232,9 @@ export default function AmbiancePlayer({
                 playerRefs.current[index].cueVideoById({
                   videoId,
                 });
-                //return;
               } catch (e) {
                 playerRefs.current[index] = null;
-                console.log(`Error reloading player ${index}:`, e);
+                //console.log(`Error reloading player ${index}:`, e);
               }
             }
           }
@@ -276,10 +268,7 @@ export default function AmbiancePlayer({
                 height: "200px",
                 width: "200px",
                 videoId: videoId,
-                playerVars: {
-                  //autoplay: 1,
-                  //start: video.startTime,
-                },
+                playerVars: {},
                 events: {
                   onReady: (e: any) => {
                     playerRefs.current[index] = e.target;
@@ -291,7 +280,6 @@ export default function AmbiancePlayer({
                     ) {
                       setAllPlayersReady(true);
                     }
-                    console.log(`${playerId} is ready now`);
                     prevStartTimesRef.current[index] =
                       initialVideoData?.[index]?.startTime ?? 0;
                     setVideoData &&
@@ -374,7 +362,6 @@ export default function AmbiancePlayer({
                       // Video paused or buffering, stops the loop timer
                       case 2:
                       case 3: {
-                        //scheduleLoop(e.target, video, index, true);
                         scheduleLoop(e.target, index, true);
                         break;
                       }
@@ -453,8 +440,8 @@ export default function AmbiancePlayer({
                     }
                   },
                   onError: (e: any) => {
-                    console.log(`🚨 Player ${index} error:`, e.data);
-                    console.log("Error code:", e.data);
+                    // console.log(`🚨 Player ${index} error:`, e.data);
+                    // console.log("Error code:", e.data);
                     if (e.data === 100) {
                       setVideoData &&
                         updateObjectArr(setVideoData, index, {
@@ -509,7 +496,7 @@ export default function AmbiancePlayer({
               newPlayerElement.id = `player-${index}`;
               if (!playerElement) return;
               wrapperElement?.replaceChild(newPlayerElement, playerElement);
-              console.log("video id prob doesn't exist");
+              // console.log("video id prob doesn't exist");
               initializingRef.current[index] = false;
               if (
                 initializingRef.current.every((entry) => {
@@ -538,7 +525,6 @@ export default function AmbiancePlayer({
 
     // If API is already loaded, create players immediately
     if (window.YT && window.YT.Player) {
-      console.log("the api was already loaded so we're creating players");
       createPlayers();
     }
   };
@@ -560,7 +546,6 @@ export default function AmbiancePlayer({
         timeoutRefs.current[index] = setTimeout(() => {
           const videoData = videoDataRef.current[index];
           player.seekTo(videoData.startTime || 0);
-          console.log(`lets rewind back to ${videoData.startTime}`);
         }, timeRemaining * 1000);
       }
     },
@@ -585,7 +570,6 @@ export default function AmbiancePlayer({
   }, []);
 
   const pause = useCallback(() => {
-    //if (!isPlayerReady.current) return;
     playerRefs.current.forEach((player) => {
       player && player.pauseVideo();
     });
@@ -601,7 +585,6 @@ export default function AmbiancePlayer({
   }
 
   const mute = useCallback(() => {
-    // if (!isPlayerReady.current) return;
     playerRefs.current.forEach((player) => {
       player && player.mute();
     });
@@ -609,7 +592,6 @@ export default function AmbiancePlayer({
   }, []);
 
   const unmute = useCallback(() => {
-    //if (!isPlayerReady.current) return;
     playerRefs.current.forEach((player, index) => {
       if (!player) return;
       unmutePlayer(player, index);

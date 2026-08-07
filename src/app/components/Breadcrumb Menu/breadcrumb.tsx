@@ -1,6 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import Image from "next/image";
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./breadcrumb.module.css";

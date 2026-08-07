@@ -1,6 +1,5 @@
 "use client";
 import React, { useRef } from "react";
-import Link from "next/link";
 import styles from "./dashboard.module.css";
 import { User } from "@/app/contexts/userContext";
 import Carousel from "@/app/components/Carousel/carousel";

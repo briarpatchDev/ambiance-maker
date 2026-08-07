@@ -1,6 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import Image from "next/image";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import styles from "./ambianceCard.module.css";
 import TooltipLink from "@/app/components/Tooltip Link/tooltipLink";
@@ -46,6 +45,45 @@ export interface AmbianceCardProps {
   banner?: AmbianceCardBanner;
 }
 
+function formatRelativeTime(date: Date): string {
+  const diffMs = Date.now() - date.getTime();
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+  const diffWeeks = Math.floor(diffDays / 7);
+  const diffMonths = Math.floor(diffDays / 30);
+  const diffYears = Math.floor(diffDays / 365);
+  if (diffSeconds < 60) return `just now`;
+  if (diffMinutes < 60)
+    return `${diffMinutes} minute${diffMinutes === 1 ? `` : `s`} ago`;
+  if (diffHours < 24)
+    return `${diffHours} hour${diffHours === 1 ? `` : `s`} ago`;
+  if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? `` : `s`} ago`;
+  if (diffWeeks < 5)
+    return `${diffWeeks} week${diffWeeks === 1 ? `` : `s`} ago`;
+  if (diffMonths < 12)
+    return `${diffMonths} month${diffMonths === 1 ? `` : `s`} ago`;
+  return `${diffYears} year${diffYears === 1 ? `` : `s`} ago`;
+}
+
+// Takes the number of views and abbreviates it
+function formatViews(views: number): string {
+  if (views < 2) {
+    return `No views`;
+  }
+  if (views < 1000) {
+    return `${views} views`;
+  }
+  if (views < 10000) {
+    return `${Math.floor(views / 100) / 10}k views`;
+  }
+  if (views < 1000000) {
+    return `${Math.floor(views / 1000)}k views`;
+  }
+  return `${Math.floor(views / 100000) / 10}M views`;
+}
+
 export default function AmbianceCard({
   id,
   title,
@@ -60,7 +98,6 @@ export default function AmbianceCard({
   ratingCount,
   datePublished,
   dateUpdated,
-  //mode = "vertical",
   mode,
   style,
   banner,
@@ -75,41 +112,6 @@ export default function AmbianceCard({
     window.addEventListener("pointermove", onMove);
     return () => window.removeEventListener("pointermove", onMove);
   }, []);
-
-  function formatRelativeTime(date: Date): string {
-    const diffMs = Date.now() - date.getTime();
-    const diffSeconds = Math.floor(diffMs / 1000);
-    const diffMinutes = Math.floor(diffSeconds / 60);
-    const diffHours = Math.floor(diffMinutes / 60);
-    const diffDays = Math.floor(diffHours / 24);
-    const diffWeeks = Math.floor(diffDays / 7);
-    const diffMonths = Math.floor(diffDays / 30);
-    const diffYears = Math.floor(diffDays / 365);
-    if (diffSeconds < 60) return `just now`;
-    if (diffMinutes < 60) return `${diffMinutes} minute${diffMinutes === 1 ? `` : `s`} ago`;
-    if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? `` : `s`} ago`;
-    if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? `` : `s`} ago`;
-    if (diffWeeks < 5) return `${diffWeeks} week${diffWeeks === 1 ? `` : `s`} ago`;
-    if (diffMonths < 12) return `${diffMonths} month${diffMonths === 1 ? `` : `s`} ago`;
-    return `${diffYears} year${diffYears === 1 ? `` : `s`} ago`;
-  }
-
-  // Takes the number of views and abbreviates it
-  function formatViews(views: number): string {
-    if (views < 2) {
-      return `No views`;
-    }
-    if (views < 1000) {
-      return `${views} views`;
-    }
-    if (views < 10000) {
-      return `${Math.floor(views / 100) / 10}k views`;
-    }
-    if (views < 1000000) {
-      return `${Math.floor(views / 1000)}k views`;
-    }
-    return `${Math.floor(views / 100000) / 10}M views`;
-  }
 
   return (
     <div
@@ -181,7 +183,11 @@ export default function AmbianceCard({
                 </div>
                 {datePublished && (
                   <div className={styles.date}>
-                    {datePublished.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    {datePublished.toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
                   </div>
                 )}
               </div>

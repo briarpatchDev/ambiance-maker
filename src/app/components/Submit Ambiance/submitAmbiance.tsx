@@ -1,7 +1,5 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import styles from "./submitAmbiance.module.css";
 import { VideoData } from "@/app/components/Ambiance Maker/ambianceMaker";
 import { convertToTimecode } from "@/app/components/Sliders/Video Range Slider/videoRangeSlider";

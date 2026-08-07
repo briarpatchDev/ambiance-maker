@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import styles from "./ambianceMaker.module.css";
 import classNames from "classnames";
@@ -86,29 +85,27 @@ export default function AmbianceMaker({
   const [userRating, setUserRating] = useState<number | null>(null);
   const [isFavorited, setIsFavorited] = useState(false);
   // Handles when an inputs link / src changes
-  function onLinkChange(link: string, index = 0) {
-    updateObjectArr(setVideoData, index, { [`src`]: link });
-  }
+  const onLinkChange = useCallback((link: string, index = 0) => {
+    updateObjectArr(setVideoData, index, { src: link });
+  }, []);
 
   // Handles when an inputs timeframe changes
-  function onTimeframeChange(start: number, end: number, index = 0) {
-    updateObjectArr(setVideoData, index, {
-      [`startTime`]: start,
-      [`endTime`]: end,
-    });
-  }
+  const onTimeframeChange = useCallback(
+    (start: number, end: number, index = 0) => {
+      updateObjectArr(setVideoData, index, { startTime: start, endTime: end });
+    },
+    [],
+  );
 
   // Handles when an inputs volume changes
-  function onVolumeChange(volume: string, index = 0) {
-    updateObjectArr(setVideoData, index, { [`volume`]: parseInt(volume) });
-  }
+  const onVolumeChange = useCallback((volume: string, index = 0) => {
+    updateObjectArr(setVideoData, index, { volume: parseInt(volume) });
+  }, []);
 
   // Handles when an inputs playback rate changes
-  function onSpeedChange(speed: string, index = 0) {
-    updateObjectArr(setVideoData, index, {
-      [`playbackSpeed`]: parseFloat(speed),
-    });
-  }
+  const onSpeedChange = useCallback((speed: string, index = 0) => {
+    updateObjectArr(setVideoData, index, { playbackSpeed: parseFloat(speed) });
+  }, []);
 
   // Handles per-video play / pause
   function onPlayPause(index = 0) {
@@ -372,10 +369,10 @@ export default function AmbianceMaker({
   }
 
   // Called when submitAmbiance succeeds
-  function handleSubmitSuccess() {
+  const handleSubmitSuccess = useCallback(() => {
     setStatus("submitted");
     setPublishButtonText("Categories");
-  }
+  }, []);
 
   // Withdraws a submitted ambiance back to draft
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
@@ -428,25 +425,27 @@ export default function AmbianceMaker({
     title: ambianceData?.title || "Untitled",
     description: ambianceData?.description || "",
   });
-  function handleInputChange(
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
-  ) {
-    const { name, value } = e.target;
-    setInputData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  }
-  function handleTitleBlur(e: React.FocusEvent<HTMLInputElement>) {
-    if (inputData.title.trim().length === 0) {
-      setInputData((prevData) => ({
-        ...prevData,
-        title: "Untitled",
-      }));
-    }
-  }
+  const handleInputChange = useCallback(
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >,
+    ) => {
+      const { name, value } = e.target;
+      setInputData((prevData) => ({ ...prevData, [name]: value }));
+    },
+    [],
+  );
+  const handleTitleBlur = useCallback(
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      setInputData((prevData) =>
+        prevData.title.trim().length === 0
+          ? { ...prevData, title: "Untitled" }
+          : prevData,
+      );
+    },
+    [],
+  );
 
   const canRate =
     mode === "published" && !!user && user.username !== ambianceData?.author;
@@ -507,9 +506,6 @@ export default function AmbianceMaker({
                     {ambianceData.views.toLocaleString()} views
                   </span>
                 )}
-                {/*(hasDisplayRating || canRate) && (
-                  <span className={styles.separator}>{`●`}</span>
-                )*/}
                 {hasDisplayRating ? (
                   canRate ? (
                     <div className={styles.rating_button_wrapper}>

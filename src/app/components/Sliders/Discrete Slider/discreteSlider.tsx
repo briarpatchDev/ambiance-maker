@@ -1,7 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./discreteSlider.module.css";
 import classNames from "classnames";
 

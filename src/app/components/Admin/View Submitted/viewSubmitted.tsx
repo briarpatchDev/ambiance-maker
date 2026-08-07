@@ -1,19 +1,13 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import Image from "next/image";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import styles from "./viewSubmitted.module.css";
 import classNames from "classnames";
 import { JSX } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import Button from "@/app/components/Buttons/Button Set/button";
 import AmbianceCard from "@/app/components/Ambiance Card/ambianceCard";
 import { AmbianceCardProps } from "@/app/components/Ambiance Card/ambianceCard";
-import { usePathname, useRouter } from "next/navigation";
-
-interface ViewSubmittedProps {
-  style?: React.CSSProperties;
-}
 
 // Pagination view of the submitted ambiances
 export default function ViewSubmitted({
@@ -31,7 +25,6 @@ export default function ViewSubmitted({
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const searchParams = useSearchParams();
   const path = usePathname();
-  const router = useRouter();
 
   useEffect(() => {
     getItems();
@@ -43,7 +36,6 @@ export default function ViewSubmitted({
       const res = await fetch(`/api/admin/submitted?${searchParams}`);
       const data = await res.json();
       if (data.errors) throw new Error();
-      //if (0 == Math.floor(Math.random() * 3)) throw new Error();
       setPage(data.page);
       setNumPages(data.numPages);
       setSort(data.sort);
@@ -186,10 +178,10 @@ export default function ViewSubmitted({
 
     let startPage = Math.max(page - range, 1);
     let endPage = Math.min(page + range, numPages);
-    if (startPage == 1) {
+    if (startPage === 1) {
       endPage = Math.min(1 + 2 * range, numPages);
     }
-    if (endPage == numPages) {
+    if (endPage === numPages) {
       startPage = Math.max(numPages - 2 * range, 1);
     }
     if (page > 1) {
