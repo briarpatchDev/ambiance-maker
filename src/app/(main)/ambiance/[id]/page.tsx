@@ -1,6 +1,6 @@
 import AmbianceMaker from "@/app/components/Ambiance Maker/ambianceMaker";
 import styles from "./page.module.css";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { AmbianceData } from "@/app/components/Ambiance Maker/ambianceMaker";
 import { createClient } from "@/app/lib/supabase/server";
 import { createAdminClient } from "@/app/lib/supabase/admin";
@@ -67,40 +67,39 @@ async function getAmbiance(ambianceId: string): Promise<
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
   const ambianceResult = await getAmbiance(id);
+  if (!ambianceResult) notFound();
 
-  if (ambianceResult) {
-    const [cookieStore, headerStore] = await Promise.all([
-      cookies(),
-      headers(),
-    ]);
-    const admin = createAdminClient();
-    const today = new Date().toISOString().slice(0, 10);
-    const sessionId = cookieStore.get("sessionId")?.value;
-    const ip =
-      headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-    const ua = headerStore.get("user-agent") ?? "unknown";
+  const [cookieStore, headerStore] = await Promise.all([
+    cookies(),
+    headers(),
+  ]);
+  const admin = createAdminClient();
+  const today = new Date().toISOString().slice(0, 10);
+  const sessionId = cookieStore.get("sessionId")?.value;
+  const ip =
+    headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const ua = headerStore.get("user-agent") ?? "unknown";
 
-    (async () => {
-      try {
-        const { data } = sessionId
-          ? await admin
-              .from("sessions")
-              .select("user_id")
-              .eq("session_id", sessionId)
-              .single()
-          : { data: null };
-        const userId = (data as any)?.user_id ?? null;
-        const viewerKey = userId
-          ? `user:${userId}`
-          : `anon:${createHash("sha256").update(`${ip}:${ua}`).digest("hex")}`;
-        await admin.rpc("record_ambiance_view", {
-          p_ambiance_id: id,
-          p_viewer_key: viewerKey,
-          p_date: today,
-        });
-      } catch {}
-    })();
-  }
+  (async () => {
+    try {
+      const { data } = sessionId
+        ? await admin
+            .from("sessions")
+            .select("user_id")
+            .eq("session_id", sessionId)
+            .single()
+        : { data: null };
+      const userId = (data as any)?.user_id ?? null;
+      const viewerKey = userId
+        ? `user:${userId}`
+        : `anon:${createHash("sha256").update(`${ip}:${ua}`).digest("hex")}`;
+      await admin.rpc("record_ambiance_view", {
+        p_ambiance_id: id,
+        p_viewer_key: viewerKey,
+        p_date: today,
+      });
+    } catch {}
+  })();
 
-  return <AmbianceClient ambianceData={ambianceResult?.ambianceData} />;
+  return <AmbianceClient ambianceData={ambianceResult.ambianceData} />;
 }

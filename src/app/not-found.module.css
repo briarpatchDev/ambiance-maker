@@ -104,3 +104,10 @@
     opacity: 1;
   }
 }
+
+/* Removes the detailed page background for high-contrast users */
+@media (prefers-contrast: more) {
+  .page::before {
+    background: rgb(220, 220, 220);
+  }
+}

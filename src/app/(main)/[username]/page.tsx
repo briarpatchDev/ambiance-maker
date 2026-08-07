@@ -1,9 +1,8 @@
-import styles from "./page.module.css";
+import { notFound } from "next/navigation";
 import { createClient } from "@/app/lib/supabase/server";
 import { createAdminClient } from "@/app/lib/supabase/admin";
 import { cookies } from "next/headers";
 import UsernameClient, { InitialOwnerData } from "./client";
-import NotFound from "@/app/components/Errors/Not Found/notFound";
 import { getCurrentUser } from "@/app/lib/auth/getCurrentUser";
 
 interface PageProps {
@@ -117,17 +116,5 @@ export default async function Page({ params }: PageProps) {
       return <UsernameClient username={correctUsername} />;
     }
   }
-  return (
-    <div className={styles.not_found}>
-      <NotFound
-        errorMessage={
-          username.slice(0, 3) === "%40"
-            ? "This creator hasn't made a sound..."
-            : "The sound doesn't reach this far..."
-        }
-        buttonText="Return Home"
-        href="/"
-      />
-    </div>
-  );
+  notFound();
 }

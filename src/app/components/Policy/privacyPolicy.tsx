@@ -152,9 +152,7 @@ export default function PrivacyPolicy() {
 
         <section>
           <h2>Age Requirement</h2>
-          <p>
-            To create an account, you must be at least 13 years of age.
-          </p>
+          <p>To create an account, you must be at least 13 years of age.</p>
         </section>
 
         <section>
@@ -179,12 +177,7 @@ export default function PrivacyPolicy() {
           <h2>Contact</h2>
           <p>
             If you have questions about this Privacy Policy, please contact us
-            at:{" "}
-            <div
-              className={styles.email}
-            >
-              support@ambiancemaker.com
-            </div>
+            at: <span className={styles.email}>support@ambiancemaker.com</span>
           </p>
         </section>
       </div>

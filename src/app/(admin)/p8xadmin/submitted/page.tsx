@@ -7,9 +7,7 @@ export default function Page() {
   const containerRef = useRef<HTMLDivElement>(null);
   return (
     <div className={styles.page} ref={containerRef}>
-      <div className={styles.wrapper}>
-        <ViewSubmitted containerRef={containerRef} />
-      </div>
+      <ViewSubmitted containerRef={containerRef} />
     </div>
   );
 }

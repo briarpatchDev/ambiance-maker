@@ -1,12 +1,11 @@
 import AmbianceMaker from "@/app/components/Ambiance Maker/ambianceMaker";
 import styles from "./page.module.css";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { AmbianceData } from "@/app/components/Ambiance Maker/ambianceMaker";
 import { createClient } from "@/app/lib/supabase/server";
 import { createAdminClient } from "@/app/lib/supabase/admin";
 import { cookies } from "next/headers";
 import { getUserId } from "@/app/lib/auth/getCurrentUser";
-import NotFound from "@/app/components/Errors/Not Found/notFound";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -65,7 +64,9 @@ export default async function Page({ params }: PageProps) {
   }
   const draft = await getDraft(id, userId);
 
-  return draft ? (
+  if (!draft) notFound();
+
+  return (
     <div className={styles.drafts}>
       <div className={styles.ambiance_maker_wrapper}>
         <AmbianceMaker
@@ -75,14 +76,6 @@ export default async function Page({ params }: PageProps) {
           status={draft.status}
         />
       </div>
-    </div>
-  ) : (
-    <div className={styles.not_found}>
-      <NotFound
-        errorMessage="This draft seems to have gone quiet..."
-        buttonText="Back to Drafts"
-        href="/drafts"
-      />
     </div>
   );
 }

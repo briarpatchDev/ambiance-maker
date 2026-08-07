@@ -2,7 +2,7 @@
   display: flex;
   position: relative;
   width: 100vw;
-  height: max-content;
+  min-height: 100vh;
   background:
     linear-gradient(
       210deg,
@@ -52,59 +52,6 @@
   overflow-x: hidden;
 }
 
-.gradient_bottom {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0) 0%,
-    var(--background-color) 100%
-  );
-  position: absolute;
-  height: 4rem;
-  width: 100%;
-  bottom: 0;
-  left: 0;
-}
-
-.gradient_top {
-  background: linear-gradient(
-    0deg,
-    rgba(255, 255, 255, 0) 0%,
-    var(--background-color) 100%
-  );
-  position: absolute;
-  height: 0.8rem;
-  width: 100%;
-  bottom: 0;
-  top: 0;
-}
-
-.gradient_right {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    var(--background-color) 100%
-  );
-  position: absolute;
-  width: 0.6rem;
-  height: 100%;
-  right: 0;
-  top: 0;
-}
-
-.gradient_bottom {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0) 0%,
-    var(--background-color) 95%
-  );
-  position: absolute;
-  height: 2.8rem;
-  width: 100%;
-  bottom: 0;
-  left: 0;
-}
-
-/* Removes the detailed page background for high-contrast users */
 @media (prefers-contrast: more) {
   .page::before {
     background: rgb(220, 220, 220);
