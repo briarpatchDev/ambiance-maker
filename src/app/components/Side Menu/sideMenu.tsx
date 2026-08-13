@@ -132,12 +132,18 @@ export default function SideMenu({
           </Modal>
         )}
         <header className={styles.header}>
-          <Link href="/" onClick={linkClicked}>
+          <Link
+            href="/"
+            onClick={linkClicked}
+            style={{ display: "flex", justifyContent: "center" }}
+          >
             <Image
               height="80"
               width="80"
               alt="Ambiance Maker Logo"
               src="/images/logo.jpg"
+              style={{ borderRadius: "20%", transform: "scale(.8)" }}
+              unoptimized
             />
           </Link>
         </header>

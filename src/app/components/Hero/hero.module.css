@@ -6,7 +6,6 @@
   height: 18rem;
   overflow: hidden;
   transform: translateY(-0.6rem);
-  border-bottom: 0.2rem solid rgba(91, 73, 113, 0.5);
 }
 
 .bg {
@@ -16,10 +15,15 @@
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  filter: brightness(0.5);
   z-index: 0;
-  transform: translateZ(0);
+  transform: translateZ(0) translateY(5%);
   will-change: transform;
+  background-size: unset;
+  margin: 0 auto;
+  max-width: 200rem;
+  background-size: auto 40rem;
+  max-width: unset;
+  margin: unset;
 }
 
 .card {
@@ -27,46 +31,61 @@
   z-index: 1;
   display: flex;
   flex-direction: column;
-  row-gap: 0.4rem;
   margin: 2rem 2.4rem;
-  padding: 2rem 2.8rem 2.4rem;
+  padding: 2rem 2.4rem 2.4rem;
   max-width: 56rem;
-  background: rgba(20, 16, 28, 0.55);
+  background: linear-gradient(
+    160deg,
+    rgba(80, 58, 105, 0.88) 0%,
+    rgba(44, 34, 58, 0.9) 100%
+  );
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-radius: 1.2rem;
-  border: 0.05rem solid rgba(180, 150, 220, 0.2);
-  border-left: 0.3rem solid rgba(160, 120, 210, 0.5);
-  border-top: 0.3rem solid rgba(160, 120, 210, 0.5);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border: 0.05rem solid rgba(180, 150, 220, 0.25);
+  border-top-color: rgba(190, 160, 230, 0.45);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.35),
+    0 16px 48px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .app_name {
-  margin: 0;
+  margin: 0.2rem 0 0;
   font-family: var(--font-display), serif;
   font-optical-sizing: auto;
-  font-size: 3.6rem;
+  font-size: 3.8rem;
   font-weight: 450;
-  color: var(--grey-text);
+  font-style: italic;
+  letter-spacing: 0.02em;
+  color: rgb(240, 240, 240);
   line-height: 1.1;
 }
 
 .tagline {
-  margin: 0;
+  margin-left: 0.1rem;
   font-family: var(--font-display), serif;
-  font-optical-sizing: auto;
   font-size: 2rem;
-  font-weight: 450;
-  color: rgba(210, 190, 240, 0.9);
-  font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: rgb(180, 160, 200);
+  margin-bottom: 0.1rem;
+  display: flex;
+  align-items: center;
+  column-gap: 0.4em;
+  white-space: nowrap;
+}
+
+.circle{
+  font-size: 1.4rem;
 }
 
 .subtitle {
-  margin: 0.2rem 0 0;
+  margin-left: 0.1rem;
   font-family: var(--font-interface), sans-serif;
   font-size: 1.6rem;
-  font-weight: 400;
-  color: rgba(240, 240, 240, 0.9);
+  font-weight: 350;
+  color: rgba(220, 220, 220);
 }
 
 @media (max-width: 720px) {

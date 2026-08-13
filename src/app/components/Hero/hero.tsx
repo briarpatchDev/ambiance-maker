@@ -6,11 +6,11 @@ export default function Hero() {
       <div className={styles.bg} />
       <div className={styles.card}>
         <h1 className={styles.app_name}>Ambiance Maker</h1>
-        <p className={styles.tagline}>Set the mood. Stay in flow.</p>
+        <p className={styles.tagline}>Set the tone <span className={styles.circle}>●</span>  Stay in flow</p>
         <p className={styles.subtitle}>
           Mix YouTube videos into relaxing background soundscapes
         </p>
       </div>
-    </header>
+      <div className={styles.fade} />    </header>
   );
 }

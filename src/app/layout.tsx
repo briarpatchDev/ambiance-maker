@@ -8,6 +8,7 @@ import { Newsreader, Barlow_Condensed, Figtree } from "next/font/google";
 const newsreader = Newsreader({
   subsets: ["latin"],
   variable: "--font-display",
+  style: ["normal", "italic"],
   display: "swap",
 });
 

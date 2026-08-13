@@ -14,17 +14,19 @@ export default function LoginCard({ path = "/" }: LoginCardProps) {
 
   return (
     <div className={styles.card}>
-      <Image
-        src="/images/logo.jpg"
-        alt="Ambiance Maker Logo"
-        width={80}
-        height={80}
-        className={styles.logo}
-      />
-      <h1 className={styles.title}>Ambiance Maker</h1>
+      <div className={styles.banner_wrapper}>
+        <Image
+          src="/images/login-banner.jpg"
+          width={1080}
+          height={360}
+          alt="Ambiance Maker Banner"
+          priority
+        />
+      </div>
       <p className={styles.subtitle}>
-        Create an account to save your mixes, publish them for others to
-        discover, and keep a collection of your favorites.
+        <span>Sign into an account to save your mixes,</span>
+        <span>publish them for others to discover,</span>
+        <span> and keep a collection of your favorites.</span>
       </p>
       <div className={styles.button_wrapper}>
         <Button
@@ -44,7 +46,7 @@ export default function LoginCard({ path = "/" }: LoginCardProps) {
           style={{
             color: "rgb(60,60,60)",
             backgroundColor: "rgb(240,240,240)",
-            padding: "0.6rem 2.4rem",
+            padding: "0.6rem 4.2rem",
             borderRadius: "0.8em",
             margin: "0 1.2rem",
           }}
