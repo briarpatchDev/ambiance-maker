@@ -11,19 +11,37 @@
 .bg {
   position: absolute;
   inset: -2rem 0;
-  background-image: url("/images/hero.jpg");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background-image: url("/images/hero.png");
+  background-size: auto 28rem;
+  background-repeat: repeat-x;
+  background-position-x: 0;
+  background-position-y: center;
   z-index: 0;
-  transform: translateZ(0) translateY(5%);
-  will-change: transform;
-  background-size: unset;
-  margin: 0 auto;
-  max-width: 200rem;
-  background-size: auto 40rem;
-  max-width: unset;
-  margin: unset;
+  animation:
+    bg_move 300s infinite linear,
+    bg_glow 5s linear infinite alternate;
+}
+
+@keyframes bg_move {
+  0% {
+    background-position-x: 0;
+  }
+  100% {
+    /* This is img-width * (background-size / img-height) */
+    background-position-x: -1022px;
+  }
+}
+
+@keyframes bg_glow {
+  0% {
+    filter: brightness(1);
+  }
+  90% {
+    filter: brightness(1);
+  }
+  100% {
+    filter: brightness(1.02);
+  }
 }
 
 .card {
@@ -76,7 +94,7 @@
   white-space: nowrap;
 }
 
-.circle{
+.circle {
   font-size: 1.4rem;
 }
 

@@ -46,7 +46,7 @@ export default function BreadcrumbMenu({
         return index === numLinks && !linkOnLast ? (
           <div
             className={styles.segment}
-            style={{ transform: `translateY(${0.4 * index + 0.1}rem)` }}
+            style={{ transform: `translateY(${0.4 * index}rem)` }}
             key={index}
             aria-current="page"
           >
