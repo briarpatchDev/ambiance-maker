@@ -21,18 +21,17 @@ export const categories: Record<string, any> = {
   Musical: {
     "Lo-fi": {},
     Jazz: {},
-    Electronic: {},
     Instrumental: {},
+    Electronic: {},
     Alternative: {},
     "Other Music": {},
   },
   "White Noise": {},
   Nature: {
     Forest: {},
+    Meadows: {},
     Rivers: {},
-    Ocean: {},
-    Meadow: {},
-    Night: {},
+    Coastline: {},
     Wilderness: {},
   },
   Weather: {
@@ -52,8 +51,8 @@ export const categories: Record<string, any> = {
   Urban: {
     "City Streets": {},
     Suburbia: {},
-    Industrial: {},
     Transit: {},
+    Industrial: {},
   },
   World: {},
   Activities: {},
@@ -70,7 +69,8 @@ export type CategoryMeta = {
 };
 
 // IDs are permanent — never reuse or change an ID.
-// Top-level categories are spaced by 100s, subcategories increment within.
+// Top-level categories are spaced by 100s, subcategories are spaced by 10s within each century (e.g. 110, 120, 130...).
+// This leaves room to insert new subcategories between existing ones (e.g. 115, 125) without breaking order.
 export const categoryMeta: Record<string, CategoryMeta> = {
   // Moods (100s)
   Moods: {
@@ -81,55 +81,55 @@ export const categoryMeta: Record<string, CategoryMeta> = {
     image: "/images/categories/horror.jpg",
   },
   Relaxing: {
-    id: 101,
+    id: 110,
     description: "Comfortable, gentle sounds for unwinding and decompressing.",
     tags: ["tranquil", "serene", "gentle"],
     image: "/images/categories/horror.jpg",
   },
   Upbeat: {
-    id: 102,
+    id: 120,
     description:
       "Lively, energetic sounds that keep momentum and lift your mood.",
     tags: ["energetic", "bright", "motivated"],
     image: "/images/categories/horror.jpg",
   },
   Zen: {
-    id: 103,
+    id: 130,
     description:
       "Intentionally still and focused ambiance for meditation and deep work.",
     tags: ["meditative", "mindful", "contemplative"],
     image: "/images/categories/horror.jpg",
   },
   Melancholic: {
-    id: 104,
+    id: 140,
     description:
       "Bittersweet, reflective sounds that sit comfortably with quiet sadness.",
     tags: ["somber", "wistful", "introspective"],
     image: "/images/categories/horror.jpg",
   },
   Chaotic: {
-    id: 105,
+    id: 150,
     description:
       "A wash of competing sounds pulling in every direction. The kind of noise certain minds need to settle in and work.",
     tags: ["frenetic", "layered", "cacophony"],
     image: "/images/categories/horror.jpg",
   },
   Dark: {
-    id: 106,
+    id: 160,
     description:
       "Weighty, oppressive atmospheres for those drawn to the darker side of sound.",
     tags: ["ominous", "haunting", "foreboding"],
     image: "/images/categories/horror.jpg",
   },
   Liminal: {
-    id: 107,
+    id: 170,
     description:
       "Sounds from places that feel slightly out of time. Empty and familiar, but somehow not quite right.",
     tags: ["adrift", "vacant", "nowhere"],
     image: "/images/categories/horror.jpg",
   },
   "Other Moods": {
-    id: 108,
+    id: 180,
     description:
       "Moods without a named category. Feelings that sit between the others, or outside them entirely.",
     tags: ["nostalgic", "emotional", "yearning"],
@@ -141,53 +141,53 @@ export const categoryMeta: Record<string, CategoryMeta> = {
     id: 200,
     description:
       "Indoor settings ranging from cozy reading nooks to functional workspaces.",
-    tags: ["library", "cafe", "tavern", "lounge", "manor"],
+    tags: ["cafe", "library", "office", "lounge", "manor"],
     image: "/images/categories/horror.jpg",
   },
   Cafe: {
-    id: 201,
+    id: 210,
     description:
       "The warm clatter of a coffee shop. Espresso machines, soft conversation, and background music.",
-    tags: ["espresso", "morning", "chatter"],
+    tags: ["espresso", "steam", "morning"],
     image: "/images/categories/horror.jpg",
   },
   Library: {
-    id: 202,
+    id: 220,
     description:
       "The rustle of pages, distant footsteps on hardwood, and the focused hush of a reading room.",
-    tags: ["studious", "quiet", "literary"],
+    tags: ["studious", "quiet", "tomes"],
     image: "/images/categories/horror.jpg",
   },
   Office: {
-    id: 203,
+    id: 230,
     description:
-      "The sounds of getting work done. Keyboards, computer hum, and the low-level background that helps you focus.",
+      "The sounds of getting work done. Keyboards, computer hum, and the low level background that helps you focus.",
     tags: ["productivity", "focus"],
     image: "/images/categories/horror.jpg",
   },
   Lounge: {
-    id: 204,
+    id: 240,
     description:
       "Dim lighting, cocktails, and the unhurried murmur of sophisticated company.",
     tags: ["mellow", "refined"],
     image: "/images/categories/horror.jpg",
   },
   Tavern: {
-    id: 205,
+    id: 250,
     description:
       "Old drinking halls and inns filled with chatter, clinking glasses, and fireside warmth.",
     tags: ["medieval", "rustic", "lively"],
     image: "/images/categories/horror.jpg",
   },
   Manor: {
-    id: 206,
+    id: 260,
     description:
-      "Old castles and manor houses. Crackling fires, ticking clocks, stone corridors, and rain-lashed windows.",
+      "Old castles and manor houses. Crackling fires, ticking clocks, stone corridors, and rain lashed windows.",
     tags: ["solitary", "hushed", "gothic"],
     image: "/images/categories/horror.jpg",
   },
   "Other Rooms": {
-    id: 207,
+    id: 270,
     description:
       "Indoor spaces that aren't quite like the others. Hallways, quiet corners, and personal spaces.",
     tags: ["interior", "secluded", "personal"],
@@ -198,50 +198,50 @@ export const categoryMeta: Record<string, CategoryMeta> = {
   Musical: {
     id: 300,
     description:
-      "Ambiances where music takes center stage. Mellow study beats, live instruments, and synthesized landscapes.",
+      "Mellow study beats, live instruments, and synthesized landscapes.",
     tags: ["melodic", "rhythmic", "immersive"],
     image: "/images/categories/horror.jpg",
   },
   "Lo-fi": {
-    id: 301,
+    id: 310,
     description:
       "Beats that stay in the background and let you think. Unhurried and slightly muted, built for long sessions of focused work.",
     tags: ["chill", "mellow", "understated"],
     image: "/images/categories/horror.jpg",
   },
   Jazz: {
-    id: 302,
+    id: 320,
     description:
       "Upright bass, brushed drums, and saxophone. The calm sophistication of a live performance late at night.",
     tags: ["sophisticated", "smooth", "late night"],
     image: "/images/categories/horror.jpg",
   },
-  Electronic: {
-    id: 303,
-    description:
-      "Synthesizers, pulsing beats, and layered textures. From lo-fi retrofuture to full electronic production.",
-    tags: ["synth", "vaporwave", "hypnotic"],
-    image: "/images/categories/horror.jpg",
-  },
   Instrumental: {
-    id: 304,
+    id: 330,
     description:
       "Solo instruments and ensembles. Piano, strings, and music built around the instrument alone.",
     tags: ["piano", "acoustic", "orchestral"],
     image: "/images/categories/horror.jpg",
   },
-  Alternative: {
-    id: 305,
+  Electronic: {
+    id: 340,
     description:
-      "Indie, alt-rock, and the harder sounds on the edges. Guitar driven music with attitude to match.",
-    tags: ["indie", "alt-rock", "metal"],
+      "Synthesizers, pulsing beats, and layered textures. From lo-fi retrofuture to full electronic production.",
+    tags: ["synth", "vaporwave", "hypnotic"],
+    image: "/images/categories/horror.jpg",
+  },
+  Alternative: {
+    id: 350,
+    description:
+      "Quiet and textured to raw and loud. Indie, shoegaze, and the harder sounds.",
+    tags: ["post-rock", "dream pop", "grunge", "punk"],
     image: "/images/categories/horror.jpg",
   },
   "Other Music": {
-    id: 306,
+    id: 360,
     description:
-      "The genres that don't fit anywhere else. Soul, country, folk, pop, and beyond.",
-    tags: ["country", "soul", "folk", "pop"],
+      "Country, folk, soul, pop, or anything else that didn't get its own category.",
+    tags: ["timeless", "traditional", "modern"],
     image: "/images/categories/horror.jpg",
   },
 
@@ -259,49 +259,42 @@ export const categoryMeta: Record<string, CategoryMeta> = {
     id: 500,
     description:
       "Wildlife, water, and open land. The sounds of the natural world at its most uninterrupted.",
-    tags: ["forest", "meadows", "rivers", "ocean"],
+    tags: ["forest", "meadows", "rivers", "coastline"],
     image: "/images/categories/horror.jpg",
   },
   Forest: {
-    id: 501,
+    id: 510,
     description:
-      "The layered sound of old growth. Rustling canopy, distant calls, creaking bark, and the deep quiet within.",
-    tags: ["woodland", "birdsong", "trees"],
+      "The layered sound of old growth, temperate or tropical. Rustling canopy, distant calls, and the deep quiet within.",
+    tags: ["woodland", "jungle", "birdsong"],
     image: "/images/categories/horror.jpg",
   },
   Meadows: {
-    id: 502,
+    id: 520,
     description:
       "Open fields and gentle countryside. Soft wind, animals, insects, and the unhurried pace of open land.",
-    tags: ["grassland", "countryside", "savannah"],
+    tags: ["grassland", "savannah", "countryside"],
     image: "/images/categories/horror.jpg",
   },
   Rivers: {
-    id: 503,
+    id: 530,
     description:
       "The sound of moving freshwater, from gentle murmurs to the roar of a cascade.",
-    tags: ["stream", "waterfall", "brook"],
+    tags: ["watefalls", "brooks", "marshes"],
     image: "/images/categories/horror.jpg",
   },
-  Ocean: {
-    id: 504,
+  Coastline: {
+    id: 540,
     description:
-      "Rolling surf, distant gulls, salt air, and the vast expanse of the open sea.",
-    tags: ["waves", "coastal", "sea breeze"],
-    image: "/images/categories/horror.jpg",
-  },
-  Night: {
-    id: 505,
-    description:
-      "The world after sundown. The hum of insects, distant calls, and the cooling quiet of the small hours.",
-    tags: ["nocturnal", "crickets", "owls"],
+      "Waves breaking on rock and sand, salt air, and the call of seagulls. From a quiet cove to the open sea.",
+    tags: ["waves", "shore", "beach"],
     image: "/images/categories/horror.jpg",
   },
   Wilderness: {
-    id: 506,
+    id: 550,
     description:
       "Remote, extreme environments far from the familiar. Vast, sparse, and indifferent.",
-    tags: ["desert", "mountains", "tundra"],
+    tags: ["desert", "mountains", "tundra", "caves"],
     image: "/images/categories/horror.jpg",
   },
 
@@ -314,21 +307,21 @@ export const categoryMeta: Record<string, CategoryMeta> = {
     image: "/images/categories/horror.jpg",
   },
   Rain: {
-    id: 601,
+    id: 610,
     description:
       "A soft patter on glass, a steady rainfall, or the full weight of a thunderstorm.",
     tags: ["drizzle", "storm", "thunder"],
     image: "/images/categories/horror.jpg",
   },
   Wind: {
-    id: 602,
+    id: 620,
     description:
       "Air in motion. From a gentle rustle through leaves to a howling gale.",
     tags: ["gust", "breeze", "howling"],
     image: "/images/categories/horror.jpg",
   },
   Snow: {
-    id: 603,
+    id: 630,
     description:
       "The world under snowfall. Muffled sounds, crunching underfoot, and a rare, deep silence.",
     tags: ["blizzard", "winter", "frost"],
@@ -343,49 +336,49 @@ export const categoryMeta: Record<string, CategoryMeta> = {
     image: "/images/categories/horror.jpg",
   },
   Spring: {
-    id: 701,
+    id: 710,
     description:
-      "Fresh breezes, returning birdsong, soft rain, and the gentle thaw of the world waking up.",
+      "Fresh breezes, returning birdsong, and soft rain after a long winter.",
     tags: ["renewal", "awakening"],
     image: "/images/categories/horror.jpg",
   },
   Summer: {
-    id: 702,
+    id: 720,
     description:
-      "Sun-soaked days, distant surf, and the long golden light of evenings that don't want to end.",
-    tags: ["sunny", "cookout", "cicadas"],
+      "Hot afternoons, insects at dusk, and evenings that don't want to end.",
+    tags: ["sunny", "porch", "cicadas"],
     image: "/images/categories/horror.jpg",
   },
   Autumn: {
-    id: 703,
+    id: 730,
     description:
-      "Crisp air, falling leaves, and wood smoke in a forest gone gold and red.",
+      "Crisp air, falling leaves, and wood smoke in a forest turning amber and crimson.",
     tags: ["leaves", "harvest", "bonfire"],
     image: "/images/categories/horror.jpg",
   },
   Winter: {
-    id: 704,
+    id: 740,
     description:
       "Frozen landscapes and the deep quiet of snow. Cold air, bare trees, and long nights.",
     tags: ["cold", "snowfall", "stillness"],
     image: "/images/categories/horror.jpg",
   },
   Halloween: {
-    id: 705,
+    id: 750,
     description:
-      "Creaking doors, distant howls, jack-o-lanterns, and the unsettling edge of the year's darkest night.",
+      "Creaking doors, distant howls, jack-o-lanterns. The unsettling edge of the year's darkest night.",
     tags: ["spooky", "haunted", "macabre"],
     image: "/images/categories/horror.jpg",
   },
   Christmas: {
-    id: 706,
+    id: 760,
     description:
       "Crackling fires, bells, and carols in the air. December at its most familiar.",
-    tags: ["festive", "carols", "winter warmth"],
+    tags: ["festive", "carols", "yuletide"],
     image: "/images/categories/horror.jpg",
   },
   "Other Holidays": {
-    id: 707,
+    id: 770,
     description:
       "Harvest festivals, midsummer celebrations, and all the seasonal holidays that don't have their own category.",
     tags: ["fireworks", "festivals", "celebration"],
@@ -401,31 +394,31 @@ export const categoryMeta: Record<string, CategoryMeta> = {
     image: "/images/categories/horror.jpg",
   },
   "City Streets": {
-    id: 801,
+    id: 810,
     description:
       "The full intensity of city life. Sirens, street vendors, bus engines, and the constant motion of people.",
     tags: ["traffic", "crowds", "downtown"],
     image: "/images/categories/horror.jpg",
   },
   Suburbia: {
-    id: 802,
+    id: 820,
     description:
       "The unhurried sounds of residential life. Lawn mowers, dogs barking, distant voices, and occasional traffic.",
     tags: ["neighborhood", "residential", "quiet"],
     image: "/images/categories/horror.jpg",
   },
-  Industrial: {
-    id: 803,
-    description:
-      "The rhythmic noise of large-scale production. Metalwork, steam, equipment, and the hum of infrastructure.",
-    tags: ["machinery", "factory"],
-    image: "/images/categories/horror.jpg",
-  },
   Transit: {
-    id: 804,
+    id: 830,
     description:
       "The sounds of moving through the world. Rumbling carriages, echoing platforms, and the rhythm of a commute.",
     tags: ["train", "bus", "commute"],
+    image: "/images/categories/horror.jpg",
+  },
+  Industrial: {
+    id: 840,
+    description:
+      "The rhythmic noise of large-scale production. Metalwork, steam, equipment, and the hum of infrastructure.",
+    tags: ["machinery", "factory"],
     image: "/images/categories/horror.jpg",
   },
 
@@ -433,8 +426,8 @@ export const categoryMeta: Record<string, CategoryMeta> = {
   World: {
     id: 900,
     description:
-      "Sounds tied to specific cultures, regions, and historical periods. Ambiance that could only come from one particular corner of the globe.",
-    tags: ["cultural", "historical"],
+      "Ambiance only heard in one particular corner of the globe. Sounds tied to specific cultures, regions, or historical periods.",
+    tags: ["cultural", "regional"],
     image: "/images/categories/horror.jpg",
   },
 
@@ -470,7 +463,7 @@ export const categoryMeta: Record<string, CategoryMeta> = {
     id: 1300,
     description:
       "Ambiances that don't fit anywhere else. Some are unconventional by design, others simply resist categorization.",
-    tags: ["unconventional", "unique"],
+    tags: ["unique", "unconventional"],
     image: "/images/categories/horror.jpg",
   },
 };

@@ -33,17 +33,17 @@ export default function CategoryCard({
       aria-label={`Go to the ${title} category.`}
     >
       <h1>{title}</h1>
+      <p className={styles.description}>{description}</p>
       <div className={styles.tags}>
         {tags.map((tag, index) => {
           return (
             <div className={styles.tag} key={`${tag}-${index}`}>
-              <div className={styles.tag_bullet}></div>
+              {index > 0 && <div className={styles.tag_bullet}></div>}
               {tag}
             </div>
           );
         })}
       </div>
-      <p className={styles.description}>{description}</p>
       <div className={styles.image_wrapper}>
         <Image
           className={styles.image}

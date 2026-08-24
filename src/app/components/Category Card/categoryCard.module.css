@@ -11,13 +11,17 @@
       rgba(57, 50, 57, 0.6) 100%
     ),
     linear-gradient(180deg, rgb(50, 50, 50) 0%, rgb(57, 50, 57) 100%);
-  padding: 0.6rem 0.6rem 0.2rem;
   color: var(--grey-text);
   border-radius: 1.2rem;
   border-bottom-left-radius: 0.6rem;
+  border-top-left-radius: 0rem;
   border: 0.05rem solid rgb(30, 0, 30);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 3px 3px rgba(0, 0, 0, 0.5);
   user-select: none;
   transition: all 0.1s;
+  padding-top: 0.6rem;
 }
 
 .category:hover {
@@ -27,7 +31,7 @@
 
 .category:hover .image {
   transform: scale(1.1);
-  filter: blur(0) brightness(1.1);
+  filter: brightness(1.1);
   transition:
     transform 6s,
     filter 2s;
@@ -40,43 +44,47 @@
 }
 
 .category h1 {
-  padding: 0.4rem 0.8rem 0rem;
+  padding: 0.4rem 1rem 0rem;
   margin: 0;
-  font-size: 3.2rem;
+  font-size: 3.4rem;
+  letter-spacing: 0.05em;
+}
+
+.description {
+  font-size: 1.7rem;
+  padding: 0.25rem 1.6rem 1rem;
 }
 
 .tags {
   display: flex;
   flex-wrap: wrap;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-family: var(--font-structural), sans-serif;
   font-weight: 600;
-  color: rgb(170, 170, 170);
-  padding: 0 0.6rem;
+  color: rgb(190, 190, 200);
+
+  padding: 0 0.6rem 0.4rem 1rem;
   column-gap: 0.6rem;
+  letter-spacing: 0.04em;
+  justify-content: center;
 }
 
 .tag {
   display: flex;
   align-items: center;
-  column-gap: 0.4rem;
+  column-gap: 0.6rem;
 }
 
 .tag_bullet {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  height: 0.6rem;
-  width: 0.6rem;
+  height: 0.8rem;
+  width: 0.8rem;
   border-radius: 50%;
-  background-color: rgb(170, 170, 170);
+  background-color: rgb(180, 160, 200);
   opacity: 0.9;
   transform: translateY(0.15rem);
-}
-
-.description {
-  font-size: 1.6rem;
-  padding: 0.8rem 1.6rem 1.2rem;
 }
 
 .image_wrapper {
@@ -87,23 +95,17 @@
   padding: 0;
   position: relative;
   overflow: hidden;
-  filter: blur(1.05);
   border-radius: 0.4rem;
-  -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 30%);
-  mask-image: linear-gradient(
-    180deg,
-    transparent 0%,
-    black 30%,
-    black 90%,
-    transparent 100%
-  );
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 17%);
+  mask-image: linear-gradient(180deg, transparent 0%, black 17%);
+  height: 20rem;
 }
 
 .image {
   width: 100%;
   height: auto;
   object-fit: cover;
-  filter: blur(1) brightness(1);
+  filter: brightness(1);
   transform: scale(1);
   transition: all 2s;
 }
