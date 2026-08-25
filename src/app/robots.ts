@@ -6,18 +6,16 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         disallow: [
-          "/account",
-          `/login`,
-          "/signup",
-          "/reset-password",
-          "/change-password",
-          "/verify",
-          "/account-deleted",
+          "/login",
+          "/drafts",
+          "/favorites",
+          "/settings",
+          "/published",
+          "/share",
           "/api/",
-          "/dev/",
         ],
       },
     ],
-    sitemap: "https://website.com/sitemap.xml",
+    sitemap: "https://ambiancemaker.com/sitemap.xml",
   };
 }
