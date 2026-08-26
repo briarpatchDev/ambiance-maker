@@ -467,3 +467,39 @@ export const categoryMeta: Record<string, CategoryMeta> = {
     image: "/images/categories/horror.jpg",
   },
 };
+
+function nameToSlug(name: string): string {
+  return name.toLowerCase().replace(/ /g, "-");
+}
+
+function findCategoryPath(
+  name: string,
+  tree: Record<string, any>,
+  prefix: string,
+): string | undefined {
+  for (const key of Object.keys(tree)) {
+    const path = `${prefix}/${nameToSlug(key)}`;
+    if (key === name) return path;
+    const subtree = tree[key];
+    if (subtree && Object.keys(subtree).length > 0) {
+      const found = findCategoryPath(name, subtree, path);
+      if (found) return found;
+    }
+  }
+  return undefined;
+}
+
+function getCategoryHref(name: string): string {
+  return (
+    findCategoryPath(name, categories, "/categories") ??
+    `/categories/${nameToSlug(name)}`
+  );
+}
+
+export const categoryById: Record<number, { name: string; href: string }> =
+  Object.fromEntries(
+    Object.entries(categoryMeta).map(([name, meta]) => [
+      meta.id,
+      { name, href: getCategoryHref(name) },
+    ]),
+  );

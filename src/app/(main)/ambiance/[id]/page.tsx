@@ -7,6 +7,7 @@ import { createAdminClient } from "@/app/lib/supabase/admin";
 import { cookies, headers } from "next/headers";
 import { createHash } from "crypto";
 import AmbianceClient from "./client";
+import { categoryById } from "@/app/lib/categories";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -59,6 +60,7 @@ async function getAmbiance(ambianceId: string): Promise<
       datePublished: ambiance.published_at,
       ratingTotal: ambiance.rating_score ?? undefined,
       ratingCount: ambiance.rating_count,
+      category: categoryById[ambiance.category_id] ?? undefined,
       videoData: videoData,
     },
   };

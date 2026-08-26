@@ -51,6 +51,7 @@ export interface AmbianceData {
   description?: string;
   thumbnail?: string;
   status?: "draft" | "submitted" | "published";
+  category?: { name: string; href: string };
   videoData: VideoData[];
 }
 
@@ -490,6 +491,17 @@ export default function AmbianceMaker({
             </div>
             {ambianceData.author && (
               <div className={styles.author_wrapper}>
+                {ambianceData.category && (
+                  <>
+                    <div className={styles.in}>{`in`}</div>
+                    <Link
+                      href={ambianceData.category.href}
+                      className={styles.category}
+                    >
+                      {ambianceData.category.name}
+                    </Link>
+                  </>
+                )}
                 <div className={styles.by}>{`by`}</div>
                 <Link
                   href={`/@${ambianceData.author}`}

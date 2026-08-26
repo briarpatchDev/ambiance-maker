@@ -80,19 +80,25 @@
   margin-top: 0.2rem;
 }
 
+.in,
 .by {
-  padding-left: 0.4rem;
   font-size: 1.6rem;
   opacity: 0.8;
 }
 
-.author {
+.in {
+  padding-left: 0.4rem;
+}
+
+.author,
+.category {
   font-size: 1.9rem;
   font-weight: 400;
   font-family: var(--font-interface);
 }
 
-.author:hover {
+.author:hover,
+.category:hover {
   color: white;
   text-underline-offset: 0.3rem;
   text-decoration: underline;
