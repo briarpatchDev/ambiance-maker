@@ -58,16 +58,13 @@
 }
 
 .carousel_controls button:focus-visible {
-  outline: var(--focusOutline);
+  outline: var(--focus-outline);
 }
 
 .carousel_controls button svg {
   fill: var(--grey-text);
   height: 50%;
   width: auto;
-}
-
-button.back {
 }
 
 button.back svg {

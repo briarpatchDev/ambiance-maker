@@ -28,6 +28,8 @@ export async function GET(req: NextRequest) {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let query: any = null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let countQuery: any = null;
 
     if (collection.startsWith("user_")) {
       // --- User collection ---
@@ -49,6 +51,12 @@ export async function GET(req: NextRequest) {
         .select(AMBIANCE_SELECT_FIELDS, { count: "exact" })
         .eq("user_id", userData.id)
         .eq("status", "published");
+
+      countQuery = supabase
+        .from("ambiances")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userData.id)
+        .eq("status", "published");
     } else {
       // --- Category collection ---
       const categoryId = Number(collection);
@@ -66,9 +74,15 @@ export async function GET(req: NextRequest) {
         })
         .eq("category_id", categoryId)
         .eq("status", "published");
+
+      countQuery = supabase
+        .from("ambiances")
+        .select("id", { count: "exact", head: true })
+        .eq("category_id", categoryId)
+        .eq("status", "published");
     }
 
-    // Apply sort
+    // Apply sort to data query only (sort does not affect count)
     switch (sort) {
       case "popular":
         query = query.order("views", { ascending: false });
@@ -78,18 +92,18 @@ export async function GET(req: NextRequest) {
         break;
       case "best":
         // Bayesian score DESC; rating_score is NULL for count < 8 → sorts to end automatically
-        query = query.order("rating_score", { ascending: false, nullsFirst: false });
+        query = query.order("rating_score", {
+          ascending: false,
+          nullsFirst: false,
+        });
         break;
       default: // newest
         query = query.order("published_at", { ascending: false });
     }
 
-    // Get total count first (HEAD request — no rows transferred) so we can
-    // clamp the page before fetching, mirroring the original single-pass logic.
-    const { count: totalCount, error: countError } = await query.select(
-      undefined,
-      { count: "exact", head: true },
-    );
+    // Get total count via a separate HEAD query so the data query's select
+    // (which includes the users join) is not mutated.
+    const { count: totalCount, error: countError } = await countQuery;
 
     if (countError) {
       console.error("Pagination count error:", countError);

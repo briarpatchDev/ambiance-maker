@@ -25,7 +25,7 @@
   font-family: var(--font-structural), sans-serif;
   font-size: 3rem;
   font-weight: 700;
-  padding: 0.8rem 1.6rem;
+  padding: 0.8rem 1.6rem 1.2rem;
   border-radius: 1.6rem;
   background-color: rgb(50, 50, 50);
 }
@@ -59,6 +59,7 @@
 .options_container {
   display: flex;
   flex-direction: column;
+  border-radius: 1.2rem;
 }
 
 .options_container a {
@@ -78,7 +79,6 @@
 .size_option,
 .corner_effect {
   padding: 0.6rem;
-  border: 0.1rem solid rgb(50, 50, 50);
   width: 8.2rem;
   height: 3.2rem;
   display: flex;
@@ -86,22 +86,68 @@
   align-items: center;
   background-color: rgb(50, 50, 50);
   z-index: 1;
+  padding: 0rem;
+  border: 0.1rem solid rgb(50, 50, 50);
+}
+
+.sort_option {
+  border-bottom-width: 0.05rem;
+}
+
+.size_option {
+  border-top-width: 0.05rem;
 }
 
 .sort_option.active,
 .size_option.active {
+  background-color: rgb(50, 50, 50);
+}
+
+.option_content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.active .option_content {
   background-color: rgb(120, 120, 120);
-  border: 0.1rem solid rgb(50, 50, 50);
-  border-right: none;
+  border-radius: 0.6rem;
+}
+
+.sort_option.active .option_content {
+  border-top-left-radius: 0rem;
+}
+
+.sort_option.active:first-child .option_content {
+  border-top-left-radius: 0.8rem;
+  border-top-right-radius: 0rem;
+  border-bottom-left-radius: 0rem;
+}
+
+.size_option.active:first-child .option_content {
+  border-top-left-radius: 0rem;
+  border-bottom-left-radius: 1.2rem;
+}
+
+.sort_option.active:last-child .option_content {
+  border-top-right-radius: 1.2rem;
+  border-bottom-right-radius: 0rem;
+}
+
+.size_option.active:last-child .option_content {
+  border-top-right-radius: 0rem;
+  border-bottom-right-radius: 1.2rem;
 }
 
 .sort_option.active {
-  border-bottom: none;
+  border-bottom-color: transparent;
 }
 
 .sort_option.active:last-child,
 .size_option.active:last-child {
-  border-right: 0.1rem solid rgb(50, 50, 50);
+  border-right-color: rgb(50, 50, 50);
 }
 
 .sort_option:first-child {
@@ -109,15 +155,15 @@
 }
 
 .size_option:first-child {
-  border-bottom-left-radius: 0.8rem;
+  border-bottom-left-radius: 1.2rem;
 }
 
 .sort_option:last-child {
-  border-top-right-radius: 0.8rem;
+  border-top-right-radius: 1.2rem;
 }
 
 .size_option:last-child {
-  border-bottom-right-radius: 0.8rem;
+  border-bottom-right-radius: 1.2rem;
 }
 
 .error_container {
@@ -185,6 +231,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: start;
+  margin-top: 1.8rem;
 }
 
 .entries_wrapper.mobile {

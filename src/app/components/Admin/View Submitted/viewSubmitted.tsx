@@ -95,7 +95,7 @@ export default function ViewSubmitted({
           })}
           aria-label={`Sort by ${sortOption}`}
         >
-          {text}
+          <div className={styles.option_content}>{text}</div>
         </Link>
       );
     };
@@ -131,7 +131,7 @@ export default function ViewSubmitted({
           })}
           aria-label={`Change page size to ${newPageSize} items`}
         >
-          {text}
+          <div className={styles.option_content}>{text}</div>
         </Link>
       );
     };

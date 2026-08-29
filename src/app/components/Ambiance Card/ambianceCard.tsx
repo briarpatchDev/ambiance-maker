@@ -54,7 +54,7 @@ function formatRelativeTime(date: Date): string {
   const diffWeeks = Math.floor(diffDays / 7);
   const diffMonths = Math.floor(diffDays / 30);
   const diffYears = Math.floor(diffDays / 365);
-  if (diffSeconds < 60) return `just now`;
+  if (diffSeconds < 60) return `Just now`;
   if (diffMinutes < 60)
     return `${diffMinutes} minute${diffMinutes === 1 ? `` : `s`} ago`;
   if (diffHours < 24)

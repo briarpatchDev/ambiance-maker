@@ -45,6 +45,7 @@
   user-select: none;
   overflow: hidden;
   pointer-events: none;
+  box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.4);
 }
 
 .ribbon {
@@ -93,15 +94,15 @@
   filter: brightness(1);
   transform: scale(1);
   transition:
-    filter 0.15s,
+    filter 0.6s,
     transform 0.6s;
 }
 
 .card_wrapper:hover .card img {
-  filter: brightness(1.16);
+  filter: brightness(1.1);
   transform: scale(1.05);
   transition:
-    filter 0.3s,
+    filter 1.8s,
     transform 1.8s;
 }
 
@@ -161,6 +162,11 @@
   font-size: 1.4rem;
   font-weight: 300;
   font-family: var(--font-interface);
+  color: rgb(220, 220, 220);
+}
+
+.card:hover .meta {
+  color: var(--dark-grey);
 }
 
 .meta_row_left {
@@ -183,7 +189,7 @@
   position: relative;
   z-index: 2;
   pointer-events: auto;
-  color: inherit;
+  color: rgba(220, 220, 220);
   text-decoration: none;
   cursor: pointer;
   text-underline-offset: 0.2rem;
@@ -194,7 +200,7 @@
 }
 
 .author_link:hover {
-  color: rgb(255, 255, 255);
+  color: var(--dark-grey);
   text-decoration: underline;
   text-decoration-thickness: 0.1rem;
 }

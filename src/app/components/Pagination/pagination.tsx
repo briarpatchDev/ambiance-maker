@@ -4,7 +4,9 @@ import Link from "next/link";
 import styles from "./pagination.module.css";
 import classNames from "classnames";
 import { useSearchParams } from "next/navigation";
-import AmbianceCard, { AmbianceCardProps } from "@/app/components/Ambiance Card/ambianceCard";
+import AmbianceCard, {
+  AmbianceCardProps,
+} from "@/app/components/Ambiance Card/ambianceCard";
 import ExpectedError from "@/app/components/Errors/Expected Error/errorExpected";
 
 export default function Pagination({
@@ -124,7 +126,7 @@ export default function Pagination({
           })}
           aria-label={`Sort by ${sortOption}`}
         >
-          {text}
+          <div className={styles.option_content}>{text}</div>
         </Link>
       );
     };
@@ -160,7 +162,7 @@ export default function Pagination({
           })}
           aria-label={`Change page size to ${newPageSize} items`}
         >
-          {text}
+          <div className={styles.option_content}>{text}</div>
         </Link>
       );
     };

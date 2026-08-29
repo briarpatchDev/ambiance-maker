@@ -64,7 +64,7 @@ export default function ViewReports() {
           })}
           aria-label={`Sort by ${sortOption}`}
         >
-          {text}
+          <div className={styles.option_content}>{text}</div>
         </Link>
       );
     };
@@ -92,7 +92,7 @@ export default function ViewReports() {
           })}
           aria-label={`Change page size to ${newPageSize} items`}
         >
-          {text}
+          <div className={styles.option_content}>{text}</div>
         </Link>
       );
     };
