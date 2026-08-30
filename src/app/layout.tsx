@@ -31,11 +31,16 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ambiancemaker.com"),
-  title: "Ambiance Maker",
-  description: `This description will appear in search results`,
+  title: {
+    template: "%s | Ambiance Maker",
+    default: "Ambiance Maker",
+  },
+  description:
+    "Mix YouTube audio into immersive soundscapes. Layer up to six tracks with custom loop points to make your perfect ambiance.",
   openGraph: {
     title: "Ambiance Maker",
-    description: "The opengraph description appears below the image and title",
+    description:
+      "Layer up to six YouTube audio tracks with custom loop points. Make your perfect ambiance, then share it with the world.",
     url: "https://ambiancemaker.com",
     images: ["/og-image.png"],
   },

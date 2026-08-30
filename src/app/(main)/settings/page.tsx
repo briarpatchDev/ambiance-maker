@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { createAdminClient } from "@/app/lib/supabase/admin";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Settings from "@/app/components/Settings/settings";
 import styles from "./page.module.css";
+
+export const metadata: Metadata = {
+  title: "Settings",
+  robots: { index: false },
+};
 
 async function getSettingsData() {
   const cookieStore = await cookies();

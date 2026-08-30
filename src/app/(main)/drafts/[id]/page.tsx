@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { cache } from "react";
 import AmbianceMaker from "@/app/components/Ambiance Maker/ambianceMaker";
 import styles from "./page.module.css";
 import { redirect, notFound } from "next/navigation";
@@ -11,13 +13,13 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-async function getDraft(
+const getDraft = cache(async (
   ambianceId: string,
   userId: string,
 ): Promise<{
   ambianceData: AmbianceData;
   status: "draft" | "submitted";
-} | null> {
+} | null> => {
   const isDev = process.env.NODE_ENV === "development";
   const supabase = isDev ? createAdminClient() : createClient(cookies());
 
@@ -53,6 +55,18 @@ async function getDraft(
       videoData,
     },
     status: ambiance.status as "draft" | "submitted",
+  };
+});
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const userId = await getUserId();
+  if (!userId) return {};
+  const draft = await getDraft(id, userId);
+  if (!draft) return {};
+  return {
+    title: { absolute: `${draft.ambianceData.title} | Drafts` },
+    robots: { index: false },
   };
 }
 

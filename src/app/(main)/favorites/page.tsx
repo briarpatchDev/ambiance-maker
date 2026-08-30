@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { createAdminClient } from "@/app/lib/supabase/admin";
 import { createClient } from "@/app/lib/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import FavoritesContent from "./client";
 import { AmbianceData } from "@/app/components/Ambiance Maker/ambianceMaker";
+
+export const metadata: Metadata = {
+  title: "Favorites",
+  robots: { index: false },
+};
 
 async function getFavorites() {
   const cookieStore = await cookies();

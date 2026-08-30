@@ -10,7 +10,7 @@ export default function Hero() {
           Set the tone <span className={styles.circle}>●</span> Stay in flow
         </p>
         <p className={styles.subtitle}>
-          Mix YouTube videos into relaxing background soundscapes
+          Mix YouTube videos into immersive background soundscapes
         </p>
       </div>
     </header>

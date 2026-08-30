@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import { createClient } from "@/app/lib/supabase/server";
 import { createAdminClient } from "@/app/lib/supabase/admin";
@@ -66,27 +68,43 @@ async function getOwnerInitialData(
 }
 
 // Checks if the username exists, if they have publihed ambiance, and returns it with correct uppercase/lowercases if it does
-async function getUsername(username: string): Promise<string | undefined> {
-  const isDev = process.env.NODE_ENV === "development";
-  const supabase = isDev ? createAdminClient() : createClient(cookies());
-  const { data, error } = await supabase
-    .from("users")
-    .select("username, id")
-    .ilike("username", username)
-    .single();
-  if (error || !data?.id) {
-    return undefined;
-  }
-  const { data: ambData, error: ambError } = await supabase
-    .from("ambiances")
-    .select("id")
-    .eq("user_id", data.id)
-    .eq("status", "published")
-    .limit(1);
-  if (ambError || !ambData?.length) {
-    return undefined;
-  }
-  return data.username;
+const getUsername = cache(
+  async (username: string): Promise<string | undefined> => {
+    const isDev = process.env.NODE_ENV === "development";
+    const supabase = isDev ? createAdminClient() : createClient(cookies());
+    const { data, error } = await supabase
+      .from("users")
+      .select("username, id")
+      .ilike("username", username)
+      .single();
+    if (error || !data?.id) {
+      return undefined;
+    }
+    const { data: ambData, error: ambError } = await supabase
+      .from("ambiances")
+      .select("id")
+      .eq("user_id", data.id)
+      .eq("status", "published")
+      .limit(1);
+    if (ambError || !ambData?.length) {
+      return undefined;
+    }
+    return data.username;
+  },
+);
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { username } = await params;
+  if (username.slice(0, 3) !== "%40") return {};
+  const rawName = username.slice(3);
+  const correctUsername = await getUsername(rawName);
+  if (!correctUsername) return {};
+  return {
+    title: correctUsername,
+    description: `Browse ambiances by ${correctUsername} on Ambiance Maker.`,
+  };
 }
 
 export default async function Page({ params }: PageProps) {

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import NotFoundClient from "./not-found-client";
 
 export const metadata: Metadata = {
-  title: "Ambiance Maker",
+  title: { absolute: "Ambiance Maker" },
   description: "Page not found",
 };
 

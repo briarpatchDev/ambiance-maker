@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 import { AmbianceData } from "@/app/components/Ambiance Maker/ambianceMaker";
 import AmbianceCard from "@/app/components/Ambiance Card/ambianceCard";
 import DraftIcon from "@/app/components/Icons/draft";
-import PublishedIcon from "@/app/components/Icons/published";
 
 interface SelectionManagerProps {
   itemsArr: AmbianceData[];

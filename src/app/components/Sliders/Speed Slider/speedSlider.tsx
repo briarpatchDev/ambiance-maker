@@ -2,7 +2,7 @@
 import React from "react";
 import styles from "./speedSlider.module.css";
 import DiscreteSlider from "../Discrete Slider/discreteSlider";
-import SpeedIcon from "@/app/components/Icons/speed";
+import Speedometer from "@/app/components/Icons/speedometer";
 
 interface SpeedSliderProps {
   onValueChange: (value: string, videoIndex?: number) => void;
@@ -24,12 +24,21 @@ export default function SpeedSlider({
 }: SpeedSliderProps) {
   return (
     <div style={{ ...style }} className={styles.speed_slider}>
-      <SpeedIcon />
+      <Speedometer
+        style={{
+          marginRight: "0.54rem",
+          width: "4.2rem",
+          height: "4.8rem",
+          transform: "scale(1.25) translateX(0.0rem) translateY(0.03rem)",
+        }}
+      />
       <DiscreteSlider
         values={values}
         defaultValue="1.00x"
         currentValue={
-          playbackSpeed ? `${playbackSpeed?.toFixed(2)}x` : undefined
+          playbackSpeed
+            ? `${Math.min(playbackSpeed, 2.0).toFixed(2)}x` // Highest is 2.0
+            : undefined
         }
         onValueChange={onValueChange}
         ariaLabel={"Video speed slider"}

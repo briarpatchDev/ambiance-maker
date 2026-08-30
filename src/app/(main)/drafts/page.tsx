@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { createAdminClient } from "@/app/lib/supabase/admin";
 import { createClient } from "@/app/lib/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import DraftsContent from "./client";
 import { AmbianceData } from "@/app/components/Ambiance Maker/ambianceMaker";
+
+export const metadata: Metadata = {
+  title: "Drafts",
+  robots: { index: false },
+};
 
 async function getDrafts() {
   const cookieStore = await cookies();

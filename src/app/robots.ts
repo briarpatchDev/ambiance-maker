@@ -10,7 +10,6 @@ export default function robots(): MetadataRoute.Robots {
           "/drafts",
           "/favorites",
           "/settings",
-          "/published",
           "/share",
           "/api/",
         ],
