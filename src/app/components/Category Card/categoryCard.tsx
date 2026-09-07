@@ -11,6 +11,7 @@ export interface CategoryCardProps {
   href: string;
   image: string;
   imageAlt?: string;
+  imageCredit?: string;
   imageStyle?: React.CSSProperties;
   style?: React.CSSProperties;
 }
@@ -22,6 +23,7 @@ export default function CategoryCard({
   href,
   image,
   imageAlt,
+  imageCredit,
   imageStyle,
   style,
 }: CategoryCardProps) {
@@ -44,7 +46,7 @@ export default function CategoryCard({
           );
         })}
       </div>
-      <div className={styles.image_wrapper}>
+      <div className={styles.image_wrapper} data-credit={imageCredit}>
         <Image
           className={styles.image}
           height="250"

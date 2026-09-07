@@ -95,6 +95,13 @@ export default function CategoriesPage({ slug }: CategoriesPageProps) {
             {displayKeys.map((name) => {
               const meta = categoryMeta[name];
               if (!meta) return null;
+              const { src, alt, author, sourceUrl } = meta.image;
+              const imageCredit =
+                author || sourceUrl
+                  ? [author ? `Photo by ${author}` : null, sourceUrl ?? null]
+                      .filter(Boolean)
+                      .join(" — ")
+                  : undefined;
               return (
                 <div key={name} className={styles.card_container}>
                   <CategoryCard
@@ -104,7 +111,10 @@ export default function CategoriesPage({ slug }: CategoriesPageProps) {
                     )}
                     description={meta.description}
                     href={`${hrefPrefix}/${nameToSlug(name)}`}
-                    image={meta.image}
+                    image={src}
+                    imageAlt={alt}
+                    imageCredit={imageCredit}
+                    imageStyle={meta.imageStyle}
                   />
                 </div>
               );
