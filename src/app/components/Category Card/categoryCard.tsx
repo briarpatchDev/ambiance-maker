@@ -49,8 +49,8 @@ export default function CategoryCard({
       <div className={styles.image_wrapper} data-credit={imageCredit}>
         <Image
           className={styles.image}
-          height="250"
-          width="250"
+          height="400"
+          width="800"
           src={image || "/images/categories/default.jpg"}
           style={imageStyle}
           alt={imageAlt ? imageAlt : ""}

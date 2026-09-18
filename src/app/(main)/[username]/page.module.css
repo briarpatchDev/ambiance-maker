@@ -115,7 +115,7 @@
 
 @media screen and (max-width: 480px) {
   .sort_menu_wrapper {
-    overflow-x: scroll;
+    overflow-x: auto;
     justify-content: flex-start;
   }
 

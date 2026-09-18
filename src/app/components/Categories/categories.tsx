@@ -88,10 +88,7 @@ export default function CategoriesPage({ slug }: CategoriesPageProps) {
           </div>
         )}
         {displayKeys.length > 0 ? (
-          <div
-            className={styles.cards_wrapper}
-            style={{ width: "100%", padding: "0 0.4rem" }}
-          >
+          <div className={styles.cards_wrapper}>
             {displayKeys.map((name) => {
               const meta = categoryMeta[name];
               if (!meta) return null;
